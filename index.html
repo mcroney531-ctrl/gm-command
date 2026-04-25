@@ -694,14 +694,8 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
       </div>
 
       <!-- PARTNER CHIPS — shown when multi -->
-      <div class="tf-partners-row" id="tf-multi-partners" id="tf-partner-chips-row">
-        <div class="tf-partner-chip" onclick="togglePartner(this,'jc')"><div class="tf-p-init">JC</div><span class="tf-p-name">Renegades</span></div>
-        <div class="tf-partner-chip" onclick="togglePartner(this,'dm')"><div class="tf-p-init">DM</div><span class="tf-p-name">Shutdown</span></div>
-        <div class="tf-partner-chip" onclick="togglePartner(this,'kb')"><div class="tf-p-init">KB</div><span class="tf-p-name">Algorithm</span></div>
-        <div class="tf-partner-chip" onclick="togglePartner(this,'tr')"><div class="tf-p-init">TR</div><span class="tf-p-name">4th&Ever</span></div>
-        <div class="tf-partner-chip" onclick="togglePartner(this,'mm')"><div class="tf-p-init">MM</div><span class="tf-p-name">MoneyMvs</span></div>
-        <div class="tf-partner-chip" onclick="togglePartner(this,'ax')"><div class="tf-p-init">AX</div><span class="tf-p-name">Axe Cap</span></div>
-      </div>
+      <div class="tf-partners-row" id="tf-multi-partners">
+        <!-- partner chips injected by JS --></div>
       <div id="tf-partner-warning" style="display:none;font-family:DM Mono,monospace;font-size:8px;color:#d4900a;padding:0 14px 8px;"></div>
 
       <!-- ROW 2: Mode -->
@@ -899,6 +893,22 @@ function updateHomeChatPreview() {
     '<div class="src-note">// Roster live from Sleeper · All 12 rosters pulled</div>';
 }
 
+function renderTFPartnerChips() {
+  var container = document.getElementById('tf-multi-partners');
+  if (!container) return;
+  // Find the placeholder comment and replace with live chips
+  var chipsHtml = '';
+  rivalTeams.forEach(function(t) {
+    var shortName = t.name.length > 10 ? t.name.slice(0, 10) + '…' : t.name;
+    chipsHtml += '<div class="tf-partner-chip" data-pid="' + t.id + '" onclick="togglePartner(this,\'' + t.id + '\')">' +
+      '<div class="tf-p-init">' + t.initials + '</div>' +
+      '<span class="tf-p-name">' + shortName + '</span>' +
+    '</div>';
+  });
+  // Replace the comment node with chips
+  container.innerHTML = container.innerHTML.replace('<!-- partner chips injected by JS -->', chipsHtml);
+}
+
 async function loadSleeperData() {
   setLiveStatus('Syncing…', '#d4900a');
   try {
@@ -949,6 +959,7 @@ async function loadSleeperData() {
     renderHomeRosterStrip();
     updateSnapCard();
     updateHomeChatPreview();
+    renderTFPartnerChips();
 
   } catch(err) {
     console.error('Sleeper load error:', err);
