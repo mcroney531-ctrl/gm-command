@@ -4,7 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>GM Command · v0.0.2</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#0f1f3d">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GM Command">
+  <link rel="manifest" href="manifest.json">
+  <!-- App Icons -->
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -474,12 +485,12 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     <!-- snapshot -->
     <div class="snap">
       <div class="snap-top">
-        <div><div class="snap-name">The Psych Ward</div><div class="snap-sub">TitansTrev55 · Offseason 2026</div></div>
-        <div class="snap-rec"><div class="snap-rec-num">7–5</div><div class="snap-rec-lbl">Record</div></div>
+        <div><div class="snap-name" id="snap-team-name">The Psych Ward</div><div class="snap-sub">TitansTrev55 · Offseason 2026</div></div>
+        <div class="snap-rec"><div class="snap-rec-num" id="snap-record">7–5</div><div class="snap-rec-lbl">Record</div></div>
       </div>
       <div class="snap-stats">
-        <div class="snap-stat"><span class="sv">24</span><span class="sl">Active</span></div>
-        <div class="snap-stat"><span class="sv">4</span><span class="sl">IR</span></div>
+        <div class="snap-stat"><span class="sv" id="snap-active">24</span><span class="sl">Active</span></div>
+        <div class="snap-stat"><span class="sv" id="snap-ir">4</span><span class="sl">IR</span></div>
         <div class="snap-stat"><span class="sv blue">3</span><span class="sl">'27 Picks</span></div>
         <div class="snap-stat"><span class="sv gold">4th</span><span class="sl">Standing</span></div>
       </div>
@@ -495,7 +506,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
           <span class="ctx-pill">Rivals</span>
         </div>
         <div class="cc-msgs">
-          <div class="msg msg-ai"><span class="msg-who">GM Assistant</span><div class="bubble">War room is live. <strong>24-man roster loaded</strong>, Rotowire synced. Two items flagged — McConkey leading OTAs, Pacheco still day-to-day.<div class="src-note">// Roster auto-injected · All 12 rosters pulled</div></div></div>
+          <div class="msg msg-ai"><span class="msg-who">GM Assistant</span><div class="bubble"><span id="home-chat-preview-msg">War room is live. <strong>24-man roster loaded</strong>, Rotowire synced. Two items flagged — McConkey leading OTAs, Pacheco still day-to-day.<div class="src-note">// Roster auto-injected · All 12 rosters pulled</div></div></div>
           <div class="msg you"><span class="msg-who">You</span><div class="bubble">Someone offered their 2026 first (top 4) for McConkey. Do I do it?</div></div>
           <div class="msg msg-ai"><span class="msg-who">GM Assistant</span><div class="bubble">No — McConkey at 23 is in his ascent window. Clear WR1 in LAC, KTC trending up. Top-4 pick has landing spot variance. You're thin at WR2.<div class="verdict"><span>🚫</span><span class="verdict-lbl">Decline the Trade</span><span class="verdict-sub">Counter: 1.01 + more</span></div></div></div>
           <div class="msg msg-ai"><span class="msg-who">GM Assistant</span><div class="typing"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div></div>
@@ -519,15 +530,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     <!-- roster strip -->
     <div>
       <div class="sec-head"><span class="sec-title">My Roster</span><button class="sec-link" onclick="nav('roster')">See All ›</button></div>
-      <div class="rstrip">
-        <div class="pchip nw" onclick="openPlayer('cw')"><div class="pavatar">CW<span class="pflag pf-n">⚡</span></div><span class="ppos pos-qb">QB</span><span class="pname">C. Williams</span></div>
-        <div class="pchip" onclick="openPlayer('jd')"><div class="pavatar">JD</div><span class="ppos pos-qb">QB</span><span class="pname">J. Daniels</span></div>
-        <div class="pchip" onclick="openPlayer('br')"><div class="pavatar">BR</div><span class="ppos pos-rb">RB</span><span class="pname">B. Robinson</span></div>
-        <div class="pchip fl" onclick="openPlayer('ip')"><div class="pavatar">IP<span class="pflag pf-i">!</span></div><span class="ppos pos-rb">RB</span><span class="pname">I. Pacheco</span></div>
-        <div class="pchip" onclick="openPlayer('jj')"><div class="pavatar">JJ</div><span class="ppos pos-wr">WR</span><span class="pname">J. Jefferson</span></div>
-        <div class="pchip nw" onclick="openPlayer('lm')"><div class="pavatar">LM<span class="pflag pf-n">⚡</span></div><span class="ppos pos-wr">WR</span><span class="pname">L. McConkey</span></div>
-        <div class="pchip" onclick="openPlayer('tm')"><div class="pavatar">TM</div><span class="ppos pos-te">TE</span><span class="pname">T. McBride</span></div>
-      </div>
+      <div class="rstrip" id="home-roster-strip"><!-- populated by Sleeper --></div>
     </div>
     <!-- news tray -->
     <div class="ntray">
@@ -569,7 +572,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
   <div class="fc-msgs" id="fc-msgs">
     <div class="fc-msg">
       <span class="fc-who">GM Assistant</span>
-      <div class="fc-bubble">War room is live. <strong>24-man roster loaded</strong> — Caleb Williams, Jayden Daniels, Bijan Robinson, Pacheco, Jefferson, McConkey, McBride and the rest. Rotowire synced 4 minutes ago, two items flagged on your guys.<br><br>What are we working on?<div class="fc-note">// Roster auto-injected · Rotowire NFL feed · All 12 rosters pulled from Sleeper</div></div>
+      <div class="fc-bubble"><span id="home-chat-preview-msg">War room is live. <strong>24-man roster loaded</strong> — Caleb Williams, Jayden Daniels, Bijan Robinson, Pacheco, Jefferson, McConkey, McBride and the rest. Rotowire synced 4 minutes ago, two items flagged on your guys.<br><br>What are we working on?<div class="fc-note">// Roster auto-injected · Rotowire NFL feed · All 12 rosters pulled from Sleeper</div></div>
     </div>
   </div>
   <div class="fc-input-wrap">
@@ -885,6 +888,17 @@ function setLiveStatus(text, color) {
 }
 
 // ── Main load sequence ──
+function updateHomeChatPreview() {
+  // Update the home screen chat card opening message with live roster
+  if (!liveMyRoster || !liveMyRoster.length) return;
+  var el = document.getElementById('home-chat-preview-msg');
+  if (!el) return;
+  var count = liveMyRoster.length;
+  var names = liveMyRoster.slice(0,4).map(function(p){ return p.name.split(' ')[1]; }).join(', ');
+  el.innerHTML = 'War room is live. <strong>' + count + '-man roster loaded</strong> — ' + names + ' and the rest. Rotowire synced. What are we working on?' +
+    '<div class="src-note">// Roster live from Sleeper · All 12 rosters pulled</div>';
+}
+
 async function loadSleeperData() {
   setLiveStatus('Syncing…', '#d4900a');
   try {
@@ -929,10 +943,12 @@ async function loadSleeperData() {
     buildRivalTeams();
     buildSystemPrompt();
 
-    // Re-render current screens
+    // Re-render all screens with live data
     renderRivalsList();
     renderRosterScreen();
+    renderHomeRosterStrip();
     updateSnapCard();
+    updateHomeChatPreview();
 
   } catch(err) {
     console.error('Sleeper load error:', err);
@@ -1032,6 +1048,30 @@ function buildSystemPrompt() {
 }
 
 // ── Re-render roster screen from live data ──
+function renderHomeRosterStrip() {
+  var strip = document.getElementById('home-roster-strip');
+  if (!strip || !liveMyRoster || !liveMyRoster.length) return;
+  var posColors = {QB:'pos-qb',RB:'pos-rb',WR:'pos-wr',TE:'pos-te'};
+  // Show first 8 players (top of roster by position)
+  var shown = liveMyRoster.slice(0, 8);
+  strip.innerHTML = shown.map(function(p) {
+    var injured = p.status && p.status !== 'Active' && p.status !== 'active';
+    var flagHtml = injured ? '<span class="pflag pf-i">!</span>' : '';
+    var chipCls = injured ? 'pchip fl' : 'pchip';
+    var posClass = posColors[p.pos] || 'pos-qb';
+    // Shorten name for display
+    var nameParts = p.name.split(' ');
+    var shortName = nameParts.length > 1 
+      ? nameParts[0][0] + '. ' + nameParts[nameParts.length-1]
+      : p.name;
+    return '<div class="' + chipCls + '" onclick="openLivePlayer(' + JSON.stringify(p.id) + ')">' +
+      '<div class="pavatar">' + p.initials + flagHtml + '</div>' +
+      '<span class="ppos ' + posClass + '">' + p.pos + '</span>' +
+      '<span class="pname">' + shortName + '</span>' +
+    '</div>';
+  }).join('');
+}
+
 function renderRosterScreen() {
   if (!liveMyRoster || !liveMyRoster.length) return;
   var container = document.getElementById('roster-list');
@@ -1070,13 +1110,27 @@ function updateSnapCard() {
   if (!myRoster) return;
   var w = (myRoster.settings && myRoster.settings.wins) || 0;
   var l = (myRoster.settings && myRoster.settings.losses) || 0;
-  var recEl = document.querySelector('.snap-rec-num');
-  if (recEl) recEl.textContent = w + '–' + l;
-  var activeEl = document.querySelector('.snap-stat .sv');
-  if (activeEl) activeEl.textContent = (myRoster.players || []).length;
+  var t = (myRoster.settings && myRoster.settings.ties) || 0;
+  var record = w + '–' + l + (t ? '–' + t : '');
+  var recEl = document.getElementById('snap-record');
+  if (recEl) recEl.textContent = record;
+  var allPlayers = (myRoster.players || []);
+  var irPlayers = (myRoster.reserve || []);
+  var activeEl = document.getElementById('snap-active');
+  if (activeEl) activeEl.textContent = allPlayers.length - irPlayers.length;
+  var irEl = document.getElementById('snap-ir');
+  if (irEl) irEl.textContent = irPlayers.length;
+  // Mark Rivals context pill as loaded
+  if (rivalTeams.length > 0) {
+    document.querySelectorAll('.ctx-pill').forEach(function(p) {
+      if (p.textContent.trim() === 'Rivals') {
+        p.textContent = 'Rivals ✓';
+        p.classList.add('on');
+      }
+    });
+  }
 }
 
-// ── Open player card from live roster ──
 function openLivePlayer(pid) {
   var p = liveMyRoster ? liveMyRoster.find(function(x) { return x.id === pid; }) : null;
   if (!p) return;
@@ -1988,6 +2042,19 @@ window.addEventListener("DOMContentLoaded", function() {
     <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">&#x1F500;</span><span class="ni-lbl">Trades</span></div>
   </div>
 </div>
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('sw.js').then(function(reg) {
+        console.log('SW registered:', reg.scope);
+      }).catch(function(err) {
+        console.log('SW registration failed:', err);
+      });
+    });
+  }
+</script>
 
 </body>
 </html>
