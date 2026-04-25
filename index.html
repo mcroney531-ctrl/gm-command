@@ -172,7 +172,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
 .pbl { font-size: 10px; line-height: 1.45; color: var(--mid); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* ── BOTTOM NAV ── */
-.bnav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--white); border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(5,1fr); padding-bottom: env(safe-area-inset-bottom,0); z-index: 100; box-shadow: 0 -4px 20px rgba(15,31,61,.07); }
+.bnav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--white); border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(6,1fr); padding-bottom: env(safe-area-inset-bottom,0); z-index: 100; box-shadow: 0 -4px 20px rgba(15,31,61,.07); }
 .ni { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0 8px; cursor: pointer; gap: 4px; position: relative; transition: opacity .15s; }
 .ni:active { opacity: .6; }
 .ni-icon { font-size: 20px; line-height: 1; }
@@ -455,6 +455,82 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
 .tf-pkg-intel strong { color: #0f1f3d; }
 .tf-pkg-eval { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 1px; color: #1a56ff; text-transform: uppercase; background: none; border: none; cursor: pointer; }
 
+
+/* SCOUTING CENTER */
+.sc-scroll { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:14px 18px 90px; display:flex; flex-direction:column; gap:14px; }
+.sc-scroll::-webkit-scrollbar { display:none; }
+.sc-search-row { display:flex; gap:8px; align-items:center; }
+.sc-input { flex:1; background:#ffffff; border:1.5px solid #dce2f0; border-radius:10px; padding:10px 14px; font-family:Figtree,sans-serif; font-size:13px; color:#0f1f3d; outline:none; transition:border-color .15s; }
+.sc-input:focus { border-color:#1a56ff; }
+.sc-input::placeholder { color:#7a8fb5; }
+.sc-add-btn { background:#0f1f3d; border:none; border-radius:10px; padding:10px 16px; font-family:Bebas Neue,sans-serif; font-size:14px; letter-spacing:2px; color:#ffffff; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+.sc-add-btn:active { opacity:.8; }
+.sc-sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.sc-sec-title { font-size:14px; font-weight:700; color:#0f1f3d; }
+.sc-sec-count { font-family:DM Mono,monospace; font-size:9px; color:#7a8fb5; letter-spacing:1px; }
+.sc-prospect-card { background:#ffffff; border:1px solid #dce2f0; border-radius:12px; padding:12px 14px; cursor:pointer; transition:background .1s; display:flex; align-items:center; gap:12px; box-shadow:0 1px 6px rgba(15,31,61,.05); margin-bottom:8px; }
+.sc-prospect-card:active { background:#f4f6fb; }
+.sc-pav { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:Bebas Neue,sans-serif; font-size:15px; color:rgba(255,255,255,.85); flex-shrink:0; }
+.sc-pinfo { flex:1; min-width:0; }
+.sc-pname { font-size:13px; font-weight:700; color:#0f1f3d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sc-pmeta { font-family:DM Mono,monospace; font-size:9px; color:#7a8fb5; margin-top:2px; }
+.sc-pright { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
+.sc-pos-badge { font-family:DM Mono,monospace; font-size:9px; font-weight:500; padding:2px 8px; border-radius:6px; }
+.sc-news-count { font-family:DM Mono,monospace; font-size:8px; color:#7a8fb5; }
+.sc-arrow { font-size:16px; color:#c8d2e8; }
+.sc-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; gap:10px; text-align:center; }
+.sc-empty-icon { font-size:40px; }
+.sc-empty-title { font-family:Bebas Neue,sans-serif; font-size:20px; letter-spacing:2px; color:#0f1f3d; }
+.sc-empty-sub { font-size:12px; color:#7a8fb5; line-height:1.6; max-width:240px; }
+/* PROSPECT DETAIL */
+.pd-header { background:#0f1f3d; padding:14px 18px 0; flex-shrink:0; }
+.pd-back { display:flex; align-items:center; gap:5px; background:none; border:none; cursor:pointer; color:rgba(255,255,255,.5); font-family:DM Mono,monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; margin-bottom:14px; padding:0; }
+.pd-hero { display:flex; align-items:flex-end; justify-content:space-between; padding-bottom:16px; }
+.pd-hero-l { display:flex; align-items:center; gap:14px; }
+.pd-avatar { width:56px; height:56px; border-radius:14px; background:#1e3566; display:flex; align-items:center; justify-content:center; font-family:Bebas Neue,sans-serif; font-size:20px; letter-spacing:2px; color:rgba(255,255,255,.85); border:2px solid rgba(255,255,255,.12); flex-shrink:0; position:relative; }
+.pd-pos-badge { position:absolute; bottom:-6px; left:50%; transform:translateX(-50%); font-family:DM Mono,monospace; font-size:8px; font-weight:500; padding:2px 7px; border-radius:6px; white-space:nowrap; border:1.5px solid #0f1f3d; }
+.pd-name { font-family:Bebas Neue,sans-serif; font-size:24px; letter-spacing:2px; color:#ffffff; line-height:1; }
+.pd-school { font-family:DM Mono,monospace; font-size:9px; color:rgba(255,255,255,.45); text-transform:uppercase; margin-top:4px; }
+.pd-draft-badge { font-family:DM Mono,monospace; font-size:8px; padding:3px 10px; border-radius:20px; background:rgba(26,86,255,.25); color:#90b8ff; border:1px solid rgba(26,86,255,.4); margin-top:5px; display:inline-block; }
+.pd-val { text-align:right; }
+.pd-grade { font-family:Bebas Neue,sans-serif; font-size:32px; color:#6daaff; line-height:1; }
+.pd-grade-lbl { font-family:DM Mono,monospace; font-size:8px; color:rgba(255,255,255,.3); letter-spacing:1px; text-transform:uppercase; }
+.pd-tabs { display:flex; background:#ffffff; border-bottom:1px solid #dce2f0; flex-shrink:0; }
+.pd-tab { flex:1; padding:11px 4px; text-align:center; font-family:DM Mono,monospace; font-size:8px; letter-spacing:1.2px; text-transform:uppercase; color:#7a8fb5; cursor:pointer; border-bottom:2px solid transparent; transition:all .15s; position:relative; }
+.pd-tab.active { color:#0f1f3d; border-bottom-color:#0f1f3d; }
+.pd-scroll { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:16px 18px 30px; display:flex; flex-direction:column; gap:14px; }
+.pd-scroll::-webkit-scrollbar { display:none; }
+.pd-notes-blurb { font-size:12px; line-height:1.75; color:#3a4e72; background:#f4f6fb; border:1px solid #dce2f0; border-radius:8px; padding:12px 14px; min-height:70px; }
+.pd-notes-blurb.empty { color:#7a8fb5; font-style:italic; }
+.pd-note-row { display:flex; gap:8px; align-items:flex-end; }
+.pd-note-input { flex:1; background:#ffffff; border:1.5px solid #dce2f0; border-radius:8px; padding:10px 13px; font-family:Figtree,sans-serif; font-size:12px; color:#0f1f3d; resize:none; outline:none; min-height:64px; line-height:1.55; transition:border-color .15s; }
+.pd-note-input:focus { border-color:#1a56ff; }
+.pd-note-input::placeholder { color:#7a8fb5; }
+.pd-note-btn { background:#0f1f3d; color:#ffffff; border:none; border-radius:8px; padding:10px 14px; font-family:DM Mono,monospace; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; height:64px; display:flex; align-items:center; gap:5px; white-space:nowrap; flex-shrink:0; transition:opacity .15s; }
+.pd-note-btn:disabled { opacity:.5; cursor:not-allowed; }
+.pd-synth-row { display:none; align-items:center; gap:6px; margin-top:6px; font-family:DM Mono,monospace; font-size:8px; color:#1a56ff; letter-spacing:1px; }
+.pd-succ-row { display:none; align-items:center; gap:6px; margin-top:6px; font-family:DM Mono,monospace; font-size:8px; color:#0ea86b; }
+.film-add-row { display:flex; gap:8px; align-items:center; }
+.film-input { flex:1; background:#ffffff; border:1.5px solid #dce2f0; border-radius:10px; padding:10px 14px; font-family:Figtree,sans-serif; font-size:12px; color:#0f1f3d; outline:none; transition:border-color .15s; }
+.film-input:focus { border-color:#1a56ff; }
+.film-input::placeholder { color:#7a8fb5; }
+.film-add-btn { background:#0f1f3d; border:none; border-radius:10px; padding:10px 14px; font-family:DM Mono,monospace; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:#ffffff; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+.film-grid { display:flex; flex-direction:column; gap:8px; }
+.film-card { background:#ffffff; border:1px solid #dce2f0; border-radius:10px; overflow:hidden; cursor:pointer; box-shadow:0 1px 6px rgba(15,31,61,.05); transition:opacity .15s; }
+.film-card:active { opacity:.8; }
+.film-thumb { width:100%; height:140px; object-fit:cover; background:#eef1f8; display:block; }
+.film-thumb-placeholder { width:100%; height:140px; background:linear-gradient(135deg,#0f1f3d,#1e3566); display:flex; align-items:center; justify-content:center; font-size:40px; }
+.film-info { padding:10px 12px; display:flex; align-items:center; justify-content:space-between; }
+.film-title { font-size:12px; font-weight:600; color:#0f1f3d; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-right:8px; }
+.film-remove { font-family:DM Mono,monospace; font-size:8px; color:#e03040; background:none; border:none; cursor:pointer; flex-shrink:0; }
+.film-search-btn { width:100%; padding:11px; background:#f4f6fb; border:1.5px dashed #c8d2e8; border-radius:10px; font-family:DM Mono,monospace; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:#7a8fb5; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+.pd-news-item { padding:11px 0; border-bottom:1px solid #dce2f0; }
+.pd-news-item:last-child { border-bottom:none; }
+.pd-news-meta { display:flex; align-items:center; gap:7px; margin-bottom:4px; }
+.pd-news-date { font-family:DM Mono,monospace; font-size:8px; color:#7a8fb5; }
+.pd-news-txt { font-size:12px; line-height:1.55; color:#3a4e72; }
+.pd-no-news { padding:20px 0; text-align:center; font-family:DM Mono,monospace; font-size:10px; color:#7a8fb5; letter-spacing:1px; }
+
 </style>
 </head>
 <body>
@@ -506,10 +582,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
           <span class="ctx-pill">Rivals</span>
         </div>
         <div class="cc-msgs">
-          <div class="msg msg-ai"><span class="msg-who">GM Assistant</span><div class="bubble"><span id="home-chat-preview-msg">War room is live. <strong>24-man roster loaded</strong>, Rotowire synced. Two items flagged — McConkey leading OTAs, Pacheco still day-to-day.<div class="src-note">// Roster auto-injected · All 12 rosters pulled</div></div></div>
-          <div class="msg you"><span class="msg-who">You</span><div class="bubble">Someone offered their 2026 first (top 4) for McConkey. Do I do it?</div></div>
-          <div class="msg msg-ai"><span class="msg-who">GM Assistant</span><div class="bubble">No — McConkey at 23 is in his ascent window. Clear WR1 in LAC, KTC trending up. Top-4 pick has landing spot variance. You're thin at WR2.<div class="verdict"><span>🚫</span><span class="verdict-lbl">Decline the Trade</span><span class="verdict-sub">Counter: 1.01 + more</span></div></div></div>
-          <div class="msg msg-ai"><span class="msg-who">GM Assistant</span><div class="typing"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div></div>
+          <div class="msg msg-ai"><span class="msg-who">GM Assistant</span><div class="bubble"><span id="home-chat-preview-msg">War room is live. <strong>Roster loaded</strong>, Rotowire synced. What are we working on?<div class="src-note">// Roster live from Sleeper · All 12 rosters pulled</div></span></div></div>
         </div>
         <div class="cc-input">
           <input type="text" placeholder="Ask anything..." onclick="nav('chat')">
@@ -534,12 +607,9 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     </div>
     <!-- news tray -->
     <div class="ntray">
-      <div class="nth"><div class="nth-l"><div class="ndot"></div><span class="nlbl">Rotowire · 7 new items</span></div><button class="nexp">See All ›</button></div>
-      <div class="nscroll">
-        <div class="npill fn"><div class="pm"><span class="pt">LAC</span><span class="pti">12m</span><span class="pb bm">Mine</span></div><div class="pp">L. McConkey</div><div class="pbl">8 targets at OTAs — clear WR1 with Keenan gone.</div></div>
-        <div class="npill fi"><div class="pm"><span class="pt">KC</span><span class="pti">34m</span><span class="pb bm">Mine</span></div><div class="pp">I. Pacheco</div><div class="pbl">Not cleared for practice. Knee day-to-day entering minicamp.</div></div>
-        <div class="npill ft"><div class="pm"><span class="pt">MIN</span><span class="pti">1h</span><span class="pb br">Rival</span></div><div class="pp">J. Addison</div><div class="pbl">Vikings open to offers amid cap constraints.</div></div>
-        <div class="npill ft"><div class="pm"><span class="pt">PHI</span><span class="pti">5h</span><span class="pb bw">Watch</span></div><div class="pp">A.J. Brown</div><div class="pbl">Trade to Patriots expected in early June.</div></div>
+      <div class="nth"><div class="nth-l"><div class="ndot"></div><span class="nlbl" id="news-tray-label">Rotowire · Loading...</span></div><button class="nexp">See All ›</button></div>
+      <div class="nscroll" id="news-tray-scroll">
+        <div style="padding:14px 16px;font-family:DM Mono,monospace;font-size:9px;color:#7a8fb5;letter-spacing:1px">Syncing feed...</div>
       </div>
     </div>
   </div>
@@ -550,6 +620,8 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
     <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
     <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+  
   </div>
 </div>
 
@@ -615,6 +687,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
     <div class="ni" onclick="nav('rivals')"><span class="ni-icon">&#x1F465;</span><span class="ni-lbl">Rivals</span></div>
     <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trade Finder</span></div>
+  
   </div>
 </div>
 
@@ -655,6 +728,8 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
     <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
     <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+  
   </div>
 </div>
 
@@ -803,6 +878,8 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
     <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
     <div class="ni trade-ni active" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+  
   </div>
 </div>
 
@@ -909,6 +986,118 @@ function renderTFPartnerChips() {
   container.innerHTML = container.innerHTML.replace('<!-- partner chips injected by JS -->', chipsHtml);
 }
 
+
+// ═══════════════════════════════════════════
+// ROTOWIRE RSS FEED
+// ═══════════════════════════════════════════
+var rotowireItems = [];
+
+async function loadRotowireFeed() {
+  try {
+    // Use a CORS proxy to fetch the RSS feed
+    var rssUrl = 'https://www.rotowire.com/rss/news.php?sport=NFL';
+    var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(rssUrl);
+    var res = await fetch(proxyUrl);
+    var data = await res.json();
+    var xmlStr = data.contents;
+    var parser = new DOMParser();
+    var xml = parser.parseFromString(xmlStr, 'text/xml');
+    var items = xml.querySelectorAll('item');
+    rotowireItems = [];
+    items.forEach(function(item) {
+      var title = item.querySelector('title') ? item.querySelector('title').textContent : '';
+      var desc = item.querySelector('description') ? item.querySelector('description').textContent : '';
+      var pubDate = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
+      // Parse player name — usually first part of title before colon or dash
+      var playerName = title.split(/[:\-–]/)[0].trim();
+      var teamMatch = desc.match(/([A-Z]{2,3})/);
+      var team = teamMatch ? teamMatch[1] : '';
+      // Time ago
+      var timeAgo = getTimeAgo(new Date(pubDate));
+      rotowireItems.push({ title: title, desc: desc, playerName: playerName, team: team, timeAgo: timeAgo, pubDate: pubDate });
+    });
+    renderNewsTray();
+  } catch(err) {
+    console.error('Rotowire fetch error:', err);
+    document.getElementById('news-tray-label').textContent = 'Rotowire · Unavailable';
+  }
+}
+
+function getTimeAgo(date) {
+  if (!date || isNaN(date)) return '';
+  var diff = Math.floor((Date.now() - date) / 1000);
+  if (diff < 60) return diff + 's';
+  if (diff < 3600) return Math.floor(diff/60) + 'm';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h';
+  return Math.floor(diff/86400) + 'd';
+}
+
+function getOwnershipBadge(playerName) {
+  if (!playerName) return null;
+  var nameLower = playerName.toLowerCase();
+  // Check my roster
+  if (liveMyRoster && liveMyRoster.length) {
+    var onMine = liveMyRoster.some(function(p) {
+      var parts = p.name.toLowerCase().split(' ');
+      return parts.some(function(part) { return nameLower.includes(part) && part.length > 3; });
+    });
+    if (onMine) return { label: 'Mine', cls: 'bm' };
+  }
+  // Check rival rosters
+  for (var i = 0; i < rivalTeams.length; i++) {
+    var t = rivalTeams[i];
+    if (t.roster && t.roster.some(function(p) {
+      var parts = (p.name || '').toLowerCase().split(' ');
+      return parts.some(function(part) { return nameLower.includes(part) && part.length > 3; });
+    })) {
+      var shortName = t.name.length > 8 ? t.name.slice(0,8) + '…' : t.name;
+      return { label: shortName, cls: 'br' };
+    }
+  }
+  return null;
+}
+
+function renderNewsTray() {
+  var scroll = document.getElementById('news-tray-scroll');
+  var label = document.getElementById('news-tray-label');
+  if (!scroll) return;
+  if (!rotowireItems.length) {
+    scroll.innerHTML = '<div style="padding:14px;font-family:DM Mono,monospace;font-size:9px;color:#7a8fb5">No items found</div>';
+    return;
+  }
+  label.textContent = 'Rotowire · ' + rotowireItems.length + ' items';
+  // Show up to 8 items, prioritize owned players
+  var owned = rotowireItems.filter(function(item) { return getOwnershipBadge(item.playerName); });
+  var others = rotowireItems.filter(function(item) { return !getOwnershipBadge(item.playerName); });
+  var shown = owned.concat(others).slice(0, 8);
+  scroll.innerHTML = shown.map(function(item) {
+    var badge = getOwnershipBadge(item.playerName);
+    var badgeHtml = badge ? '<span class="pb ' + badge.cls + '">' + badge.label + '</span>' : '';
+    // Detect injury keywords for pill color
+    var descLower = item.desc.toLowerCase();
+    var pillCls = 'npill';
+    if (descLower.includes('injur') || descLower.includes('out') || descLower.includes('ir') || descLower.includes('questionable') || descLower.includes('doubtful')) {
+      pillCls = 'npill fi';
+    } else if (descLower.includes('trade') || descLower.includes('sign') || descLower.includes('deal') || descLower.includes('waiv')) {
+      pillCls = 'npill ft';
+    } else {
+      pillCls = 'npill fn';
+    }
+    // Truncate description
+    var shortDesc = item.desc.replace(/<[^>]+>/g, '').slice(0, 80) + (item.desc.length > 80 ? '…' : '');
+    return '<div class="' + pillCls + '">' +
+      '<div class="pm">' +
+        '<span class="pt">' + (item.team || 'NFL') + '</span>' +
+        '<span class="pti">' + item.timeAgo + '</span>' +
+        badgeHtml +
+      '</div>' +
+      '<div class="pp">' + item.playerName + '</div>' +
+      '<div class="pbl">' + shortDesc + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+
 async function loadSleeperData() {
   setLiveStatus('Syncing…', '#d4900a');
   try {
@@ -960,6 +1149,7 @@ async function loadSleeperData() {
     updateSnapCard();
     updateHomeChatPreview();
     renderTFPartnerChips();
+    loadRotowireFeed();
 
   } catch(err) {
     console.error('Sleeper load error:', err);
@@ -1216,6 +1406,7 @@ function nav(target) {
   if (target === 'settings') renderSettings();
   if (target === 'intel') renderIntel();
   if (target === 'rivals') renderRivalsList();
+  if (target === 'scout') { scLoadBoard(); renderScBoard(); }
 }
 
 // ─────────────────────────────────
@@ -1989,6 +2180,257 @@ window.addEventListener("DOMContentLoaded", function() {
   renderRivalsList();
 });
 
+
+// SCOUTING CENTER JS
+var scoutingBoard = [];
+var currentProspect = null;
+var currentPdTab = 0;
+
+function scLoadBoard() {
+  try { var s = localStorage.getItem('gmc_board'); if(s) scoutingBoard = JSON.parse(s); } catch(e) { scoutingBoard = []; }
+}
+function scSaveBoard() {
+  try { localStorage.setItem('gmc_board', JSON.stringify(scoutingBoard)); } catch(e) {}
+}
+function scInitials(name) {
+  var p = (name||'').trim().split(' ').filter(Boolean);
+  return p.length>=2 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : (p[0]||'XX').slice(0,2).toUpperCase();
+}
+function scPosClass(pos) {
+  return {QB:'qb-badge',RB:'rb-badge',WR:'wr-badge',TE:'te-badge'}[pos] || 'rb-badge';
+}
+function scPosColor(pos) {
+  return {QB:'#1a56ff',RB:'#0ea86b',WR:'#8a4fcf',TE:'#d4900a'}[pos] || '#0f1f3d';
+}
+
+function scAddProspect() {
+  var input = document.getElementById('sc-search-input');
+  var raw = (input.value||'').trim();
+  if (!raw) return;
+  var pos = 'WR', name = raw;
+  var pm = raw.match(/\b(QB|RB|WR|TE)\b/i);
+  if (pm) { pos = pm[1].toUpperCase(); name = raw.replace(pm[0],'').trim(); }
+  if (scoutingBoard.find(function(p){ return p.name.toLowerCase()===name.toLowerCase(); })) { input.value=''; return; }
+  var p = { id:'p_'+Date.now(), name:name, pos:pos, school:'', draftYear:'2026', grade:'', notes:'', notesLog:[], film:[], newsCache:[], created:Date.now() };
+  scoutingBoard.unshift(p);
+  scSaveBoard();
+  input.value = '';
+  renderScBoard();
+  openProspect(p.id);
+}
+
+function renderScBoard() {
+  var list = document.getElementById('sc-board-list');
+  var cnt = document.getElementById('sc-board-count');
+  if (!list) return;
+  if (cnt) cnt.textContent = scoutingBoard.length + ' prospect'+(scoutingBoard.length!==1?'s':'');
+  if (!scoutingBoard.length) {
+    list.innerHTML = '<div class="sc-empty"><div class="sc-empty-icon">&#x1F52D;</div><div class="sc-empty-title">Board is empty</div><div class="sc-empty-sub">Search for a prospect above to start building your board</div></div>';
+    return;
+  }
+  list.innerHTML = scoutingBoard.map(function(p) {
+    var nc = (p.newsCache||[]).length;
+    var col = scPosColor(p.pos);
+    return '<div class="sc-prospect-card" onclick="openProspect(\'' + p.id + '\')">' +
+      '<div class="sc-pav" style="background:'+col+'">'+scInitials(p.name)+'</div>' +
+      '<div class="sc-pinfo"><div class="sc-pname">'+p.name+'</div><div class="sc-pmeta">'+p.pos+(p.school?' &middot; '+p.school:'')+(p.draftYear?' &middot; '+p.draftYear+' Class':'')+'</div></div>' +
+      '<div class="sc-pright"><span class="sc-pos-badge" style="background:'+col+'22;color:'+col+'">'+p.pos+'</span>'+(nc?'<span class="sc-news-count">'+nc+' news</span>':'')+'</div>' +
+      '<div class="sc-arrow">&#x203A;</div></div>';
+  }).join('');
+}
+
+function openProspect(id) {
+  currentProspect = scoutingBoard.find(function(p){ return p.id===id; });
+  if (!currentProspect) return;
+  var p = currentProspect;
+  document.getElementById('pd-avatar').firstChild.textContent = scInitials(p.name);
+  document.getElementById('pd-pos-badge').className = 'pd-pos-badge '+scPosClass(p.pos);
+  document.getElementById('pd-pos-badge').textContent = p.pos;
+  document.getElementById('pd-name').textContent = p.name;
+  document.getElementById('pd-school').textContent = (p.school||'School TBD')+' &middot; '+p.draftYear+' Class';
+  document.getElementById('pd-draft-badge').textContent = p.draftYear+' Draft Class';
+  document.getElementById('pd-grade').textContent = p.grade||'—';
+  // Match Rotowire news
+  if (rotowireItems && rotowireItems.length) {
+    var parts = p.name.toLowerCase().split(' ').filter(function(n){ return n.length>2; });
+    p.newsCache = rotowireItems.filter(function(item) {
+      var t = (item.title||'').toLowerCase(), d=(item.desc||'').toLowerCase();
+      return parts.some(function(part){ return t.includes(part)||d.includes(part); });
+    });
+  }
+  document.querySelectorAll('.pd-tab').forEach(function(t,i){ t.classList.toggle('active',i===0); });
+  currentPdTab = 0;
+  renderPdTab(0);
+  setTimeout(function() {
+    var fs = document.getElementById('sc-field-school'); if (fs) fs.value = p.school || '';
+    var fd = document.getElementById('sc-field-draft'); if (fd) fd.value = p.draftYear || '2026';
+    var fg = document.getElementById('sc-field-grade'); if (fg) fg.value = p.grade || '';
+  }, 50);
+  nav('prospect');
+}
+
+function pdTab(idx, el) {
+  currentPdTab = idx;
+  document.querySelectorAll('.pd-tab').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+  renderPdTab(idx);
+}
+
+function renderPdTab(idx) {
+  var p = currentProspect;
+  var s = document.getElementById('pd-scroll');
+  if (!s||!p) return;
+  var col = scPosColor(p.pos);
+
+  if (idx===0) {
+    s.innerHTML =
+      '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;overflow:hidden;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb"><span style="font-size:12px;font-weight:700;color:#0f1f3d">Details</span></div>' +
+        '<div style="padding:14px;display:flex;flex-direction:column;gap:10px">' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+            '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">School</div><input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" placeholder="School" id="sc-field-school" oninput="scField(currentProspect.id,String.fromCharCode(115,99,104,111,111,108),this.value)"></div>' +
+            '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Draft Year</div><input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" placeholder="2026" id="sc-field-draft" oninput="scField(currentProspect.id,String.fromCharCode(100,114,97,102,116,89,101,97,114),this.value)"></div>' +
+          '</div>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+            '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Position</div>' +
+            '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" onchange="scField(currentProspect.id,String.fromCharCode(112,111,115),this.value)">' +
+            ['QB','RB','WR','TE'].map(function(pos){ return '<option value="'+pos+'"'+(p.pos===pos?' selected':'')+'>'+pos+'</option>'; }).join('')+
+            '</select></div>' +
+            '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">My Grade</div><input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" placeholder="A, B+..." id="sc-field-grade" oninput="scGrade(currentProspect.id,this.value)"></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;overflow:hidden;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb">' +
+          '<span style="font-size:12px;font-weight:700;color:#0f1f3d">Scout Notes</span>' +
+          '<span style="font-family:DM Mono,monospace;font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(14,168,107,.1);color:#0ea86b;border:1px solid rgba(14,168,107,.25)">AI Synthesized</span>' +
+        '</div>' +
+        '<div style="padding:14px;display:flex;flex-direction:column;gap:10px">' +
+          '<div class="pd-notes-blurb'+(p.notes?'':' empty')+'" id="pd-notes-display">'+(p.notes||'No notes yet. Add your first observation below.')+'</div>' +
+          (p.notesLog&&p.notesLog.length ? p.notesLog.map(function(e){ return '<div style="display:flex;gap:8px;padding:6px 9px;background:#f4f6fb;border-radius:6px;border:1px solid #dce2f0;margin-bottom:4px"><span style="font-family:DM Mono,monospace;font-size:8px;color:#7a8fb5;flex-shrink:0">'+e.date+'</span><span style="font-size:11px;color:#3a4e72">'+e.text+'</span></div>'; }).join('') : '') +
+          '<div class="pd-note-row"><textarea class="pd-note-input" id="pd-note-input" placeholder="Route running, snap count, landing spot..."></textarea>' +
+          '<button class="pd-note-btn" id="pd-note-btn" onclick="scAddNote(currentProspect.id)">Add Note</button></div>' +
+          '<div class="pd-synth-row" id="pd-synth-row"><span>Synthesizing...</span></div>' +
+          '<div class="pd-succ-row" id="pd-succ-row">&#x2713; Notes updated</div>' +
+        '</div>' +
+      '</div>' +
+      '<button onclick="scRemove(currentProspect.id)" style="width:100%;padding:11px;background:#fff0f0;border:1px solid rgba(224,48,64,.2);border-radius:10px;font-family:DM Mono,monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#e03040;cursor:pointer">Remove from Board</button>';
+
+  } else if (idx===1) {
+    s.innerHTML =
+      '<div style="display:flex;flex-direction:column;gap:12px">' +
+        '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#7a8fb5;margin-bottom:8px">Add YouTube Link</div>' +
+          '<div class="film-add-row"><input class="film-input" id="film-url-input" type="url" placeholder="Paste YouTube URL..."><button class="film-add-btn" onclick="scAddFilm(currentProspect.id)">Add</button></div>' +
+        '</div>' +
+        '<button class="film-search-btn" onclick="scSearchHL(currentProspect.name)">&#x1F3AC; &nbsp;Search Highlights on YouTube</button>' +
+        '<div class="film-grid" id="film-grid">'+scRenderFilm(p)+'</div>' +
+      '</div>';
+
+  } else if (idx===2) {
+    var news = p.newsCache||[];
+    s.innerHTML = news.length ?
+      '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;padding:0 14px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+        news.map(function(item){ return '<div class="pd-news-item"><div class="pd-news-meta"><span class="pd-news-date">'+(item.timeAgo||'')+'</span></div><div class="pd-news-txt">'+item.desc.replace(/<[^>]+>/g,'').slice(0,200)+'</div></div>'; }).join('')+
+      '</div>' :
+      '<div class="pd-no-news">No Rotowire items found for '+p.name+'<br><span style="font-size:10px;color:#c8d2e8">Items appear when Rotowire covers this prospect</span></div>';
+
+  } else {
+    s.innerHTML =
+      '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;padding:16px;box-shadow:0 1px 8px rgba(15,31,61,.05);display:flex;flex-direction:column;gap:12px">' +
+        '<div style="font-size:13px;color:#3a4e72;line-height:1.65">Ask the GM Assistant anything about <strong style="color:#0f1f3d">'+p.name+'</strong> — dynasty value, landing spot, scheme fit, whether to target him in the draft.</div>' +
+        '<button onclick="scAskGM(currentProspect.id)" style="width:100%;padding:13px;background:#0f1f3d;border:none;border-radius:10px;font-family:Bebas Neue,sans-serif;font-size:16px;letter-spacing:2.5px;color:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">&#x1F9E0; &nbsp;Ask GM About '+p.name+'</button>' +
+      '</div>';
+  }
+}
+
+function scField(id, field, val) {
+  var p = scoutingBoard.find(function(x){ return x.id===id; });
+  if (!p) return;
+  p[field] = val; scSaveBoard();
+  if (field==='school'||field==='draftYear') { var el=document.getElementById('pd-school'); if(el) el.innerHTML=(p.school||'School TBD')+' &middot; '+p.draftYear+' Class'; }
+  if (field==='pos') { var b=document.getElementById('pd-pos-badge'); if(b){b.className='pd-pos-badge '+scPosClass(val);b.textContent=val;} }
+}
+function scGrade(id, val) {
+  var p=scoutingBoard.find(function(x){return x.id===id;}); if(!p) return;
+  p.grade=val; scSaveBoard();
+  var el=document.getElementById('pd-grade'); if(el) el.textContent=val||'—';
+}
+
+async function scAddNote(id) {
+  var p=scoutingBoard.find(function(x){return x.id===id;}); if(!p) return;
+  var input=document.getElementById('pd-note-input');
+  var note=(input.value||'').trim(); if(!note) return;
+  var btn=document.getElementById('pd-note-btn'), synth=document.getElementById('pd-synth-row'), succ=document.getElementById('pd-succ-row');
+  btn.disabled=true; btn.textContent='Working...'; synth.style.display='flex'; succ.style.display='none';
+    var prompt = p.notes
+    ? 'Dynasty fantasy football scout notes on a prospect. Existing notes: ' + p.notes + ' New observation: ' + note + ' Rewrite as a single cohesive paragraph incorporating the new observation. Analytical scouting tone. Return only the updated notes.'
+    : 'Dynasty fantasy football scout. First observation on a prospect: ' + note + ' Write a short scouting note (2-3 sentences). Analytical tone. Return only the text.';
+  try {
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:prompt}]})});
+    var data=await res.json();
+    var updated=data.content&&data.content[0]?data.content[0].text.trim():null;
+    if(updated){
+      p.notes=updated; if(!p.notesLog) p.notesLog=[];
+      var today=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      p.notesLog.unshift({date:today,text:note}); scSaveBoard();
+      var display=document.getElementById('pd-notes-display');
+      if(display){display.textContent=updated;display.classList.remove('empty');}
+      input.value=''; synth.style.display='none'; succ.style.display='flex';
+      setTimeout(function(){succ.style.display='none';},3000);
+    }
+  } catch(e){synth.style.display='none';}
+  btn.disabled=false; btn.textContent='Add Note';
+}
+
+function scRenderFilm(p) {
+  if(!p.film||!p.film.length) return '<div style="text-align:center;padding:20px;font-family:DM Mono,monospace;font-size:10px;color:#7a8fb5">No film added yet</div>';
+  return p.film.map(function(f,i){
+    return '<div class="film-card" onclick="scOpenFilm(this)" data-url="'+f.url+'">' +
+      '<img class="film-thumb" src="'+f.thumb+'" alt="'+f.title+'">' +
+      '<div class="film-info"><span class="film-title">'+f.title+'</span>' +
+      '<button class="film-remove" onclick="event.stopPropagation();scRemoveFilm(currentProspect.id,'+i+')">&#x2715; Remove</button></div></div>';
+  }).join('');
+}
+
+function scOpenFilm(el) { var url = el.closest(".film-card").dataset.url; if(url) window.open(url,"_blank"); }
+
+function scAddFilm(id) {
+  var p=scoutingBoard.find(function(x){return x.id===id;}); if(!p) return;
+  var input=document.getElementById('film-url-input');
+  var url=(input.value||'').trim(); if(!url) return;
+  var m=url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+  if(!m){input.value='';return;}
+  var vid=m[1];
+  if(!p.film) p.film=[];
+  p.film.unshift({url:'https://www.youtube.com/watch?v='+vid,thumb:'https://img.youtube.com/vi/'+vid+'/hqdefault.jpg',title:p.name+' highlights',videoId:vid});
+  scSaveBoard(); input.value='';
+  var grid=document.getElementById('film-grid'); if(grid) grid.innerHTML=scRenderFilm(p);
+}
+
+function scRemoveFilm(id, idx) {
+  var p=scoutingBoard.find(function(x){return x.id===id;}); if(!p||!p.film) return;
+  p.film.splice(idx,1); scSaveBoard();
+  var grid=document.getElementById('film-grid'); if(grid) grid.innerHTML=scRenderFilm(p);
+}
+
+function scSearchHL(name) {
+  window.open('https://www.youtube.com/results?search_query='+encodeURIComponent(name+' highlights 2024 2025'),'_blank');
+}
+
+function scRemove(id) {
+  scoutingBoard=scoutingBoard.filter(function(p){return p.id!==id;}); scSaveBoard(); renderScBoard(); nav('scout');
+}
+
+function scAskGM(id) {
+  var p=scoutingBoard.find(function(x){return x.id===id;}); if(!p) return;
+  var ctx='I want to ask about the dynasty prospect '+p.name+' ('+p.pos+(p.school?', '+p.school:'')+(p.draftYear?', '+p.draftYear+' draft class':'')+').';
+  if(p.notes) ctx+=' My scouting notes: '+p.notes;
+  if(typeof chatHistory!=='undefined') chatHistory.push({role:'user',content:ctx});
+  nav('chat');
+}
+
+window.addEventListener('DOMContentLoaded', function() { scLoadBoard(); });
+
 </script>
 
 <!-- ═══════════════════════════════
@@ -2019,6 +2461,7 @@ window.addEventListener("DOMContentLoaded", function() {
     <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">&#x1F9E0;</div><span class="ni-lbl">Ask GM</span></div>
     <div class="ni active" onclick="nav('rivals')"><span class="ni-icon">&#x1F465;</span><span class="ni-lbl">Rivals</span></div>
     <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">&#x1F500;</span><span class="ni-lbl">Trades</span></div>
+  
   </div>
 </div>
 
@@ -2059,6 +2502,7 @@ window.addEventListener("DOMContentLoaded", function() {
     <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">&#x1F9E0;</div><span class="ni-lbl">Ask GM</span></div>
     <div class="ni active" onclick="nav('rivals')"><span class="ni-icon">&#x1F465;</span><span class="ni-lbl">Rivals</span></div>
     <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">&#x1F500;</span><span class="ni-lbl">Trades</span></div>
+  
   </div>
 </div>
 
@@ -2074,6 +2518,90 @@ window.addEventListener("DOMContentLoaded", function() {
     });
   }
 </script>
+
+
+<!-- ═══════════════════════════════
+     SCOUTING CENTER SCREEN
+═══════════════════════════════ -->
+<div class="screen" id="screen-scout">
+  <div class="app-header">
+    <div class="header-row">
+      <div class="logo"><span class="logo-gm">Scouting</span><span class="logo-cmd">Center</span></div>
+      <div class="hdr-right">
+        <div class="live-chip"><div class="live-dot"></div><span class="live-text">Live</span></div>
+        <div class="hdr-btn" onclick="nav('settings')">⚙️</div>
+      </div>
+    </div>
+  </div>
+  <div class="sc-scroll">
+    <div>
+      <div class="sc-sec-head" style="margin-bottom:10px">
+        <span class="sc-sec-title">Track a Prospect</span>
+      </div>
+      <div class="sc-search-row">
+        <input class="sc-input" id="sc-search-input" type="text" placeholder="e.g. Ashton Jeanty WR...">
+        <button class="sc-add-btn" onclick="scAddProspect()">+ Add</button>
+      </div>
+    </div>
+    <div>
+      <div class="sc-sec-head">
+        <span class="sc-sec-title">My Board</span>
+        <span class="sc-sec-count" id="sc-board-count">0 prospects</span>
+      </div>
+      <div id="sc-board-list">
+        <div class="sc-empty">
+          <div class="sc-empty-icon">🔭</div>
+          <div class="sc-empty-title">Board is empty</div>
+          <div class="sc-empty-sub">Search for a prospect above to start building your board</div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="bnav">
+    <div class="ni" onclick="nav('home')"><span class="ni-icon">🏠</span><span class="ni-lbl">Home</span></div>
+    <div class="ni" onclick="nav('roster')"><span class="ni-icon">📋</span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
+    <div class="ni active" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+  </div>
+</div>
+
+<!-- PROSPECT DETAIL SCREEN -->
+<div class="screen" id="screen-prospect">
+  <div class="pd-header">
+    <button class="pd-back" onclick="nav('scout')">&#x2039; &nbsp;Scouting</button>
+    <div class="pd-hero">
+      <div class="pd-hero-l">
+        <div class="pd-avatar" id="pd-avatar">??<span class="pd-pos-badge rb-badge" id="pd-pos-badge">WR</span></div>
+        <div>
+          <div class="pd-name" id="pd-name">Prospect</div>
+          <div class="pd-school" id="pd-school">School TBD</div>
+          <span class="pd-draft-badge" id="pd-draft-badge">2026 Draft Class</span>
+        </div>
+      </div>
+      <div class="pd-val">
+        <div class="pd-grade" id="pd-grade">-</div>
+        <div class="pd-grade-lbl">My Grade</div>
+      </div>
+    </div>
+  </div>
+  <div class="pd-tabs">
+    <div class="pd-tab active" onclick="pdTab(0,this)">Overview</div>
+    <div class="pd-tab" onclick="pdTab(1,this)">Film</div>
+    <div class="pd-tab" onclick="pdTab(2,this)">News</div>
+    <div class="pd-tab" onclick="pdTab(3,this)">Ask GM</div>
+  </div>
+  <div class="pd-scroll" id="pd-scroll"></div>
+  <div class="bnav">
+    <div class="ni" onclick="nav('home')"><span class="ni-icon">🏠</span><span class="ni-lbl">Home</span></div>
+    <div class="ni" onclick="nav('roster')"><span class="ni-icon">📋</span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
+    <div class="ni active" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+  </div>
+</div>
 
 </body>
 </html>
