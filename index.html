@@ -1,3 +1,4 @@
+<!-- GM Command v0.1.4 | Updated: 2026-04-25 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -143,7 +144,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
 .pchip:active { transform: scale(.95); }
 .pchip.fl { border-color: rgba(224,48,64,.35); background: rgba(224,48,64,.03); }
 .pchip.nw { border-color: rgba(212,144,10,.35); background: rgba(212,144,10,.03); }
-.pavatar { width: 40px; height: 40px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 1px; color: rgba(255,255,255,.85); position: relative; border: 2px solid var(--border); }
+.pavatar { width: 44px; height: 44px; border-radius: 6px; background: transparent; display: flex; align-items: center; justify-content: center; position: relative; border: none; }
 .pflag { position: absolute; bottom: -2px; right: -2px; width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid var(--white); font-size: 7px; display: flex; align-items: center; justify-content: center; }
 .pf-i { background: var(--red); } .pf-n { background: var(--gold); }
 .ppos { font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; }
@@ -227,7 +228,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
 .rpos-group { padding: 10px 18px 4px; font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--dim); background: var(--off); border-bottom: 1px solid var(--border); }
 .rrow { display: flex; align-items: center; gap: 12px; padding: 11px 18px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; background: var(--white); }
 .rrow:active { background: var(--off); }
-.rrow-avatar { width: 38px; height: 38px; border-radius: 10px; background: var(--navy); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: rgba(255,255,255,.85); flex-shrink: 0; position: relative; }
+.rrow-avatar { width: 48px; height: 48px; border-radius: 6px; background: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; border: none; }
 .rrow-flag { position: absolute; bottom: -3px; right: -3px; width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid var(--white); font-size: 7px; display: flex; align-items: center; justify-content: center; }
 .rrow-info { flex: 1; }
 .rrow-name { font-size: 13px; font-weight: 600; color: var(--navy); }
@@ -243,7 +244,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
 .pc-back { display: flex; align-items: center; gap: 5px; background: none; border: none; cursor: pointer; color: rgba(255,255,255,.5); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; padding: 0; }
 .pc-hero { display: flex; align-items: flex-end; justify-content: space-between; padding-bottom: 16px; }
 .pc-hero-l { display: flex; align-items: center; gap: 14px; }
-.pc-avatar { width: 58px; height: 58px; border-radius: 14px; background: var(--navy-lt); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: rgba(255,255,255,.85); border: 2px solid rgba(255,255,255,.12); position: relative; flex-shrink: 0; }
+.pc-avatar { width: 62px; height: 62px; border-radius: 8px; background: transparent; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; border: none; overflow: visible; }
 .pc-pos-badge { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); font-family: 'DM Mono', monospace; font-size: 8px; font-weight: 500; padding: 2px 7px; border-radius: 6px; white-space: nowrap; border: 1.5px solid var(--navy); }
 .rb-badge{background:rgba(14,168,107,.9);color:white} .wr-badge{background:rgba(138,79,207,.9);color:white} .qb-badge{background:rgba(26,86,255,.9);color:white} .te-badge{background:rgba(212,144,10,.9);color:white}
 .pc-fullname { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; color: var(--white); line-height: 1; }
@@ -531,6 +532,41 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
 .pd-news-txt { font-size:12px; line-height:1.55; color:#3a4e72; }
 .pd-no-news { padding:20px 0; text-align:center; font-family:DM Mono,monospace; font-size:10px; color:#7a8fb5; letter-spacing:1px; }
 
+
+/* ON THE TABLE row */
+.tf-table-row { display:flex; align-items:flex-start; gap:10px; padding:10px 14px; border-bottom:1px solid rgba(255,255,255,.1); }
+.tf-table-chips { display:flex; gap:6px; overflow-x:auto; flex:1; flex-wrap:nowrap; align-items:center; min-height:32px; }
+.tf-table-chips::-webkit-scrollbar { display:none; }
+.tf-table-chip { display:flex; align-items:center; gap:5px; padding:4px 8px 4px 4px; border-radius:20px; background:#ffffff; border:1.5px solid rgba(255,255,255,.3); flex-shrink:0; cursor:pointer; }
+.tf-table-chip-jersey { width:28px; height:28px; flex-shrink:0; }
+.tf-table-chip-name { font-family:DM Mono,monospace; font-size:9px; color:#0f1f3d; font-weight:500; white-space:nowrap; }
+.tf-table-chip-x { font-size:11px; color:#7a8fb5; margin-left:2px; line-height:1; }
+.tf-table-chip-x:hover { color:#e03040; }
+.tf-table-empty { font-family:DM Mono,monospace; font-size:9px; color:rgba(255,255,255,.3); letter-spacing:.5px; padding:4px 0; }
+.tf-add-player-btn { background:rgba(255,255,255,.12); border:1.5px dashed rgba(255,255,255,.3); border-radius:8px; padding:5px 10px; font-family:DM Mono,monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:rgba(255,255,255,.6); cursor:pointer; white-space:nowrap; flex-shrink:0; transition:all .15s; }
+.tf-add-player-btn:active { background:rgba(255,255,255,.2); }
+
+/* Player picker sheet */
+.tf-picker-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; }
+.tf-picker-overlay.show { display:block; }
+.tf-picker-sheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:#ffffff; border-radius:20px 20px 0 0; z-index:201; padding-bottom:env(safe-area-inset-bottom,0); max-height:70vh; display:flex; flex-direction:column; }
+.tf-picker-header { padding:16px 18px 12px; border-bottom:1px solid #dce2f0; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.tf-picker-title { font-family:Bebas Neue,sans-serif; font-size:18px; letter-spacing:2px; color:#0f1f3d; }
+.tf-picker-close { background:none; border:none; font-size:20px; cursor:pointer; color:#7a8fb5; padding:0; }
+.tf-picker-sub { font-family:DM Mono,monospace; font-size:9px; color:#7a8fb5; letter-spacing:1px; }
+.tf-picker-list { overflow-y:auto; flex:1; }
+.tf-picker-list::-webkit-scrollbar { display:none; }
+.tf-picker-item { display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #dce2f0; cursor:pointer; transition:background .1s; }
+.tf-picker-item:active { background:#f4f6fb; }
+.tf-picker-item.selected { background:#f0f4ff; }
+.tf-picker-item.selected .tf-picker-check { display:block; }
+.tf-picker-check { display:none; color:#1a56ff; font-size:16px; flex-shrink:0; }
+.tf-picker-pinfo { flex:1; }
+.tf-picker-pname { font-size:13px; font-weight:600; color:#0f1f3d; }
+.tf-picker-pmeta { font-family:DM Mono,monospace; font-size:9px; color:#7a8fb5; margin-top:1px; }
+.tf-picker-done { padding:14px 18px; border-top:1px solid #dce2f0; flex-shrink:0; }
+.tf-picker-done-btn { width:100%; padding:12px; background:#0f1f3d; border:none; border-radius:10px; font-family:Bebas Neue,sans-serif; font-size:16px; letter-spacing:2px; color:#ffffff; cursor:pointer; }
+
 </style>
 </head>
 <body>
@@ -688,6 +724,8 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     <div class="ni" onclick="nav('rivals')"><span class="ni-icon">&#x1F465;</span><span class="ni-lbl">Rivals</span></div>
     <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trade Finder</span></div>
   
+  
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
   </div>
 </div>
 
@@ -730,6 +768,8 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
     <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
   
+  
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
   </div>
 </div>
 
@@ -805,6 +845,15 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
           <div class="tf-pbtn" onclick="toggleTFPos(this,'sel-te')">TE</div>
           <div class="tf-pbtn" onclick="toggleTFPos(this,'sel-pk')">Picks</div>
         </div>
+      </div>
+
+      <!-- ON THE TABLE -->
+      <div class="tf-row tf-table-row">
+        <span class="tf-row-label">On Table</span>
+        <div class="tf-table-chips" id="tf-table-chips">
+          <span class="tf-table-empty">No players added</span>
+        </div>
+        <button class="tf-add-player-btn" onclick="openTFPicker()">+ Player</button>
       </div>
 
       <!-- SUBMIT -->
@@ -887,7 +936,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
      TRADE FINDER BOTTOM SHEET
 ═══════════════════════════════ -->
 <div class="tf-overlay" id="tf-overlay" onclick="closeTFSheet()"></div>
-<div class="tf-sheet" id="tf-sheet">
+<div class="tf-sheet" id="tf-sheet" style="display:none">
   <div class="tf-sheet-accent" id="tf-sheet-accent"></div>
   <div class="tf-sheet-pull"></div>
   <div class="tf-sheet-hd">
@@ -937,6 +986,68 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
 </div>
 
 <script>
+
+
+// ═══════════════════════════════════════════
+// JERSEY AVATAR SYSTEM
+// ═══════════════════════════════════════════
+
+// Determine if a hex color is dark (for text contrast)
+function isColorDark(hex) {
+  var h = hex.replace('#','');
+  if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  var r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+  return (0.299*r + 0.587*g + 0.114*b) < 140;
+}
+
+// Generate jersey SVG
+function makeJerseySVG(playerName, number, teamAbbr, size) {
+  size = size || 56;
+  var primary = getTeamColor(teamAbbr) || '#0f1f3d';
+  var secondary = getTeamColor2(teamAbbr) || '#ffffff';
+  var darkPrimary = isColorDark(primary);
+
+  // Text colors
+  var nameColor = darkPrimary ? '#ffffff' : '#0f1f3d';
+  var numColor = secondary;
+  // If secondary is too light on a light primary, darken
+  if (!darkPrimary && !isColorDark(secondary)) numColor = '#0f1f3d';
+  // If secondary is white on dark, that's fine
+  var numStroke = darkPrimary ? primary : '#ffffff';
+
+  // Short name (last name only, max 8 chars)
+  var lastName = (playerName || '').split(' ').pop().slice(0,9).toUpperCase();
+  var numStr = number ? String(number) : '??';
+
+  // Font sizes scale with jersey size
+  var nameFontSize = size <= 42 ? Math.round(size * 0.16) : Math.round(size * 0.14);
+  var numFontSize  = size <= 42 ? Math.round(size * 0.38) : Math.round(size * 0.36);
+
+  // Jersey SVG path (simplified jersey silhouette)
+  // Viewbox 100x100
+  var vb = 100;
+  var jerseyPath = "M20,18 L5,32 L15,38 L15,90 L85,90 L85,38 L95,32 L80,18 Q72,12 62,14 Q58,22 50,22 Q42,22 38,14 Q28,12 20,18 Z";
+  var collarPath = "M38,14 Q42,24 50,24 Q58,24 62,14";
+
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="'+size+'" height="'+size+'">' +
+    // Jersey body
+    '<path d="'+jerseyPath+'" fill="'+primary+'" />' +
+    // Shoulder stripe accent
+    '<path d="M15,38 L15,48 L85,48 L85,38 Z" fill="'+secondary+'" opacity="0.3"/>' +
+    // Collar
+    '<path d="'+collarPath+'" fill="none" stroke="'+secondary+'" stroke-width="2.5" opacity="0.8"/>' +
+    // Player name
+    '<text x="50" y="63" text-anchor="middle" font-family="Bebas Neue,Arial Narrow,sans-serif" font-size="'+nameFontSize+'" fill="'+nameColor+'" letter-spacing="1">'+lastName+'</text>' +
+    // Jersey number
+    '<text x="50" y="83" text-anchor="middle" font-family="Bebas Neue,Arial Narrow,sans-serif" font-size="'+numFontSize+'" fill="'+numColor+'" stroke="'+numStroke+'" stroke-width="1.5" paint-order="stroke">'+numStr+'</text>' +
+    '</svg>';
+  return svg;
+}
+
+// CSS container for jersey avatars
+function jerseyContainer(svg, extraStyle) {
+  return '<div style="display:flex;align-items:center;justify-content:center;flex-shrink:0;' + (extraStyle||'') + '">' + svg + '</div>';
+}
 
 // NFL Team Colors
 var NFL_COLORS = {
@@ -1037,34 +1148,43 @@ function renderTFPartnerChips() {
 // ═══════════════════════════════════════════
 var rotowireItems = [];
 
-async function loadRotowireFeed() {
+async function fetchRotoFeed(url) {
+  var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+  var res = await fetch(proxyUrl);
+  var data = await res.json();
+  var xml = new DOMParser().parseFromString(data.contents, 'text/xml');
+  return Array.from(xml.querySelectorAll('item')).map(function(item) {
+    var title = item.querySelector('title') ? item.querySelector('title').textContent : '';
+    var desc  = item.querySelector('description') ? item.querySelector('description').textContent : '';
+    var pub   = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
+    var playerName = title.split(/[:\-–]/)[0].trim();
+    var teamMatch = desc.match(/\b([A-Z]{2,3})\b/);
+    return { title:title, desc:desc, playerName:playerName, team:teamMatch?teamMatch[1]:'', timeAgo:getTimeAgo(new Date(pub)), pubDate:pub };
+  });
+}
+
+async function loadRotowireFeed(silent) {
   try {
-    // Use a CORS proxy to fetch the RSS feed
-    var rssUrl = 'https://www.rotowire.com/rss/news.php?sport=NFL';
-    var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(rssUrl);
-    var res = await fetch(proxyUrl);
-    var data = await res.json();
-    var xmlStr = data.contents;
-    var parser = new DOMParser();
-    var xml = parser.parseFromString(xmlStr, 'text/xml');
-    var items = xml.querySelectorAll('item');
-    rotowireItems = [];
-    items.forEach(function(item) {
-      var title = item.querySelector('title') ? item.querySelector('title').textContent : '';
-      var desc = item.querySelector('description') ? item.querySelector('description').textContent : '';
-      var pubDate = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
-      // Parse player name — usually first part of title before colon or dash
-      var playerName = title.split(/[:\-–]/)[0].trim();
-      var teamMatch = desc.match(/([A-Z]{2,3})/);
-      var team = teamMatch ? teamMatch[1] : '';
-      // Time ago
-      var timeAgo = getTimeAgo(new Date(pubDate));
-      rotowireItems.push({ title: title, desc: desc, playerName: playerName, team: team, timeAgo: timeAgo, pubDate: pubDate });
-    });
+    var lbl = document.getElementById('news-tray-label');
+    if (!silent && lbl) lbl.textContent = 'Rotowire · Syncing...';
+    var results = await Promise.allSettled([
+      fetchRotoFeed('https://www.rotowire.com/rss/news.php?sport=NFL'),
+      fetchRotoFeed('https://www.rotowire.com/rss/news.php?sport=NFL&type=transactions')
+    ]);
+    var all = [];
+    results.forEach(function(r) { if (r.status === 'fulfilled') all = all.concat(r.value); });
+    var seen = {};
+    rotowireItems = all.filter(function(item) {
+      if (seen[item.title]) return false;
+      seen[item.title] = true;
+      return true;
+    }).sort(function(a,b){ return new Date(b.pubDate) - new Date(a.pubDate); });
     renderNewsTray();
+    if (typeof currentProspect !== 'undefined' && currentProspect) scFetchProspectNews(currentProspect);
   } catch(err) {
     console.error('Rotowire fetch error:', err);
-    document.getElementById('news-tray-label').textContent = 'Rotowire · Unavailable';
+    var lbl2 = document.getElementById('news-tray-label');
+    if (lbl2) lbl2.textContent = 'Rotowire · Unavailable';
   }
 }
 
@@ -1220,6 +1340,7 @@ function buildMyRoster() {
       pos: p.position || '?',
       team: p.team || 'FA',
       age: p.age || '?',
+      number: p.number || null,
       initials: getInitials((p.first_name || '') + ' ' + (p.last_name || '')),
       status: p.injury_status || p.status || 'Active',
       ktc: '—'
@@ -1311,7 +1432,7 @@ function renderHomeRosterStrip() {
       ? nameParts[0][0] + '. ' + nameParts[nameParts.length-1]
       : p.name;
     return '<div class="' + chipCls + '" onclick="openLivePlayer(' + JSON.stringify(p.id) + ')">' +
-      '<div class="pavatar" style="' + teamAvatarStyle(p.team) + '">' + p.initials + flagHtml + '</div>' +
+      makeJerseySVG(p.name, p.number, p.team, 44) +
       '<span class="ppos ' + posClass + '">' + p.pos + '</span>' +
       '<span class="pname">' + shortName + '</span>' +
     '</div>';
@@ -1335,7 +1456,7 @@ function renderRosterScreen() {
       var injFlag = (p.status && p.status !== 'Active' && p.status !== 'active')
         ? '<span class="rrow-flag pf-i" style="background:#e03040">!</span>' : '';
       html += '<div class="rrow" onclick="openLivePlayer(' + JSON.stringify(p.id) + ')">'  +
-        '<div class="rrow-avatar" style="position:relative;' + teamAvatarStyle(p.team) + '">' + p.initials + injFlag + '</div>' +
+        makeJerseySVG(p.name, p.number, p.team, 48) +
         '<div class="rrow-info">' +
           '<div class="rrow-name">' + p.name + '</div>' +
           '<div class="rrow-sub">' + p.team + ' · ' + p.pos + (p.age ? ' · Age ' + p.age : '') + (p.status && p.status !== 'Active' ? ' · ' + p.status : '') + '</div>' +
@@ -1388,9 +1509,10 @@ function openLivePlayer(pid) {
   });
   if (staticKey) { openPlayer(staticKey); return; }
   // Build minimal player object for unknown players
-  document.getElementById('pc-avatar').childNodes[0].textContent = p.initials;
-  var teamAbbr = getTeamAbbr(p.team || '');
-  document.getElementById('pc-avatar').style.cssText = teamAvatarStyle(teamAbbr);
+  var teamAbbr2 = getTeamAbbr(p.team || '');
+  var pcAv2 = document.getElementById('pc-avatar');
+  pcAv2.innerHTML = makeJerseySVG(p.name, null, teamAbbr2, 62);
+  pcAv2.style.cssText = 'background:transparent;border:none;';
   document.getElementById('pc-avatar').style.cssText = teamAvatarStyle(p.team);
   document.getElementById('pc-pos-badge').className = 'pc-pos-badge ' + (p.pos === 'QB' ? 'qb-badge' : p.pos === 'RB' ? 'rb-badge' : p.pos === 'WR' ? 'wr-badge' : 'te-badge');
   document.getElementById('pc-pos-badge').textContent = p.pos;
@@ -1790,7 +1912,26 @@ function selectTFMode(idx) {
   if (el) el.innerHTML = labels[idx];
 }
 function submitTFWidget() {
-  openTFSheet(currentTFMode);
+  // Build context string for GM chat
+  if (tfTablePlayers.length > 0) {
+    var playerNames = tfTablePlayers.map(function(p){
+      return p.name + ' (' + p.pos + (p.number ? ', #' + p.number : '') + ')';
+    }).join(', ');
+    var context = 'I want to explore trading ' + playerNames + '. ';
+    // Add intent if selected
+    var intentEl = document.querySelector('.tf-ichip.sel');
+    if (intentEl) context += 'My goal: ' + intentEl.querySelector('.tf-ichip-lbl').textContent + '. ';
+    // Add position priority
+    var posSel = Array.from(document.querySelectorAll('.tf-pbtn[class*="sel-"]')).map(function(b){ return b.textContent; });
+    if (posSel.length) context += 'Targeting: ' + posSel.join(', ') + '. ';
+    // Add structure
+    context += 'Trade structure: ' + (tradeType === 'multi' ? teamCount + '-team trade.' : '2-way trade.');
+    // Push to chat
+    if (typeof chatHistory !== "undefined") chatHistory.push({role:"user", content: context});
+    nav("chat");
+  } else {
+    openTFSheet(currentTFMode);
+  }
 }
 
 function toggleIntent(el) {
@@ -2177,7 +2318,7 @@ function renderRdTab(idx) {
         const flagHtml = p.flag==='trade' ? '<span class="rbadge rbadge-intel" style="margin-left:auto">Trade?</span>' :
                          p.flag==='news'  ? '<span class="rbadge rbadge-news" style="margin-left:auto">News</span>' : '';
         return `<div class="rd-player-row" onclick="nav('chat')">
-          <div class="rd-pav" style="${teamAvatarStyle(p.team)}">${initials}</div>
+          ${makeJerseySVG(p.name, null, p.team, 44)}
           <div class="rd-pinfo">
             <div class="rd-pname">${p.name}</div>
             <div class="rd-psub">${p.team} · Age ${p.age}</div>
@@ -2276,7 +2417,7 @@ function scAddProspect() {
   var pm = raw.match(/\b(QB|RB|WR|TE)\b/i);
   if (pm) { pos = pm[1].toUpperCase(); name = raw.replace(pm[0],'').trim(); }
   if (scoutingBoard.find(function(p){ return p.name.toLowerCase()===name.toLowerCase(); })) { input.value=''; return; }
-  var p = { id:'p_'+Date.now(), name:name, pos:pos, school:'', draftYear:'2026', grade:'', notes:'', notesLog:[], film:[], newsCache:[], created:Date.now() };
+  var p = { id:'p_'+Date.now(), name:name, pos:pos, school:'', draftYear:'NOW', grade:'', notes:'', notesLog:[], film:[], newsCache:[], created:Date.now() };
   scoutingBoard.unshift(p);
   scSaveBoard();
   input.value = '';
@@ -2308,30 +2449,25 @@ function openProspect(id) {
   currentProspect = scoutingBoard.find(function(p){ return p.id===id; });
   if (!currentProspect) return;
   var p = currentProspect;
-  document.getElementById('pd-avatar').firstChild.textContent = scInitials(p.name);
-  document.getElementById('pd-pos-badge').className = 'pd-pos-badge '+scPosClass(p.pos);
-  document.getElementById('pd-pos-badge').textContent = p.pos;
-  document.getElementById('pd-name').textContent = p.name;
-  document.getElementById('pd-school').textContent = (p.school||'School TBD')+' &middot; '+p.draftYear+' Class';
-  document.getElementById('pd-draft-badge').textContent = p.draftYear+' Draft Class';
-  document.getElementById('pd-grade').textContent = p.grade||'—';
-  // Match Rotowire news
-  if (rotowireItems && rotowireItems.length) {
-    var parts = p.name.toLowerCase().split(' ').filter(function(n){ return n.length>2; });
-    p.newsCache = rotowireItems.filter(function(item) {
-      var t = (item.title||'').toLowerCase(), d=(item.desc||'').toLowerCase();
-      return parts.some(function(part){ return t.includes(part)||d.includes(part); });
-    });
-  }
+  // Navigate first so screen is active
+  nav('prospect');
+  // Reset tabs
   document.querySelectorAll('.pd-tab').forEach(function(t,i){ t.classList.toggle('active',i===0); });
   currentPdTab = 0;
-  renderPdTab(0);
+  // Update header and render content
+  try { scUpdateProspectHeader(p); } catch(e) { console.error('header err', e); }
+  try { renderPdTab(0); } catch(e) { console.error('render err', e); }
+  try { scFetchProspectNews(p); } catch(e) {}
+  // Populate fields after render
   setTimeout(function() {
-    var fs = document.getElementById('sc-field-school'); if (fs) fs.value = p.school || '';
-    var fd = document.getElementById('sc-field-draft'); if (fd) fd.value = p.draftYear || '2026';
-    var fg = document.getElementById('sc-field-grade'); if (fg) fg.value = p.grade || '';
-  }, 50);
-  nav('prospect');
+    try {
+      var isDrafted = !!(p.drafted || (p.proTeam && p.proTeam !== ''));
+      var fs = document.getElementById('sc-field-school');
+      if (fs) fs.value = isDrafted ? (p.proTeam || '') : (p.school || '');
+      var fd = document.getElementById('sc-field-draft'); if (fd) fd.value = p.draftYear || 'NOW';
+      var fg = document.getElementById('sc-field-grade'); if (fg) fg.value = p.grade || '';
+    } catch(e) { console.error('field err', e); }
+  }, 100);
 }
 
 function pdTab(idx, el) {
@@ -2348,38 +2484,102 @@ function renderPdTab(idx) {
   var col = scPosColor(p.pos);
 
   if (idx===0) {
-    s.innerHTML =
-      '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;overflow:hidden;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb"><span style="font-size:12px;font-weight:700;color:#0f1f3d">Details</span></div>' +
-        '<div style="padding:14px;display:flex;flex-direction:column;gap:10px">' +
-          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-            '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">School</div><input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" placeholder="School" id="sc-field-school" oninput="scField(currentProspect.id,String.fromCharCode(115,99,104,111,111,108),this.value)"></div>' +
-            '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Draft Year</div><input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" placeholder="2026" id="sc-field-draft" oninput="scField(currentProspect.id,String.fromCharCode(100,114,97,102,116,89,101,97,114),this.value)"></div>' +
+    var isDrafted = !!(p.drafted || (p.proTeam && p.proTeam !== ''));
+    var teamCol = isDrafted ? (getTeamColor(p.proTeam) || '#0f1f3d') : '#0f1f3d';
+    var teamCol2 = isDrafted ? (getTeamColor2(p.proTeam) || '#ffffff') : '#1e3566';
+
+    // ── PHASE BANNER ──
+    var phaseBanner = isDrafted
+      ? '<div style="background:linear-gradient(135deg,'+teamCol+','+teamCol2+');border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:2px">' +
+          '<div style="width:52px;height:52px;flex-shrink:0">' + makeJerseySVG(p.name, p.number||'', p.proTeam, 52) + '</div>' +
+          '<div style="flex:1">' +
+            '<div style="font-family:Bebas Neue,sans-serif;font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.55);text-transform:uppercase">NFL Rookie</div>' +
+            '<div style="font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:2px;color:#ffffff;line-height:1.1">' + (p.proTeam||'').toUpperCase() + ' · ' + p.pos + '</div>' +
+            (p.school ? '<div style="font-family:DM Mono,monospace;font-size:9px;color:rgba(255,255,255,.45);margin-top:3px">' + p.school + ' · ' + (p.draftYear==='NOW'?'2026':p.draftYear) + ' Draft</div>' : '') +
           '</div>' +
-          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-            '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Position</div>' +
-            '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" onchange="scField(currentProspect.id,String.fromCharCode(112,111,115),this.value)">' +
-            ['QB','RB','WR','TE'].map(function(pos){ return '<option value="'+pos+'"'+(p.pos===pos?' selected':'')+'>'+pos+'</option>'; }).join('')+
-            '</select></div>' +
-            '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">My Grade</div><input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" placeholder="A, B+..." id="sc-field-grade" oninput="scGrade(currentProspect.id,this.value)"></div>' +
+          '<div style="text-align:right">' +
+            '<div style="font-family:Bebas Neue,sans-serif;font-size:28px;color:rgba(255,255,255,.9);line-height:1">' + (p.grade||'—') + '</div>' +
+            '<div style="font-family:DM Mono,monospace;font-size:7px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase">Grade</div>' +
           '</div>' +
+        '</div>'
+      : '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:2px">' +
+          '<div style="width:44px;height:44px;background:linear-gradient(135deg,#0f1f3d,#1e3566);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:Bebas Neue,sans-serif;font-size:16px;color:rgba(255,255,255,.7)">' + p.pos + '</div>' +
+          '<div style="flex:1">' +
+            '<div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#7a8fb5">College Prospect</div>' +
+            '<div style="font-size:15px;font-weight:700;color:#0f1f3d;margin-top:2px">' + (p.school||'School TBD') + '</div>' +
+            '<div style="font-family:DM Mono,monospace;font-size:9px;color:#7a8fb5;margin-top:2px">' + (p.draftYear==='NOW'?'2026':p.draftYear) + ' Draft Class</div>' +
+          '</div>' +
+          '<div style="text-align:right">' +
+            '<div style="font-family:Bebas Neue,sans-serif;font-size:28px;color:#0f1f3d;line-height:1">' + (p.grade||'—') + '</div>' +
+            '<div style="font-family:DM Mono,monospace;font-size:7px;color:#7a8fb5;letter-spacing:1px;text-transform:uppercase">Grade</div>' +
+          '</div>' +
+        '</div>';
+
+    // ── DETAILS CARD ──
+    var isDraftedChk = (p.drafted || (p.proTeam && p.proTeam !== '')) ? 'checked' : '';
+    var nflTeamOpts = '<option value="">Select NFL Team...</option><option value="ARI">Arizona Cardinals</option><option value="ATL">Atlanta Falcons</option><option value="BAL">Baltimore Ravens</option><option value="BUF">Buffalo Bills</option><option value="CAR">Carolina Panthers</option><option value="CHI">Chicago Bears</option><option value="CIN">Cincinnati Bengals</option><option value="CLE">Cleveland Browns</option><option value="DAL">Dallas Cowboys</option><option value="DEN">Denver Broncos</option><option value="DET">Detroit Lions</option><option value="GB">Green Bay Packers</option><option value="HOU">Houston Texans</option><option value="IND">Indianapolis Colts</option><option value="JAC">Jacksonville Jaguars</option><option value="KC">Kansas City Chiefs</option><option value="LAC">Los Angeles Chargers</option><option value="LAR">Los Angeles Rams</option><option value="LV">Las Vegas Raiders</option><option value="MIA">Miami Dolphins</option><option value="MIN">Minnesota Vikings</option><option value="NE">New England Patriots</option><option value="NO">New Orleans Saints</option><option value="NYG">New York Giants</option><option value="NYJ">New York Jets</option><option value="PHI">Philadelphia Eagles</option><option value="PIT">Pittsburgh Steelers</option><option value="SEA">Seattle Seahawks</option><option value="SF">San Francisco 49ers</option><option value="TB">Tampa Bay Buccaneers</option><option value="TEN">Tennessee Titans</option><option value="WAS">Washington Commanders</option><option value="UFA">Undrafted Free Agent</option>';
+    // Build selected options
+    var nflTeamOptsSelected = nflTeamOpts.replace('value="'+p.proTeam+'"', 'value="'+p.proTeam+'" selected');
+
+    var detailCard = '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:12px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+      '<div style="padding:11px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb;display:flex;align-items:center;justify-content:space-between">' +
+        '<span style="font-size:12px;font-weight:700;color:#0f1f3d">Details</span>' +
+        // Drafted to NFL checkbox
+        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:DM Mono,monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:'+(isDrafted?'#0ea86b':'#7a8fb5')+'">' +
+          '<input type="checkbox" id="sc-drafted-chk" '+isDraftedChk+' onclick="scToggleDraftedCurrent()" style="width:14px;height:14px;accent-color:#0ea86b;cursor:pointer">' +
+          '🏈 Drafted to NFL?' +
+        '</label>' +
+      '</div>' +
+      '<div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">' +
+        // Row 1: School OR NFL Team dropdown + Position
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+          '<div>' +
+            '<div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">' + (isDrafted ? 'NFL Team' : 'School') + '</div>' +
+            (isDrafted
+              ? '<select style="width:100%;background:#f4f6fb;border:1.5px solid '+teamCol+';border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" id="sc-field-school" onchange="scField(currentProspect.id,String.fromCharCode(112,114,111,84,101,97,109),this.value)">'+nflTeamOptsSelected+'</select>'
+              : '<input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" id="sc-field-school" placeholder="College" oninput="scField(currentProspect.id,String.fromCharCode(115,99,104,111,111,108),this.value)">'
+            ) +
+          '</div>' +
+          '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Position</div>' +
+          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" onchange="scField(currentProspect.id,String.fromCharCode(112,111,115),this.value)">' +
+          ['QB','RB','WR','TE'].map(function(pos){ return '<option value="'+pos+'"'+(p.pos===pos?' selected':'')+'>'+pos+'</option>'; }).join('') +
+          '</select></div>' +
+        '</div>' +
+        // Row 2: Draft Year + Grade
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+          '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Draft Year</div>' +
+          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" id="sc-field-draft" onchange="scDraftYearChange(currentProspect.id,this.value)">' +
+          '<option value="NOW">NOW (2026)</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option>' +
+          '</select></div>' +
+          '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">My Grade</div>' +
+          '<input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" id="sc-field-grade" placeholder="Top 10 pick" oninput="scGrade(currentProspect.id,this.value)"></div>' +
         '</div>' +
       '</div>' +
-      '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;overflow:hidden;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb">' +
-          '<span style="font-size:12px;font-weight:700;color:#0f1f3d">Scout Notes</span>' +
-          '<span style="font-family:DM Mono,monospace;font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(14,168,107,.1);color:#0ea86b;border:1px solid rgba(14,168,107,.25)">AI Synthesized</span>' +
-        '</div>' +
-        '<div style="padding:14px;display:flex;flex-direction:column;gap:10px">' +
-          '<div class="pd-notes-blurb'+(p.notes?'':' empty')+'" id="pd-notes-display">'+(p.notes||'No notes yet. Add your first observation below.')+'</div>' +
-          (p.notesLog&&p.notesLog.length ? p.notesLog.map(function(e){ return '<div style="display:flex;gap:8px;padding:6px 9px;background:#f4f6fb;border-radius:6px;border:1px solid #dce2f0;margin-bottom:4px"><span style="font-family:DM Mono,monospace;font-size:8px;color:#7a8fb5;flex-shrink:0">'+e.date+'</span><span style="font-size:11px;color:#3a4e72">'+e.text+'</span></div>'; }).join('') : '') +
-          '<div class="pd-note-row"><textarea class="pd-note-input" id="pd-note-input" placeholder="Route running, snap count, landing spot..."></textarea>' +
-          '<button class="pd-note-btn" id="pd-note-btn" onclick="scAddNote(currentProspect.id)">Add Note</button></div>' +
-          '<div class="pd-synth-row" id="pd-synth-row"><span>Synthesizing...</span></div>' +
-          '<div class="pd-succ-row" id="pd-succ-row">&#x2713; Notes updated</div>' +
-        '</div>' +
+    '</div>';
+
+    // ── SCOUT NOTES ──
+    var notesCard = '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb">' +
+        '<span style="font-size:12px;font-weight:700;color:#0f1f3d">Scout Notes</span>' +
+        '<span style="font-family:DM Mono,monospace;font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(14,168,107,.1);color:#0ea86b;border:1px solid rgba(14,168,107,.25)">AI Synthesized</span>' +
       '</div>' +
+      '<div style="padding:14px;display:flex;flex-direction:column;gap:10px">' +
+        '<div class="pd-notes-blurb'+(p.notes?'':' empty')+'" id="pd-notes-display">'+(p.notes||'No notes yet. Add your first observation below.')+'</div>' +
+        (p.notesLog&&p.notesLog.length ? p.notesLog.map(function(e){ return '<div style="display:flex;gap:8px;padding:6px 9px;background:#f4f6fb;border-radius:6px;border:1px solid #dce2f0;margin-bottom:4px"><span style="font-family:DM Mono,monospace;font-size:8px;color:#7a8fb5;flex-shrink:0">'+e.date+'</span><span style="font-size:11px;color:#3a4e72">'+e.text+'</span></div>'; }).join('') : '') +
+        '<div class="pd-note-row"><textarea class="pd-note-input" id="pd-note-input" placeholder="Route running, snap count, landing spot..."></textarea>' +
+        '<button class="pd-note-btn" id="pd-note-btn" onclick="scAddNote(currentProspect.id)">Add Note</button></div>' +
+        '<div class="pd-synth-row" id="pd-synth-row"><span>Synthesizing...</span></div>' +
+        '<div class="pd-succ-row" id="pd-succ-row">&#x2713; Notes updated</div>' +
+      '</div>' +
+    '</div>';
+
+    var saveBtn = '<button onclick="scSaveAndSearch()" style="width:100%;padding:13px;background:#0ea86b;border:none;border-radius:10px;font-family:Bebas Neue,sans-serif;font-size:16px;letter-spacing:2.5px;color:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">💾 Save</button>';
+
+    var removeBtn = (p.seasonFlagged ?
+      '<div style="background:#fff8e8;border:1px solid rgba(212,144,10,.3);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px"><span style="font-size:18px">&#x1F3C8;</span><div style="flex:1"><div style="font-size:12px;font-weight:700;color:#0f1f3d">Season started!</div><div style="font-family:DM Mono,monospace;font-size:9px;color:#7a8fb5;margin-top:2px">This prospect may be on an NFL roster now</div></div><button onclick="scRemove(currentProspect.id)" style="background:#d4900a;border:none;border-radius:8px;padding:6px 10px;font-family:DM Mono,monospace;font-size:8px;letter-spacing:1px;color:#ffffff;cursor:pointer">Remove</button></div>' : '') +
       '<button onclick="scRemove(currentProspect.id)" style="width:100%;padding:11px;background:#fff0f0;border:1px solid rgba(224,48,64,.2);border-radius:10px;font-family:DM Mono,monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#e03040;cursor:pointer">Remove from Board</button>';
+
+    s.innerHTML = phaseBanner + detailCard + notesCard + saveBtn + removeBtn;
 
   } else if (idx===1) {
     s.innerHTML =
@@ -2393,11 +2593,19 @@ function renderPdTab(idx) {
 
   } else if (idx===2) {
     var news = p.newsCache||[];
-    s.innerHTML = news.length ?
-      '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;padding:0 14px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
-        news.map(function(item){ return '<div class="pd-news-item"><div class="pd-news-meta"><span class="pd-news-date">'+(item.timeAgo||'')+'</span></div><div class="pd-news-txt">'+item.desc.replace(/<[^>]+>/g,'').slice(0,200)+'</div></div>'; }).join('')+
-      '</div>' :
-      '<div class="pd-no-news">No Rotowire items found for '+p.name+'<br><span style="font-size:10px;color:#c8d2e8">Items appear when Rotowire covers this prospect</span></div>';
+    var news = p.newsCache || [];
+
+    var refreshHtml = '<button onclick="scRefreshNews()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#0f1f3d;cursor:pointer;margin-bottom:10px">&#x21BB; Refresh Feed</button>';
+
+    var newsListHtml = news.length
+      ? '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;padding:0 14px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+          news.map(function(item) {
+            return '<div class="pd-news-item"><div class="pd-news-meta"><span class="pd-news-date">'+(item.timeAgo||item.date||'')+'</span></div><div class="pd-news-txt">'+item.desc.replace(/<[^>]+>/g,'').slice(0,300)+'</div></div>';
+          }).join('') +
+        '</div>'
+      : '<div class="pd-no-news">No items found for '+p.name+'<br><span style="font-size:10px;color:#c8d2e8">Save the card to trigger a fresh search, or tap Refresh Feed.</span></div>';
+
+    s.innerHTML = refreshHtml + newsListHtml;
 
   } else {
     s.innerHTML =
@@ -2408,13 +2616,113 @@ function renderPdTab(idx) {
   }
 }
 
+
+function scDraftYearChange(id, val) {
+  var p = scoutingBoard.find(function(x){ return x.id===id; }); if (!p) return;
+  p.draftYear = val; scSaveBoard();
+  // Re-render overview tab to show/hide pro team field
+  if (currentPdTab === 0) renderPdTab(0);
+  // Update header badge
+  var badge = document.getElementById('pd-draft-badge');
+  if (badge) badge.textContent = val === 'NOW' ? '2026 Draft Class' : val + ' Draft Class';
+  var school = document.getElementById('pd-school');
+  if (school) school.innerHTML = (p.school||'School TBD') + ' &middot; ' + (val==='NOW'?'2026':val) + ' Class';
+}
+
+function scSetUndrafted(id) {
+  var p = scoutingBoard.find(function(x){ return x.id===id; }); if (!p) return;
+  p.proTeam = p.proTeam === 'UFA' ? '' : 'UFA';
+  scSaveBoard();
+  renderPdTab(0);
+}
+
+// September check — flag NOW prospects when season starts
+function scCheckSeasonStart() {
+  var now = new Date();
+  var month = now.getMonth(); // 0-indexed, August=7, September=8
+  if (month < 8) return; // Before September, do nothing
+  var nowProspects = scoutingBoard.filter(function(p){ return p.draftYear === 'NOW' && !p.seasonFlagged; });
+  if (!nowProspects.length) return;
+  nowProspects.forEach(function(p){ p.seasonFlagged = true; });
+  scSaveBoard();
+}
+
+
+
+function scToggleDraftedCurrent() {
+  if (!currentProspect) return;
+  // Always toggle from data — never trust this.checked on mobile
+  currentProspect.drafted = !currentProspect.drafted;
+  var nowDrafted = currentProspect.drafted;
+  if (!nowDrafted) currentProspect.proTeam = '';
+  scSaveBoard();
+  scUpdateProspectHeader(currentProspect);
+  renderPdTab(0);
+  setTimeout(function() {
+    var fd = document.getElementById('sc-field-draft');
+    if (fd) fd.value = currentProspect.draftYear || 'NOW';
+    var fg = document.getElementById('sc-field-grade');
+    if (fg) fg.value = currentProspect.grade || '';
+    var fs = document.getElementById('sc-field-school');
+    if (fs) fs.value = nowDrafted ? (currentProspect.proTeam || '') : (currentProspect.school || '');
+  }, 50);
+}
+
+function scToggleDrafted(id, checked) {
+  var p = scoutingBoard.find(function(x){ return x.id===id; });
+  if (!p) return;
+  p.drafted = checked;
+  if (!checked) p.proTeam = ''; // clear team when un-checking
+  scSaveBoard();
+  scUpdateProspectHeader(p);
+  renderPdTab(0);
+}
+
+function scUpdateProspectHeader(p) {
+  if (!p) return;
+  var isDrafted = !!(p.drafted || (p.proTeam && p.proTeam !== ''));
+  var avEl = document.getElementById('pd-avatar');
+  if (avEl) {
+    if (isDrafted) {
+      avEl.innerHTML = makeJerseySVG(p.name, p.number||'', p.proTeam, 56);
+      avEl.style.cssText = 'background:transparent;border:none;width:56px;height:56px;flex-shrink:0;';
+    } else {
+      avEl.innerHTML = scInitials(p.name) + '<span class="pd-pos-badge ' + scPosClass(p.pos) + '" id="pd-pos-badge">' + p.pos + '</span>';
+      avEl.style.cssText = '';
+    }
+  }
+  var nameEl = document.getElementById('pd-name');
+  if (nameEl) nameEl.textContent = p.name;
+  var schoolEl = document.getElementById('pd-school');
+  if (schoolEl) {
+    schoolEl.innerHTML = isDrafted
+      ? (p.proTeam||'').toUpperCase() + ' &middot; ' + p.pos + (p.school ? ' &middot; ' + p.school : '')
+      : (p.school||'School TBD') + ' &middot; ' + (p.draftYear==='NOW'?'2026':p.draftYear) + ' Class';
+  }
+  var badgeEl = document.getElementById('pd-draft-badge');
+  if (badgeEl) {
+    if (isDrafted) {
+      badgeEl.textContent = '🏈 Drafted · ' + (p.draftYear==='NOW'?'2026':p.draftYear);
+      badgeEl.style.cssText = 'background:rgba(14,168,107,.25);color:#4dd89a;border-color:rgba(14,168,107,.4)';
+    } else {
+      badgeEl.textContent = (p.draftYear==='NOW'?'2026':p.draftYear) + ' Draft Class';
+      badgeEl.style.cssText = '';
+    }
+  }
+  var gradeEl = document.getElementById('pd-grade');
+  if (gradeEl) gradeEl.textContent = p.grade||'—';
+}
+
 function scField(id, field, val) {
   var p = scoutingBoard.find(function(x){ return x.id===id; });
   if (!p) return;
-  p[field] = val; scSaveBoard();
-  if (field==='school'||field==='draftYear') { var el=document.getElementById('pd-school'); if(el) el.innerHTML=(p.school||'School TBD')+' &middot; '+p.draftYear+' Class'; }
-  if (field==='pos') { var b=document.getElementById('pd-pos-badge'); if(b){b.className='pd-pos-badge '+scPosClass(val);b.textContent=val;} }
+  p[field] = val;
+  if (field === 'proTeam' && val) p.drafted = true;
+  scSaveBoard();
+  scUpdateProspectHeader(p);
+  if (field === 'proTeam' || field === 'pos') { renderPdTab(0); }
 }
+
 function scGrade(id, val) {
   var p=scoutingBoard.find(function(x){return x.id===id;}); if(!p) return;
   p.grade=val; scSaveBoard();
@@ -2482,6 +2790,159 @@ function scSearchHL(name) {
   window.open('https://www.youtube.com/results?search_query='+encodeURIComponent(name+' highlights 2024 2025'),'_blank');
 }
 
+
+
+function scFetchProspectNews(p) {
+  if (!rotowireItems || !rotowireItems.length) return;
+  var nameParts = p.name.toLowerCase().split(' ').filter(function(n){ return n.length > 2; });
+  p.newsCache = rotowireItems.filter(function(item) {
+    var t = (item.title||'').toLowerCase(), d=(item.desc||'').toLowerCase();
+    return nameParts.some(function(part){ return t.includes(part)||d.includes(part); });
+  });
+  scSaveBoard();
+}
+
+
+async function scFetchRotoPage() {
+  var p = currentProspect;
+  if (!p || !p.rotowireUrl) return;
+  var statusEl = document.getElementById('sc-roto-status');
+  if (statusEl) statusEl.innerHTML = '<div style="font-family:DM Mono,monospace;font-size:9px;color:#1a56ff;margin-bottom:10px;letter-spacing:1px">Fetching...</div>';
+  try {
+    var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(p.rotowireUrl);
+    var res = await fetch(proxyUrl);
+    var data = await res.json();
+    var html = data.contents;
+    // Parse news items from the player page HTML
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(html, 'text/html');
+    var items = [];
+    // Rotowire player page news structure
+    var newsBlocks = doc.querySelectorAll('.news-update, .player-news-item, [class*="news"]');
+    // Fallback: grab paragraphs with dates nearby
+    if (!newsBlocks.length) {
+      // Try to extract headline + date + body from the page
+      var allText = doc.body ? doc.body.innerText || doc.body.textContent : '';
+      // Look for date patterns
+      var lines = allText.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+      var current = null;
+      var dateRe = /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+,\s+\d{4}/i;
+      lines.forEach(function(line) {
+        if (dateRe.test(line)) {
+          if (current && current.body) items.push(current);
+          current = { date: line, desc: '', timeAgo: line };
+        } else if (current && line.length > 20 && line.length < 500) {
+          current.desc += (current.desc ? ' ' : '') + line;
+        }
+      });
+      if (current && current.body) items.push(current);
+    }
+    // Cleaner extraction: look for article/section tags
+    if (!items.length) {
+      var articles = doc.querySelectorAll('article, .article, .news-item, .news-update, p');
+      var paragraphs = Array.from(doc.querySelectorAll('p')).filter(function(p){ return p.textContent.trim().length > 40; });
+      // Group into items using heading siblings
+      var headings = Array.from(doc.querySelectorAll('h1,h2,h3,h4,b,strong')).filter(function(h){ return h.textContent.trim().length > 5 && h.textContent.trim().length < 100; });
+      headings.slice(0, 8).forEach(function(h) {
+        var title = h.textContent.trim();
+        var next = h.nextElementSibling;
+        var body = '';
+        var dateEl = h.previousElementSibling;
+        var date = dateEl ? dateEl.textContent.trim() : '';
+        while (next && next.tagName !== 'H1' && next.tagName !== 'H2' && next.tagName !== 'H3' && body.length < 400) {
+          body += ' ' + next.textContent.trim();
+          next = next.nextElementSibling;
+        }
+        if (body.trim().length > 20) {
+          items.push({ date: date, desc: title + ': ' + body.trim(), timeAgo: date });
+        }
+      });
+    }
+    // Last resort — just grab all meaningful paragraphs
+    if (!items.length) {
+      var paras = Array.from(doc.querySelectorAll('p')).filter(function(el){ return el.textContent.trim().length > 50; });
+      paras.slice(0, 6).forEach(function(el) {
+        items.push({ date: '', desc: el.textContent.trim(), timeAgo: '' });
+      });
+    }
+    if (items.length) {
+      p.newsCache = items;
+      scSaveBoard();
+      renderPdTab(2);
+    } else {
+      if (statusEl) statusEl.innerHTML = '<div style="font-family:DM Mono,monospace;font-size:9px;color:#e03040;margin-bottom:10px">Could not parse news from page. Try refreshing.</div>';
+    }
+  } catch(e) {
+    console.error('Roto page fetch error:', e);
+    if (statusEl) statusEl.innerHTML = '<div style="font-family:DM Mono,monospace;font-size:9px;color:#e03040;margin-bottom:10px">Fetch failed. Check URL and try again.</div>';
+  }
+}
+
+
+async function scSaveAndSearch() {
+  if (!currentProspect) return;
+  var p = currentProspect;
+
+  // Collect current field values
+  var fs = document.getElementById('sc-field-school');
+  var fd = document.getElementById('sc-field-draft');
+  var fg = document.getElementById('sc-field-grade');
+  var fpt = document.getElementById('sc-field-school'); // NFL team when drafted
+
+  if (p.drafted) {
+    if (fs) p.proTeam = fs.value;
+  } else {
+    if (fs) p.school = fs.value;
+  }
+  if (fd) p.draftYear = fd.value;
+  if (fg) p.grade = fg.value;
+  scSaveBoard();
+
+  // Visual feedback
+  var saveBtn = document.querySelector('[onclick="scSaveAndSearch()"]');
+  if (saveBtn) { saveBtn.textContent = 'Saving...'; saveBtn.style.background = '#7a8fb5'; }
+
+  // Force fresh feed fetch
+  await loadRotowireFeed(true);
+
+  // Improved name matching — try multiple strategies
+  var name = p.name.toLowerCase();
+  var nameParts = name.split(' ').filter(function(n){ return n.length > 2; });
+  var lastName = nameParts[nameParts.length - 1] || '';
+  var firstName = nameParts[0] || '';
+
+  p.newsCache = rotowireItems.filter(function(item) {
+    var t = (item.title||'').toLowerCase();
+    var d = (item.desc||'').toLowerCase();
+    var combined = t + ' ' + d;
+    // Strategy 1: full name anywhere
+    if (combined.includes(name)) return true;
+    // Strategy 2: both first AND last name present
+    if (firstName.length > 3 && lastName.length > 3 &&
+        combined.includes(firstName) && combined.includes(lastName)) return true;
+    // Strategy 3: unique last name (>6 chars) alone
+    if (lastName.length > 6 && combined.includes(lastName)) return true;
+    // Strategy 4: unique first name (>6 chars) alone
+    if (firstName.length > 6 && combined.includes(firstName)) return true;
+    return false;
+  });
+
+  scSaveBoard();
+
+  // Update header in case anything changed
+  scUpdateProspectHeader(p);
+
+  // Restore button
+  if (saveBtn) { saveBtn.innerHTML = p.newsCache.length ? '✓ Saved · ' + p.newsCache.length + ' news hits' : '✓ Saved'; saveBtn.style.background = '#0ea86b'; }
+
+  // Re-render news tab if on it, else just stay on overview
+  if (currentPdTab === 2) renderPdTab(2);
+}
+
+function scRefreshNews() {
+  loadRotowireFeed(false).then(function() { if (currentProspect) renderPdTab(2); }).catch(function(){}); 
+}
+
 function scRemove(id) {
   scoutingBoard=scoutingBoard.filter(function(p){return p.id!==id;}); scSaveBoard(); renderScBoard(); nav('scout');
 }
@@ -2494,7 +2955,78 @@ function scAskGM(id) {
   nav('chat');
 }
 
-window.addEventListener('DOMContentLoaded', function() { scLoadBoard(); });
+window.addEventListener('DOMContentLoaded', function() { scLoadBoard(); scCheckSeasonStart(); });
+
+
+// ─────────────────────────────────
+// ON THE TABLE — PLAYER PICKER
+// ─────────────────────────────────
+var tfTablePlayers = []; // array of player objects currently on the table
+
+function openTFPicker() {
+  var list = document.getElementById('tf-picker-list');
+  if (!list) return;
+  var roster = liveMyRoster && liveMyRoster.length ? liveMyRoster : [];
+  if (!roster.length) {
+    list.innerHTML = '<div style="padding:20px 18px;font-family:DM Mono,monospace;font-size:10px;color:#7a8fb5;text-align:center">Roster not loaded yet — wait for Live sync</div>';
+  } else {
+    list.innerHTML = roster.map(function(p) {
+      var isSelected = tfTablePlayers.some(function(t){ return t.id === p.id; });
+      var jersey = makeJerseySVG(p.name, p.number, p.team, 40);
+      return '<div class="tf-picker-item' + (isSelected ? ' selected' : '') + '" onclick="toggleTFTablePlayer(' + JSON.stringify(p.id) + ')" id="picker-item-' + p.id + '">' +
+        jersey +
+        '<div class="tf-picker-pinfo">' +
+          '<div class="tf-picker-pname">' + p.name + '</div>' +
+          '<div class="tf-picker-pmeta">' + p.pos + ' · ' + p.team + (p.number ? ' · #' + p.number : '') + '</div>' +
+        '</div>' +
+        '<span class="tf-picker-check">✓</span>' +
+      '</div>';
+    }).join('');
+  }
+  document.getElementById('tf-picker-overlay').classList.add('show');
+  document.getElementById('tf-picker-sheet').style.display = 'flex';
+}
+
+function closeTFPicker() {
+  document.getElementById('tf-picker-overlay').classList.remove('show');
+  document.getElementById('tf-picker-sheet').style.display = 'none';
+  renderTFTableChips();
+}
+
+function toggleTFTablePlayer(id) {
+  var existing = tfTablePlayers.findIndex(function(p){ return p.id === id; });
+  if (existing >= 0) {
+    tfTablePlayers.splice(existing, 1);
+  } else {
+    var p = liveMyRoster ? liveMyRoster.find(function(r){ return r.id === id; }) : null;
+    if (p) tfTablePlayers.push(p);
+  }
+  // Update picker item state
+  var item = document.getElementById('picker-item-' + id);
+  if (item) item.classList.toggle('selected', tfTablePlayers.some(function(t){ return t.id === id; }));
+}
+
+function renderTFTableChips() {
+  var container = document.getElementById('tf-table-chips');
+  if (!container) return;
+  if (!tfTablePlayers.length) {
+    container.innerHTML = '<span class="tf-table-empty">No players added</span>';
+    return;
+  }
+  container.innerHTML = tfTablePlayers.map(function(p) {
+    return '<div class="tf-table-chip">' +
+      '<div class="tf-table-chip-jersey">' + makeJerseySVG(p.name, p.number, p.team, 28) + '</div>' +
+      '<span class="tf-table-chip-name">' + p.name.split(' ').pop() + (p.number ? ' #'+p.number : '') + '</span>' +
+      '<span class="tf-table-chip-x" onclick="removeTFTablePlayer(' + JSON.stringify(p.id) + ')">✕</span>' +
+    '</div>';
+  }).join('');
+}
+
+function removeTFTablePlayer(id) {
+  tfTablePlayers = tfTablePlayers.filter(function(p){ return p.id !== id; });
+  renderTFTableChips();
+}
+
 
 </script>
 
@@ -2527,6 +3059,8 @@ window.addEventListener('DOMContentLoaded', function() { scLoadBoard(); });
     <div class="ni active" onclick="nav('rivals')"><span class="ni-icon">&#x1F465;</span><span class="ni-lbl">Rivals</span></div>
     <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">&#x1F500;</span><span class="ni-lbl">Trades</span></div>
   
+  
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
   </div>
 </div>
 
@@ -2568,6 +3102,8 @@ window.addEventListener('DOMContentLoaded', function() { scLoadBoard(); });
     <div class="ni active" onclick="nav('rivals')"><span class="ni-icon">&#x1F465;</span><span class="ni-lbl">Rivals</span></div>
     <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">&#x1F500;</span><span class="ni-lbl">Trades</span></div>
   
+  
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
   </div>
 </div>
 
@@ -2604,7 +3140,7 @@ window.addEventListener('DOMContentLoaded', function() { scLoadBoard(); });
         <span class="sc-sec-title">Track a Prospect</span>
       </div>
       <div class="sc-search-row">
-        <input class="sc-input" id="sc-search-input" type="text" placeholder="e.g. Ashton Jeanty WR...">
+        <input class="sc-input" id="sc-search-input" type="text" placeholder="e.g. Ashton Jeanty RB...">
         <button class="sc-add-btn" onclick="scAddProspect()">+ Add</button>
       </div>
     </div>
@@ -2665,6 +3201,23 @@ window.addEventListener('DOMContentLoaded', function() { scLoadBoard(); });
     <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
     <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
     <div class="ni active" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+  </div>
+</div>
+
+
+<!-- PLAYER PICKER SHEET -->
+<div class="tf-picker-overlay" id="tf-picker-overlay" onclick="closeTFPicker()"></div>
+<div class="tf-picker-sheet" id="tf-picker-sheet" style="display:none">
+  <div class="tf-picker-header">
+    <div>
+      <div class="tf-picker-title">On the Table</div>
+      <div class="tf-picker-sub">Select players to shop</div>
+    </div>
+    <button class="tf-picker-close" onclick="closeTFPicker()">✕</button>
+  </div>
+  <div class="tf-picker-list" id="tf-picker-list"></div>
+  <div class="tf-picker-done">
+    <button class="tf-picker-done-btn" onclick="closeTFPicker()">Done</button>
   </div>
 </div>
 
