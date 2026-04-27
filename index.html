@@ -1,4 +1,4 @@
-<!-- GM Command v0.1.6 | Updated: 2026-04-26 -->
+<!-- GM Command v0.2.4 | Updated: 2026-04-27 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -481,13 +481,14 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
 .sc-pos-badge { font-family:DM Mono,monospace; font-size:9px; font-weight:500; padding:2px 8px; border-radius:6px; }
 .sc-news-count { font-family:DM Mono,monospace; font-size:8px; color:#7a8fb5; }
 .sc-arrow { font-size:16px; color:#c8d2e8; }
-.sc-year-folder { margin-bottom: 10px; }
-.sc-year-hd { display: flex; align-items: center; border-radius: 10px; padding: 11px 14px; cursor: pointer; user-select: none; -webkit-user-select: none; }
-.sc-year-lbl { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: #ffffff; flex: 1; }
-.sc-year-count { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,.65); background: rgba(0,0,0,.18); border-radius: 20px; padding: 2px 8px; margin-right: 8px; }
-.sc-year-chevron { font-size: 12px; color: rgba(255,255,255,.7); }
-.sc-year-body { background: #f4f6fb; border: 1px solid #dce2f0; border-top: none; border-radius: 0 0 10px 10px; padding: 8px 8px 4px; display: block; }
-.sc-pos-folder { margin-bottom: 6px; background: #ffffff; border: 1px solid #dce2f0; border-radius: 8px; overflow: hidden; }
+.sc-year-folder { margin-bottom: 12px; border-radius: 10px; overflow: visible; }
+.sc-year-hd { display: flex; align-items: center; border-radius: 10px; padding: 11px 14px; cursor: pointer; user-select: none; -webkit-user-select: none; border: 2px solid rgba(0,0,0,.35); box-shadow: 0 4px 0 rgba(0,0,0,.35), 0 2px 12px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.18); transition: all .12s; }
+.sc-year-hd:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.15); }
+.sc-year-lbl { font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: 2.5px; color: #ffffff; flex: 1; text-shadow: 0 1px 3px rgba(0,0,0,.3); }
+.sc-year-count { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,.75); background: rgba(0,0,0,.25); border-radius: 20px; padding: 2px 9px; margin-right: 8px; border: 1px solid rgba(0,0,0,.2); }
+.sc-year-chevron { font-size: 12px; color: rgba(255,255,255,.8); }
+.sc-year-body { background: #f4f6fb; border: 2px solid rgba(0,0,0,.12); border-top: none; border-radius: 0 0 10px 10px; padding: 8px 8px 4px; display: block; }
+.sc-pos-folder { margin-bottom: 6px; background: #ffffff; border: 1.5px solid #c8d2e8; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 0 #b0bcd4; }
 .sc-pos-hd { display: flex; align-items: center; gap: 8px; padding: 9px 12px; cursor: pointer; user-select: none; -webkit-user-select: none; background: #ffffff; }
 .sc-pos-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .sc-pos-lbl { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 2px; flex: 1; }
@@ -1038,11 +1039,14 @@ function makeJerseySVG(playerName, number, teamAbbr, size) {
 
   // Short name (last name only, max 8 chars)
   var lastName = (playerName || '').split(' ').pop().slice(0,9).toUpperCase();
-  var numStr = number ? String(number) : '??';
+  var hasNum = number !== null && number !== undefined && number !== '';
+  var numStr = hasNum ? String(number) : '';
 
   // Font sizes scale with jersey size
   var nameFontSize = size <= 42 ? Math.round(size * 0.16) : Math.round(size * 0.14);
   var numFontSize  = size <= 42 ? Math.round(size * 0.38) : Math.round(size * 0.36);
+  // If no number, center the name vertically
+  var nameY = hasNum ? 63 : 72;
 
   // Jersey SVG path (simplified jersey silhouette)
   // Viewbox 100x100
@@ -1051,16 +1055,11 @@ function makeJerseySVG(playerName, number, teamAbbr, size) {
   var collarPath = "M38,14 Q42,24 50,24 Q58,24 62,14";
 
   var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="'+size+'" height="'+size+'">' +
-    // Jersey body
     '<path d="'+jerseyPath+'" fill="'+primary+'" />' +
-    // Shoulder stripe accent
     '<path d="M15,38 L15,48 L85,48 L85,38 Z" fill="'+secondary+'" opacity="0.3"/>' +
-    // Collar
     '<path d="'+collarPath+'" fill="none" stroke="'+secondary+'" stroke-width="2.5" opacity="0.8"/>' +
-    // Player name
-    '<text x="50" y="63" text-anchor="middle" font-family="Bebas Neue,Arial Narrow,sans-serif" font-size="'+nameFontSize+'" fill="'+nameColor+'" letter-spacing="1">'+lastName+'</text>' +
-    // Jersey number
-    '<text x="50" y="83" text-anchor="middle" font-family="Bebas Neue,Arial Narrow,sans-serif" font-size="'+numFontSize+'" fill="'+numColor+'" stroke="'+numStroke+'" stroke-width="1.5" paint-order="stroke">'+numStr+'</text>' +
+    '<text x="50" y="'+nameY+'" text-anchor="middle" font-family="Bebas Neue,Arial Narrow,sans-serif" font-size="'+nameFontSize+'" fill="'+nameColor+'" letter-spacing="1">'+lastName+'</text>' +
+    (hasNum ? '<text x="50" y="83" text-anchor="middle" font-family="Bebas Neue,Arial Narrow,sans-serif" font-size="'+numFontSize+'" fill="'+numColor+'" stroke="'+numStroke+'" stroke-width="1.5" paint-order="stroke">'+numStr+'</text>' : '') +
     '</svg>';
   return svg;
 }
@@ -1098,13 +1097,190 @@ var NFL_COLORS2 = {
 function getTeamColor(teamAbbr) {
   if (!teamAbbr) return '#0f1f3d';
   var t = (teamAbbr || '').toUpperCase().trim();
-  return NFL_COLORS[t] || '#0f1f3d';
+  if (NFL_COLORS[t]) return NFL_COLORS[t];
+  // Fall back to college lookup by school name
+  var col = getNcaaColor(teamAbbr);
+  return col ? col[0] : '#0f1f3d';
 }
 
 function getTeamColor2(teamAbbr) {
   if (!teamAbbr) return '#ffffff';
   var t = (teamAbbr || '').toUpperCase().trim();
-  return NFL_COLORS2[t] || '#ffffff';
+  if (NFL_COLORS2[t]) return NFL_COLORS2[t];
+  var col = getNcaaColor(teamAbbr);
+  return col ? col[1] : '#ffffff';
+}
+
+// NCAA Colors — [primary, secondary]
+// Verified: UCF, Cincinnati, Delaware. All others confirmed from official sources.
+var NCAA_COLORS = {
+  // ── SEC ──
+  'Alabama':          ['#9E1B32','#FFFFFF'], 'Crimson Tide':  ['#9E1B32','#FFFFFF'],
+  'Georgia':          ['#BA0C2F','#000000'], 'Bulldogs':      ['#BA0C2F','#000000'],
+  'LSU':              ['#461D7C','#FDD023'], 'Tigers':        ['#461D7C','#FDD023'],
+  'Florida':          ['#0021A5','#FA4616'],
+  'Tennessee':        ['#FF8200','#FFFFFF'], 'Vols':          ['#FF8200','#FFFFFF'],
+  'Ole Miss':         ['#CE1126','#14213D'],
+  'Texas A&M':        ['#500000','#FFFFFF'], 'Aggies':        ['#500000','#FFFFFF'],
+  'Auburn':           ['#0C2340','#E87722'],
+  'South Carolina':   ['#73000A','#000000'], 'Gamecocks':     ['#73000A','#000000'],
+  'Arkansas':         ['#9D2235','#FFFFFF'], 'Razorbacks':    ['#9D2235','#FFFFFF'],
+  'Mississippi State':['#660000','#FFFFFF'],
+  'Missouri':         ['#F1B82D','#000000'],
+  'Kentucky':         ['#0033A0','#FFFFFF'], 'Wildcats':      ['#0033A0','#FFFFFF'],
+  'Vanderbilt':       ['#866D4B','#000000'], 'Commodores':    ['#866D4B','#000000'],
+  'Oklahoma':         ['#841617','#FDF9D8'], 'Sooners':       ['#841617','#FDF9D8'],
+  'Texas':            ['#BF5700','#FFFFFF'], 'Longhorns':     ['#BF5700','#FFFFFF'],
+  // ── Big Ten ──
+  'Michigan':         ['#00274C','#FFCB05'], 'Wolverines':    ['#00274C','#FFCB05'],
+  'Ohio State':       ['#BB0000','#666666'], 'Buckeyes':      ['#BB0000','#666666'],
+  'Penn State':       ['#041E42','#FFFFFF'], 'Nittany Lions': ['#041E42','#FFFFFF'],
+  'Michigan State':   ['#18453B','#FFFFFF'], 'Spartans':      ['#18453B','#FFFFFF'],
+  'Iowa':             ['#FFCD00','#000000'], 'Hawkeyes':      ['#FFCD00','#000000'],
+  'Wisconsin':        ['#C5050C','#FFFFFF'], 'Badgers':       ['#C5050C','#FFFFFF'],
+  'Minnesota':        ['#7A0019','#FFCC33'], 'Gophers':       ['#7A0019','#FFCC33'],
+  'Nebraska':         ['#E41C38','#FFFFFF'], 'Cornhuskers':   ['#E41C38','#FFFFFF'],
+  'Rutgers':          ['#CC0033','#FFFFFF'],
+  'Indiana':          ['#990000','#FFFFFF'], 'Hoosiers':      ['#990000','#FFFFFF'],
+  'Northwestern':     ['#4E2A84','#FFFFFF'], 'Wildcats NU':   ['#4E2A84','#FFFFFF'],
+  'Illinois':         ['#E84A27','#13294B'], 'Illini':        ['#E84A27','#13294B'],
+  'Purdue':           ['#CEB888','#000000'], 'Boilermakers':  ['#CEB888','#000000'],
+  'Maryland':         ['#E03A3E','#FFD520'], 'Terrapins':     ['#E03A3E','#FFD520'],
+  'UCLA':             ['#2D68C4','#F2A900'], 'Bruins':        ['#2D68C4','#F2A900'],
+  'USC':              ['#990000','#FFC72C'], 'Trojans':       ['#990000','#FFC72C'],
+  'Oregon':           ['#154733','#FEE123'], 'Ducks':         ['#154733','#FEE123'],
+  'Washington':       ['#4B2E83','#B7A57A'], 'Huskies':       ['#4B2E83','#B7A57A'],
+  // ── Big 12 ──
+  'TCU':              ['#4D1979','#FFFFFF'], 'Horned Frogs':  ['#4D1979','#FFFFFF'],
+  'Kansas State':     ['#512888','#FFFFFF'],
+  'Oklahoma State':   ['#FF7300','#000000'], 'Cowboys':       ['#FF7300','#000000'],
+  'West Virginia':    ['#002855','#EAAA00'], 'Mountaineers':  ['#002855','#EAAA00'],
+  'Baylor':           ['#003015','#FFB81C'], 'Bears':         ['#003015','#FFB81C'],
+  'Iowa State':       ['#C8102E','#F1BE48'], 'Cyclones':      ['#C8102E','#F1BE48'],
+  'Kansas':           ['#0051A5','#E8000D'], 'Jayhawks':      ['#0051A5','#E8000D'],
+  'Texas Tech':       ['#CC0000','#000000'], 'Red Raiders':   ['#CC0000','#000000'],
+  'Arizona State':    ['#8C1D40','#FFC627'],
+  'Arizona':          ['#003366','#CC0033'],
+  'Utah':             ['#890000','#FFFFFF'], 'Utes':          ['#890000','#FFFFFF'],
+  'Colorado':         ['#CFB87C','#000000'], 'Buffaloes':     ['#CFB87C','#000000'],
+  'Cincinnati':       ['#E00122','#000000'], 'Bearcats':      ['#E00122','#000000'],
+  'UCF':              ['#FFC904','#000000'], 'Knights':       ['#FFC904','#000000'],
+  'Houston':          ['#CC0000','#FFFFFF'], 'Cougars':       ['#CC0000','#FFFFFF'],
+  'BYU':              ['#002E5D','#FFFFFF'],
+  // ── ACC ──
+  'Clemson':          ['#F56600','#522D80'], 'Tigers CU':     ['#F56600','#522D80'],
+  'Florida State':    ['#782F40','#CEB888'], 'Seminoles':     ['#782F40','#CEB888'],
+  'Miami':            ['#005030','#F47321'], 'Hurricanes':    ['#005030','#F47321'],
+  'NC State':         ['#CC0000','#FFFFFF'], 'Wolfpack':      ['#CC0000','#FFFFFF'],
+  'Virginia Tech':    ['#630031','#CF4420'], 'Hokies':        ['#630031','#CF4420'],
+  'Pittsburgh':       ['#003594','#FFB81C'], 'Panthers':      ['#003594','#FFB81C'],
+  'Syracuse':         ['#D44500','#FFFFFF'], 'Orange':        ['#D44500','#FFFFFF'],
+  'Wake Forest':      ['#000000','#9E7E38'], 'Demon Deacons': ['#000000','#9E7E38'],
+  'Georgia Tech':     ['#B3A369','#003057'], 'Yellow Jackets':['#B3A369','#003057'],
+  'Louisville':       ['#AD0000','#000000'], 'Cardinals':     ['#AD0000','#000000'],
+  'Boston College':   ['#8B0000','#BC9B6A'], 'Eagles':        ['#8B0000','#BC9B6A'],
+  'North Carolina':   ['#7BAFD4','#13294B'], 'Tar Heels':     ['#7BAFD4','#13294B'],
+  'Virginia':         ['#232D4B','#F84C1E'], 'Cavaliers':     ['#232D4B','#F84C1E'],
+  'Duke':             ['#012169','#FFFFFF'], 'Blue Devils':   ['#012169','#FFFFFF'],
+  'Notre Dame':       ['#0C2340','#C99700'], 'Fighting Irish':['#0C2340','#C99700'],
+  'Stanford':         ['#8C1515','#FFFFFF'], 'Cardinal':      ['#8C1515','#FFFFFF'],
+  'Cal':              ['#003262','#FDB515'], 'Golden Bears':  ['#003262','#FDB515'],
+  // ── Conference USA ──
+  'Delaware':         ['#00539F','#FFD200'], 'Blue Hens':     ['#00539F','#FFD200'],
+  'Western Kentucky': ['#C60C30','#FFFFFF'], 'Hilltoppers':   ['#C60C30','#FFFFFF'],
+  'UTSA':             ['#002A5E','#F47920'],
+  'UAB':              ['#1E6B52','#FBBF15'], 'Blazers':       ['#1E6B52','#FBBF15'],
+  'Middle Tennessee': ['#0066CC','#FFFFFF'], 'Blue Raiders':  ['#0066CC','#FFFFFF'],
+  'FAU':              ['#003366','#CC0000'], 'Florida Atlantic':['#003366','#CC0000'],
+  'FIU':              ['#081E3F','#B6862C'], 'Florida International':['#081E3F','#B6862C'],
+  'Charlotte':        ['#046A38','#FFFFFF'], '49ers':         ['#046A38','#FFFFFF'],
+  'Old Dominion':     ['#00507D','#FFFFFF'], 'Monarchs':      ['#00507D','#FFFFFF'],
+  'Rice':             ['#002469','#9ECEEB'], 'Owls':          ['#002469','#9ECEEB'],
+  'UTEP':             ['#FF7F00','#041E42'], 'Miners':        ['#FF7F00','#041E42'],
+  'Louisiana Tech':   ['#002F8B','#E31837'], 'Bulldogs LT':   ['#002F8B','#E31837'],
+  'North Texas':      ['#00853E','#FFFFFF'], 'Mean Green':    ['#00853E','#FFFFFF'],
+  'Southern Miss':    ['#000000','#FFC845'], 'Golden Eagles': ['#000000','#FFC845'],
+  'Marshall':         ['#00B140','#000000'], 'Thundering Herd':['#00B140','#000000'],
+  // ── Sun Belt ──
+  'App State':        ['#FFCC00','#000000'], 'Appalachian State':['#FFCC00','#000000'],
+  'Louisiana':        ['#C10230','#001A57'], 'Ragin Cajuns':  ['#C10230','#001A57'],
+  'Troy':             ['#8B2332','#000000'], 'Trojans TR':    ['#8B2332','#000000'],
+  'Georgia State':    ['#0039A6','#FFFFFF'],
+  'Georgia Southern': ['#011E41','#C1A875'],
+  'Coastal Carolina': ['#006F71','#A27752'], 'Chanticleers':  ['#006F71','#A27752'],
+  'South Alabama':    ['#00205B','#BF0D3E'], 'Jaguars':       ['#00205B','#BF0D3E'],
+  'Arkansas State':   ['#CC0000','#000000'], 'Red Wolves':    ['#CC0000','#000000'],
+  'Texas State':      ['#4E1719','#FFFFFF'],
+  'UL Monroe':        ['#800000','#FFC72C'],
+  'James Madison':    ['#450084','#CBB677'], 'Dukes':         ['#450084','#CBB677'],
+  // ── Mountain West ──
+  'Boise State':      ['#0033A0','#D64309'], 'Broncos':       ['#0033A0','#D64309'],
+  'San Diego State':  ['#CC0033','#002244'], 'Aztecs':        ['#CC0033','#002244'],
+  'Utah State':       ['#0F2B5B','#8A8D8F'],
+  'Fresno State':     ['#C41230','#002244'], 'Bulldogs FS':   ['#C41230','#002244'],
+  'UNLV':             ['#CC0000','#666666'], 'Rebels':        ['#CC0000','#666666'],
+  'Air Force':        ['#003087','#8F9195'], 'Falcons':       ['#003087','#8F9195'],
+  'Wyoming':          ['#492F24','#FFC425'],
+  'Colorado State':   ['#1E4D2B','#C8C372'], 'Rams':          ['#1E4D2B','#C8C372'],
+  'Nevada':           ['#003366','#807B6F'], 'Wolf Pack':     ['#003366','#807B6F'],
+  'New Mexico':       ['#BA0C2F','#63666A'], 'Lobos':         ['#BA0C2F','#63666A'],
+  'Hawaii':           ['#024731','#FFFFFF'], 'Warriors':      ['#024731','#FFFFFF'],
+  'San Jose State':   ['#0055A2','#E5A823'],
+  // ── MAC ──
+  'Ohio':             ['#00694E','#CFC493'], 'Bobcats':       ['#00694E','#CFC493'],
+  'Northern Illinois':['#CC0000','#000000'],
+  'Western Michigan': ['#6C4023','#C89520'], 'Broncos WM':    ['#6C4023','#C89520'],
+  'Buffalo':          ['#005BBB','#000000'], 'Bulls':         ['#005BBB','#000000'],
+  'Central Michigan': ['#6A0032','#FFC82E'], 'Chippewas':     ['#6A0032','#FFC82E'],
+  'Eastern Michigan': ['#006C5B','#FFFFFF'],
+  'Bowling Green':    ['#FE5000','#4F2C1D'], 'Falcons BG':    ['#FE5000','#4F2C1D'],
+  'Toledo':           ['#15397F','#FFC425'], 'Rockets':       ['#15397F','#FFC425'],
+  'Ball State':       ['#BA0C2F','#FFFFFF'],
+  'Akron':            ['#041E42','#A89968'], 'Zips':          ['#041E42','#A89968'],
+  'Miami OH':         ['#C3142D','#FFFFFF'], 'Redhawks':      ['#C3142D','#FFFFFF'],
+  'Kent State':       ['#002664','#EAAB00'], 'Golden Flashes':['#002664','#EAAB00'],
+  // ── AAC ──
+  'UConn':            ['#000E2F','#FFFFFF'], 'Connecticut':   ['#000E2F','#FFFFFF'],
+  'East Carolina':    ['#4B1869','#C8A21B'], 'Pirates':       ['#4B1869','#C8A21B'],
+  'Memphis':          ['#003087','#898D8D'],
+  'Navy':             ['#00205B','#C5B783'], 'Midshipmen':    ['#00205B','#C5B783'],
+  'SMU':              ['#354CA1','#C8102E'], 'Mustangs':      ['#354CA1','#C8102E'],
+  'South Florida':    ['#006747','#CFC493'], 'Bulls USF':     ['#006747','#CFC493'],
+  'Temple':           ['#9D2235','#FFFFFF'],
+  'Tulane':           ['#006940','#418FDE'], 'Green Wave':    ['#006940','#418FDE'],
+  'Tulsa':            ['#002D62','#C8102E'], 'Golden Hurricane':['#002D62','#C8102E'],
+  'Wichita State':    ['#003366','#FFD100'], 'Shockers':      ['#003366','#FFD100'],
+  // ── Independents & Others ──
+  'Army':             ['#000000','#D4AF37'], 'Black Knights':  ['#000000','#D4AF37'],
+  'Liberty':          ['#002868','#990000'], 'Flames':         ['#002868','#990000'],
+  'New Mexico State': ['#891216','#000000'],
+  'UMass':            ['#881C1C','#FFFFFF'],
+  'North Dakota State':['#006633','#FFC72C'], 'Bison':         ['#006633','#FFC72C'],
+  'South Dakota State':['#0033A0','#FFCC00'], 'Jackrabbits':  ['#0033A0','#FFCC00'],
+  'Sacramento State': ['#043927','#C4B581'],
+  'Montana':          ['#5F021F','#B0B7BC'], 'Grizzlies':     ['#5F021F','#B0B7BC'],
+  'Montana State':    ['#003875','#CAAA7E'], 'Bobcats MS':    ['#003875','#CAAA7E'],
+  'Eastern Washington':['#AC1A2F','#FFFFFF'],
+};
+
+function getNcaaColor(schoolName) {
+  if (!schoolName) return null;
+  var s = schoolName.trim();
+  // Try exact match first
+  if (NCAA_COLORS[s]) return NCAA_COLORS[s];
+  // Try case-insensitive
+  var sl = s.toLowerCase();
+  var keys = Object.keys(NCAA_COLORS);
+  for (var i = 0; i < keys.length; i++) {
+    if (keys[i].toLowerCase() === sl) return NCAA_COLORS[keys[i]];
+  }
+  // Try partial match (school name contains key or key contains school name)
+  for (var j = 0; j < keys.length; j++) {
+    if (sl.includes(keys[j].toLowerCase()) || keys[j].toLowerCase().includes(sl)) {
+      return NCAA_COLORS[keys[j]];
+    }
+  }
+  return null;
 }
 
 // Get avatar gradient style for a team
@@ -2457,10 +2633,10 @@ function renderScBoard() {
   }
 
   var yearConfig = [
-    { key:'NOW',  label:'2026 Class (now)', bg:'#1a56ff', shadow:'rgba(26,86,255,.22)' },
-    { key:'2027', label:'2027 Class',        bg:'#e07820', shadow:'rgba(224,120,32,.22)' },
-    { key:'2028', label:'2028 Class',        bg:'#0ea86b', shadow:'rgba(14,168,107,.22)' },
-    { key:'2029', label:'2029 Class',        bg:'#8a4fcf', shadow:'rgba(138,79,207,.22)' }
+    { key:'NOW',  label:'2026 Class (now)', bg:'linear-gradient(135deg,#1a56ff 0%,#0033cc 100%)', shadow:'rgba(26,86,255,.3)' },
+    { key:'2027', label:'2027 Class',        bg:'linear-gradient(135deg,#e07820 0%,#b85a00 100%)', shadow:'rgba(184,90,0,.3)' },
+    { key:'2028', label:'2028 Class',        bg:'linear-gradient(135deg,#0ea86b 0%,#007a4a 100%)', shadow:'rgba(0,122,74,.3)' },
+    { key:'2029', label:'2029 Class',        bg:'linear-gradient(135deg,#8a4fcf 0%,#5c2fa0 100%)', shadow:'rgba(92,47,160,.3)' }
   ];
   var posConfig = [
     { key:'QB', color:'#1a56ff' },
@@ -2504,10 +2680,33 @@ function renderScBoard() {
       html += '<div class="sc-pos-body" id="'+posId+'">';
       posProspects.forEach(function(p) {
         var nc = (p.newsCache||[]).length;
+        var isDraftedP = !!(p.drafted || (p.proTeam && p.proTeam !== ''));
+        var avHtml;
+        if (isDraftedP) {
+          // NFL jersey using team colors
+          avHtml = '<div style="width:36px;height:36px;flex-shrink:0">' + makeJerseySVG(p.name, p.number||'', p.proTeam, 36) + '</div>';
+        } else {
+          // College or position-color jersey
+          var ncCol = getNcaaColor(p.school);
+          var jPrimary = ncCol ? ncCol[0] : pos.color;
+          var jSecondary = ncCol ? ncCol[1] : '#ffffff';
+          var isDk = isColorDark(jPrimary);
+          var namC = isDk ? '#ffffff' : '#0f1f3d';
+          var nm = (p.name||'').split(' ').pop().slice(0,9).toUpperCase();
+          var nfs = Math.round(36*0.16);
+          var jp2 = 'M20,18 L5,32 L15,38 L15,90 L85,90 L85,38 L95,32 L80,18 Q72,12 62,14 Q58,22 50,22 Q42,22 38,14 Q28,12 20,18 Z';
+          var cp2 = 'M38,14 Q42,24 50,24 Q58,24 62,14';
+          avHtml = '<div style="width:36px;height:36px;flex-shrink:0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="36">' +
+            '<path d="'+jp2+'" fill="'+jPrimary+'"/>' +
+            '<path d="M15,38 L15,48 L85,48 L85,38 Z" fill="'+jSecondary+'" opacity="0.3"/>' +
+            '<path d="'+cp2+'" fill="none" stroke="'+jSecondary+'" stroke-width="2.5" opacity="0.8"/>' +
+            '<text x="50" y="72" text-anchor="middle" font-family="Bebas Neue,Arial Narrow,sans-serif" font-size="'+nfs+'" fill="'+namC+'" letter-spacing="1">'+nm+'</text>' +
+            '</svg></div>';
+        }
         html += '<div class="sc-prospect-card" onclick="openProspect(\''+p.id+'\')">' +
-          '<div class="sc-pav" style="background:'+pos.color+'">'+scInitials(p.name)+'</div>' +
+          avHtml +
           '<div class="sc-pinfo"><div class="sc-pname">'+p.name+'</div>' +
-          '<div class="sc-pmeta">'+(p.school||'School TBD')+(p.grade?' &middot; '+p.grade:'')+'</div></div>' +
+          '<div class="sc-pmeta">'+(isDraftedP ? (p.proTeam||'') + ' · ' + p.pos : (p.school||'School TBD') + (p.grade?' &middot; '+p.grade:''))+'</div></div>' +
           '<div class="sc-pright">'+(nc?'<span class="sc-news-count">'+nc+'</span>':'')+'</div>' +
           '<div class="sc-arrow">&#x203A;</div>' +
         '</div>';
@@ -2585,6 +2784,9 @@ function renderPdTab(idx) {
     var teamCol2 = isDrafted ? (getTeamColor2(p.proTeam) || '#ffffff') : '#1e3566';
 
     // ── PHASE BANNER ──
+    var ncaaCol = !isDrafted ? getNcaaColor(p.school) : null;
+    var collegeP = ncaaCol ? ncaaCol[0] : scPosColor(p.pos);
+    var collegeS = ncaaCol ? ncaaCol[1] : '#ffffff';
     var phaseBanner = isDrafted
       ? '<div style="background:linear-gradient(135deg,'+teamCol+','+teamCol2+');border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:2px">' +
           '<div style="width:52px;height:52px;flex-shrink:0">' + makeJerseySVG(p.name, p.number||'', p.proTeam, 52) + '</div>' +
@@ -2598,16 +2800,16 @@ function renderPdTab(idx) {
             '<div style="font-family:DM Mono,monospace;font-size:7px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase">Grade</div>' +
           '</div>' +
         '</div>'
-      : '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:2px">' +
-          '<div style="width:44px;height:44px;background:linear-gradient(135deg,#0f1f3d,#1e3566);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:Bebas Neue,sans-serif;font-size:16px;color:rgba(255,255,255,.7)">' + p.pos + '</div>' +
+      : '<div style="background:linear-gradient(135deg,'+collegeP+','+collegeS+');border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:2px">' +
+          '<div style="width:52px;height:52px;flex-shrink:0">' + makeJerseySVG(p.name, '', p.school, 52) + '</div>' +
           '<div style="flex:1">' +
-            '<div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#7a8fb5">College Prospect</div>' +
-            '<div style="font-size:15px;font-weight:700;color:#0f1f3d;margin-top:2px">' + (p.school||'School TBD') + '</div>' +
-            '<div style="font-family:DM Mono,monospace;font-size:9px;color:#7a8fb5;margin-top:2px">' + (p.draftYear==='NOW'?'2026':p.draftYear) + ' Draft Class</div>' +
+            '<div style="font-family:Bebas Neue,sans-serif;font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.55);text-transform:uppercase">College Prospect</div>' +
+            '<div style="font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:2px;color:#ffffff;line-height:1.1">' + (p.school||'School TBD') + '</div>' +
+            '<div style="font-family:DM Mono,monospace;font-size:9px;color:rgba(255,255,255,.45);margin-top:3px">' + (p.draftYear==='NOW'?'2026':p.draftYear) + ' Draft Class</div>' +
           '</div>' +
           '<div style="text-align:right">' +
-            '<div style="font-family:Bebas Neue,sans-serif;font-size:28px;color:#0f1f3d;line-height:1">' + (p.grade||'—') + '</div>' +
-            '<div style="font-family:DM Mono,monospace;font-size:7px;color:#7a8fb5;letter-spacing:1px;text-transform:uppercase">Grade</div>' +
+            '<div style="font-family:Bebas Neue,sans-serif;font-size:28px;color:rgba(255,255,255,.9);line-height:1">' + (p.grade||'—') + '</div>' +
+            '<div style="font-family:DM Mono,monospace;font-size:7px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase">Grade</div>' +
           '</div>' +
         '</div>';
 
@@ -2637,7 +2839,7 @@ function renderPdTab(idx) {
             ) +
           '</div>' +
           '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Position</div>' +
-          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" onchange="scField(currentProspect.id,String.fromCharCode(112,111,115),this.value)">' +
+          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" onchange="scField(currentProspect.id,String.fromCharCode(112,111,115),this.value);scUpdateProspectHeader(currentProspect)">' +
           ['QB','RB','WR','TE'].map(function(pos){ return '<option value="'+pos+'"'+(p.pos===pos?' selected':'')+'>'+pos+'</option>'; }).join('') +
           '</select></div>' +
         '</div>' +
@@ -2645,7 +2847,7 @@ function renderPdTab(idx) {
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
           '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Draft Year</div>' +
           '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" id="sc-field-draft" onchange="scDraftYearChange(currentProspect.id,this.value)">' +
-          '<option value="NOW">NOW (2026)</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option>' +
+          ['NOW','2027','2028','2029'].map(function(yr){ return '<option value="'+yr+'"'+(p.draftYear===yr?' selected':'')+'>'+(yr==='NOW'?'NOW (2026)':yr)+'</option>'; }).join('') +
           '</select></div>' +
           '<div><div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">My Grade</div>' +
           '<input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" id="sc-field-grade" placeholder="Top 10 pick" oninput="scGrade(currentProspect.id,this.value)"></div>' +
@@ -2699,7 +2901,8 @@ function renderPdTab(idx) {
             return '<div class="pd-news-item"><div class="pd-news-meta"><span class="pd-news-date">'+(item.timeAgo||item.date||'')+'</span></div><div class="pd-news-txt">'+item.desc.replace(/<[^>]+>/g,'').slice(0,300)+'</div></div>';
           }).join('') +
         '</div>'
-      : '<div class="pd-no-news">No items found for '+p.name+'<br><span style="font-size:10px;color:#c8d2e8">Save the card to trigger a fresh search, or tap Refresh Feed.</span></div>';
+      : '<div class="pd-no-news">No items found for '+p.name+'<br><span style="font-size:10px;color:#c8d2e8">Save the card to trigger a fresh search, or tap Refresh Feed.</span></div>' +
+        (p._newsDebug && p._newsDebug.length ? '<div style="margin-top:12px;background:#f4f6fb;border:1px solid #dce2f0;border-radius:8px;padding:10px 12px;font-family:DM Mono,monospace;font-size:8px;color:#7a8fb5;line-height:1.8">' + p._newsDebug.map(function(l){ return '› ' + l; }).join('<br>') + '</div>' : '');
 
     s.innerHTML = refreshHtml + newsListHtml;
 
@@ -2715,14 +2918,13 @@ function renderPdTab(idx) {
 
 function scDraftYearChange(id, val) {
   var p = scoutingBoard.find(function(x){ return x.id===id; }); if (!p) return;
-  p.draftYear = val; scSaveBoard();
-  // Re-render overview tab to show/hide pro team field
-  if (currentPdTab === 0) renderPdTab(0);
-  // Update header badge
+  p.draftYear = val;
+  scSaveBoard();
+  // Update header badge inline — do NOT call renderPdTab (resets all form fields)
   var badge = document.getElementById('pd-draft-badge');
   if (badge) badge.textContent = val === 'NOW' ? '2026 Draft Class' : val + ' Draft Class';
   var school = document.getElementById('pd-school');
-  if (school) school.innerHTML = (p.school||'School TBD') + ' &middot; ' + (val==='NOW'?'2026':val) + ' Class';
+  if (school && !p.drafted) school.innerHTML = (p.school||'School TBD') + ' &middot; ' + (val==='NOW'?'2026':val) + ' Class';
 }
 
 function scSetUndrafted(id) {
@@ -2783,8 +2985,24 @@ function scUpdateProspectHeader(p) {
       avEl.innerHTML = makeJerseySVG(p.name, p.number||'', p.proTeam, 56);
       avEl.style.cssText = 'background:transparent;border:none;width:56px;height:56px;flex-shrink:0;';
     } else {
-      avEl.innerHTML = scInitials(p.name) + '<span class="pd-pos-badge ' + scPosClass(p.pos) + '" id="pd-pos-badge">' + p.pos + '</span>';
-      avEl.style.cssText = '';
+      // Always show jersey — school colors if known, position color if not
+      var ncCol2 = getNcaaColor(p.school);
+      var jPrimary = ncCol2 ? ncCol2[0] : scPosColor(p.pos);
+      var jSecondary = ncCol2 ? ncCol2[1] : '#ffffff';
+      var isDk = isColorDark(jPrimary);
+      var namC2 = isDk ? '#ffffff' : '#0f1f3d';
+      var nm2 = (p.name||'').split(' ').pop().slice(0,9).toUpperCase();
+      var nfs2 = Math.round(56*0.14);
+      var numfs2 = Math.round(56*0.36);
+      var jp2 = 'M20,18 L5,32 L15,38 L15,90 L85,90 L85,38 L95,32 L80,18 Q72,12 62,14 Q58,22 50,22 Q42,22 38,14 Q28,12 20,18 Z';
+      var cp2 = 'M38,14 Q42,24 50,24 Q58,24 62,14';
+      avEl.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="56" height="56">'+
+        '<path d="'+jp2+'" fill="'+jPrimary+'"/>'+
+        '<path d="M15,38 L15,48 L85,48 L85,38 Z" fill="'+jSecondary+'" opacity="0.3"/>'+
+        '<path d="'+cp2+'" fill="none" stroke="'+jSecondary+'" stroke-width="2.5" opacity="0.8"/>'+
+        '<text x="50" y="72" text-anchor="middle" font-family="Bebas Neue,Arial Narrow,sans-serif" font-size="'+nfs2+'" fill="'+namC2+'" letter-spacing="1">'+nm2+'</text>'+
+        '</svg>';
+      avEl.style.cssText = 'background:transparent;border:none;width:56px;height:56px;flex-shrink:0;';
     }
   }
   var nameEl = document.getElementById('pd-name');
@@ -2977,69 +3195,169 @@ async function scFetchRotoPage() {
 }
 
 
+async function scFetchGoogleNews(p) {
+  var results = [];
+  var debugLog = [];
+
+  // Source 1: ESPN search API
+  try {
+    var espnUrl = 'https://site.api.espn.com/apis/common/v3/search?query=' +
+      encodeURIComponent(p.name + ' football') + '&limit=10&type=article';
+    var res = await fetch(espnUrl);
+    var data = await res.json();
+    debugLog.push('ESPN status: ' + res.status + ', results: ' + JSON.stringify(data).slice(0,200));
+    var hits = (data.results || []).filter(function(r){ return r.type === 'article' && r.data; });
+    hits.forEach(function(r) {
+      var d = r.data;
+      var headline = (d.headline || d.title || '').trim();
+      var desc = (d.description || d.abstract || '').replace(/<[^>]+>/g,'').slice(0,220);
+      var dateStr = '';
+      try { dateStr = new Date(d.published || d.lastModified).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
+      if (headline) results.push({ title: headline, desc: headline + (desc ? ' \u2014 ' + desc : ''), timeAgo: dateStr, date: dateStr, source: 'espn' });
+    });
+    debugLog.push('ESPN hits parsed: ' + results.length);
+  } catch(e) { debugLog.push('ESPN error: ' + e.message); }
+
+  // Source 2: Google News via corsproxy.io
+  try {
+    var gnQuery = encodeURIComponent(p.name + ' football');
+    var gnUrl = 'https://news.google.com/rss/search?q=' + gnQuery + '&hl=en-US&gl=US&ceid=US:en';
+    var proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(gnUrl);
+    var res2 = await fetch(proxyUrl);
+    var xml = await res2.text();
+    debugLog.push('GNews status: ' + res2.status + ', xml len: ' + xml.length + ', preview: ' + xml.slice(0,100));
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(xml, 'text/xml');
+    var items = Array.from(doc.querySelectorAll('item')).slice(0, 12);
+    debugLog.push('GNews items found: ' + items.length);
+    items.forEach(function(item) {
+      var title = ((item.querySelector('title')||{}).textContent||'').replace(/\s*-\s*[^-]{1,40}$/, '').trim();
+      var desc = ((item.querySelector('description')||{}).textContent||'').replace(/<[^>]+>/g,'').slice(0,220);
+      var pubDate = (item.querySelector('pubDate')||{}).textContent || '';
+      var dateStr = '';
+      try { dateStr = new Date(pubDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
+      if (title) results.push({ title: title, desc: title + (desc ? ' \u2014 ' + desc : ''), timeAgo: dateStr, date: dateStr, source: 'google' });
+    });
+  } catch(e) { debugLog.push('GNews error: ' + e.message); }
+
+  // Source 3: allorigins raw — different path, may bypass Google block
+  if (results.length < 3) {
+    try {
+      var rawUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://news.google.com/rss/search?q=' + encodeURIComponent(p.name + ' football') + '&hl=en-US&gl=US&ceid=US:en');
+      var res3 = await fetch(rawUrl);
+      var xml3 = await res3.text();
+      debugLog.push('Allorigins raw status: ' + res3.status + ', len: ' + xml3.length + ', preview: ' + xml3.slice(0,80));
+      var doc3 = new DOMParser().parseFromString(xml3, 'text/xml');
+      var items3 = Array.from(doc3.querySelectorAll('item')).slice(0, 12);
+      debugLog.push('Allorigins items: ' + items3.length);
+      items3.forEach(function(item) {
+        var title = ((item.querySelector('title')||{}).textContent||'').replace(/\s*-\s*[^-]{1,40}$/, '').trim();
+        var desc = ((item.querySelector('description')||{}).textContent||'').replace(/<[^>]+>/g,'').slice(0,220);
+        var pubDate = (item.querySelector('pubDate')||{}).textContent || '';
+        var dateStr = '';
+        try { dateStr = new Date(pubDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
+        if (title) results.push({ title: title, desc: title + (desc ? ' \u2014 ' + desc : ''), timeAgo: dateStr, date: dateStr, source: 'ao' });
+      });
+    } catch(e) { debugLog.push('Allorigins raw error: ' + e.message); }
+  }
+
+  // Store debug log on prospect for display
+  p._newsDebug = debugLog;
+
+  var seen = {}, deduped = [];
+  results.forEach(function(item) {
+    var key = item.title.slice(0,50).toLowerCase();
+    if (!seen[key]) { seen[key] = true; deduped.push(item); }
+  });
+  return deduped;
+}
+
 async function scSaveAndSearch() {
   if (!currentProspect) return;
   var p = currentProspect;
 
-  // Collect current field values
   var fs = document.getElementById('sc-field-school');
   var fd = document.getElementById('sc-field-draft');
   var fg = document.getElementById('sc-field-grade');
-  var fpt = document.getElementById('sc-field-school'); // NFL team when drafted
 
+  // Only overwrite if field exists AND has a non-empty value — never blank out saved data
   if (p.drafted) {
-    if (fs) p.proTeam = fs.value;
+    if (fs && fs.value.trim()) p.proTeam = fs.value.trim();
   } else {
-    if (fs) p.school = fs.value;
+    if (fs && fs.value.trim()) p.school = fs.value.trim();
   }
-  if (fd) p.draftYear = fd.value;
-  if (fg) p.grade = fg.value;
+  if (fd && fd.value) p.draftYear = fd.value;
+  if (fg && fg.value.trim()) p.grade = fg.value.trim();
   scSaveBoard();
 
-  // Visual feedback
   var saveBtn = document.querySelector('[onclick="scSaveAndSearch()"]');
   if (saveBtn) { saveBtn.textContent = 'Saving...'; saveBtn.style.background = '#7a8fb5'; }
 
-  // Force fresh feed fetch
-  await loadRotowireFeed(true);
+  var nflResults = [], googleResults = [];
+  try { await loadRotowireFeed(true); } catch(e) {}
 
-  // Improved name matching — try multiple strategies
   var name = p.name.toLowerCase();
   var nameParts = name.split(' ').filter(function(n){ return n.length > 2; });
   var lastName = nameParts[nameParts.length - 1] || '';
   var firstName = nameParts[0] || '';
 
-  p.newsCache = rotowireItems.filter(function(item) {
-    var t = (item.title||'').toLowerCase();
-    var d = (item.desc||'').toLowerCase();
-    var combined = t + ' ' + d;
-    // Strategy 1: full name anywhere
+  nflResults = rotowireItems.filter(function(item) {
+    var combined = ((item.title||'') + ' ' + (item.desc||'')).toLowerCase();
     if (combined.includes(name)) return true;
-    // Strategy 2: both first AND last name present
-    if (firstName.length > 3 && lastName.length > 3 &&
-        combined.includes(firstName) && combined.includes(lastName)) return true;
-    // Strategy 3: unique last name (>6 chars) alone
+    if (firstName.length > 3 && lastName.length > 3 && combined.includes(firstName) && combined.includes(lastName)) return true;
     if (lastName.length > 6 && combined.includes(lastName)) return true;
-    // Strategy 4: unique first name (>6 chars) alone
     if (firstName.length > 6 && combined.includes(firstName)) return true;
     return false;
   });
 
-  scSaveBoard();
+  googleResults = await scFetchGoogleNews(p);
 
-  // Update header in case anything changed
+  var seen = {}, merged = [];
+  googleResults.concat(nflResults).forEach(function(item) {
+    var key = (item.title||item.desc||'').slice(0,60).toLowerCase();
+    if (!seen[key]) { seen[key] = true; merged.push(item); }
+  });
+
+  p.newsCache = merged;
+  scSaveBoard();
   scUpdateProspectHeader(p);
 
-  // Restore button
-  if (saveBtn) { saveBtn.innerHTML = p.newsCache.length ? '✓ Saved · ' + p.newsCache.length + ' news hits' : '✓ Saved'; saveBtn.style.background = '#0ea86b'; }
-
-  // Re-render news tab if on it, else just stay on overview
+  if (saveBtn) {
+    saveBtn.innerHTML = merged.length ? '\u2713 Saved \u00b7 ' + merged.length + ' news hits' : '\u2713 Saved';
+    saveBtn.style.background = '#0ea86b';
+  }
   if (currentPdTab === 2) renderPdTab(2);
 }
 
-function scRefreshNews() {
-  loadRotowireFeed(false).then(function() { if (currentProspect) renderPdTab(2); }).catch(function(){}); 
+async function scRefreshNews() {
+  if (!currentProspect) return;
+  var btn = document.querySelector('[onclick="scRefreshNews()"]');
+  if (btn) { btn.textContent = 'Fetching...'; btn.style.opacity = '.6'; }
+  try { await loadRotowireFeed(false); } catch(e) {}
+  var googleResults = await scFetchGoogleNews(currentProspect);
+  var p = currentProspect;
+  var name = p.name.toLowerCase();
+  var nameParts = name.split(' ').filter(function(n){ return n.length > 2; });
+  var lastName = nameParts[nameParts.length - 1] || '';
+  var firstName = nameParts[0] || '';
+  var nflResults = rotowireItems.filter(function(item) {
+    var combined = ((item.title||'') + ' ' + (item.desc||'')).toLowerCase();
+    if (combined.includes(name)) return true;
+    if (firstName.length > 3 && lastName.length > 3 && combined.includes(firstName) && combined.includes(lastName)) return true;
+    if (lastName.length > 6 && combined.includes(lastName)) return true;
+    return false;
+  });
+  var seen = {}, merged = [];
+  googleResults.concat(nflResults).forEach(function(item) {
+    var key = (item.title||item.desc||'').slice(0,60).toLowerCase();
+    if (!seen[key]) { seen[key] = true; merged.push(item); }
+  });
+  p.newsCache = merged;
+  scSaveBoard();
+  if (btn) { btn.textContent = '\u21BB Refresh Feed'; btn.style.opacity = '1'; }
+  renderPdTab(2);
 }
+
 
 function scRemove(id) {
   scoutingBoard=scoutingBoard.filter(function(p){return p.id!==id;}); scSaveBoard(); renderScBoard(); nav('scout');
