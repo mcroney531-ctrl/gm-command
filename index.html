@@ -1,4 +1,4 @@
-<!-- GM Command v0.2.4 | Updated: 2026-04-27 -->
+<!-- GM Command v0.2.5 | Updated: 2026-04-27 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -3198,70 +3198,62 @@ async function scFetchRotoPage() {
 async function scFetchGoogleNews(p) {
   var results = [];
   var debugLog = [];
+  var nameLower = p.name.toLowerCase();
+  var parts = nameLower.split(' ').filter(function(n){ return n.length > 2; });
+  var firstName = parts[0] || '';
+  var lastName = parts[parts.length-1] || '';
 
-  // Source 1: ESPN search API
+  function nameMatch(text) {
+    var t = (text||'').toLowerCase();
+    if (t.includes(nameLower)) return true;
+    if (firstName.length > 3 && lastName.length > 3 && t.includes(firstName) && t.includes(lastName)) return true;
+    if (lastName.length > 5 && t.includes(lastName)) return true;
+    return false;
+  }
+
+  // Source 1: ESPN CFB news feed — public CORS, no proxy needed
   try {
-    var espnUrl = 'https://site.api.espn.com/apis/common/v3/search?query=' +
-      encodeURIComponent(p.name + ' football') + '&limit=10&type=article';
+    var isDrafted = !!(p.drafted || (p.proTeam && p.proTeam !== ''));
+    var sport = isDrafted ? 'nfl' : 'college-football';
+    var espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/football/' + sport + '/news?limit=100';
     var res = await fetch(espnUrl);
     var data = await res.json();
-    debugLog.push('ESPN status: ' + res.status + ', results: ' + JSON.stringify(data).slice(0,200));
-    var hits = (data.results || []).filter(function(r){ return r.type === 'article' && r.data; });
-    hits.forEach(function(r) {
-      var d = r.data;
-      var headline = (d.headline || d.title || '').trim();
-      var desc = (d.description || d.abstract || '').replace(/<[^>]+>/g,'').slice(0,220);
+    var articles = data.articles || data.items || [];
+    debugLog.push('ESPN ' + sport + ' status: ' + res.status + ', articles: ' + articles.length);
+    articles.forEach(function(a) {
+      var headline = (a.headline || a.title || '').trim();
+      var desc = (a.description || a.summary || '').replace(/<[^>]+>/g,'').slice(0,220);
+      var combined = headline + ' ' + desc + ' ' + (a.categories||[]).map(function(c){return c.description||'';}).join(' ');
+      if (!nameMatch(combined)) return;
       var dateStr = '';
-      try { dateStr = new Date(d.published || d.lastModified).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
-      if (headline) results.push({ title: headline, desc: headline + (desc ? ' \u2014 ' + desc : ''), timeAgo: dateStr, date: dateStr, source: 'espn' });
+      try { dateStr = new Date(a.published || a.lastModified).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
+      results.push({ title: headline, desc: headline + (desc?' \u2014 '+desc:''), timeAgo: dateStr, date: dateStr, source: 'espn' });
     });
-    debugLog.push('ESPN hits parsed: ' + results.length);
+    debugLog.push('ESPN hits matched: ' + results.length);
   } catch(e) { debugLog.push('ESPN error: ' + e.message); }
 
-  // Source 2: Google News via corsproxy.io
+  // Source 2: Google News via allorigins/get — same proxy we use for Rotowire successfully
   try {
     var gnQuery = encodeURIComponent(p.name + ' football');
-    var gnUrl = 'https://news.google.com/rss/search?q=' + gnQuery + '&hl=en-US&gl=US&ceid=US:en';
-    var proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(gnUrl);
-    var res2 = await fetch(proxyUrl);
-    var xml = await res2.text();
-    debugLog.push('GNews status: ' + res2.status + ', xml len: ' + xml.length + ', preview: ' + xml.slice(0,100));
-    var parser = new DOMParser();
-    var doc = parser.parseFromString(xml, 'text/xml');
-    var items = Array.from(doc.querySelectorAll('item')).slice(0, 12);
-    debugLog.push('GNews items found: ' + items.length);
+    var gnRss = 'https://news.google.com/rss/search?q=' + gnQuery + '&hl=en-US&gl=US&ceid=US:en';
+    var aoUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(gnRss);
+    var res2 = await fetch(aoUrl);
+    var data2 = await res2.json();
+    var xml = data2.contents || '';
+    debugLog.push('GNews allorigins status: ' + res2.status + ', xml len: ' + xml.length + ', preview: ' + xml.slice(0,80));
+    var doc = new DOMParser().parseFromString(xml, 'text/xml');
+    var items = Array.from(doc.querySelectorAll('item')).slice(0,15);
+    debugLog.push('GNews items: ' + items.length);
     items.forEach(function(item) {
       var title = ((item.querySelector('title')||{}).textContent||'').replace(/\s*-\s*[^-]{1,40}$/, '').trim();
       var desc = ((item.querySelector('description')||{}).textContent||'').replace(/<[^>]+>/g,'').slice(0,220);
       var pubDate = (item.querySelector('pubDate')||{}).textContent || '';
       var dateStr = '';
       try { dateStr = new Date(pubDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
-      if (title) results.push({ title: title, desc: title + (desc ? ' \u2014 ' + desc : ''), timeAgo: dateStr, date: dateStr, source: 'google' });
+      if (title && title.length > 5) results.push({ title: title, desc: title+(desc?' \u2014 '+desc:''), timeAgo: dateStr, date: dateStr, source: 'google' });
     });
   } catch(e) { debugLog.push('GNews error: ' + e.message); }
 
-  // Source 3: allorigins raw — different path, may bypass Google block
-  if (results.length < 3) {
-    try {
-      var rawUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://news.google.com/rss/search?q=' + encodeURIComponent(p.name + ' football') + '&hl=en-US&gl=US&ceid=US:en');
-      var res3 = await fetch(rawUrl);
-      var xml3 = await res3.text();
-      debugLog.push('Allorigins raw status: ' + res3.status + ', len: ' + xml3.length + ', preview: ' + xml3.slice(0,80));
-      var doc3 = new DOMParser().parseFromString(xml3, 'text/xml');
-      var items3 = Array.from(doc3.querySelectorAll('item')).slice(0, 12);
-      debugLog.push('Allorigins items: ' + items3.length);
-      items3.forEach(function(item) {
-        var title = ((item.querySelector('title')||{}).textContent||'').replace(/\s*-\s*[^-]{1,40}$/, '').trim();
-        var desc = ((item.querySelector('description')||{}).textContent||'').replace(/<[^>]+>/g,'').slice(0,220);
-        var pubDate = (item.querySelector('pubDate')||{}).textContent || '';
-        var dateStr = '';
-        try { dateStr = new Date(pubDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
-        if (title) results.push({ title: title, desc: title + (desc ? ' \u2014 ' + desc : ''), timeAgo: dateStr, date: dateStr, source: 'ao' });
-      });
-    } catch(e) { debugLog.push('Allorigins raw error: ' + e.message); }
-  }
-
-  // Store debug log on prospect for display
   p._newsDebug = debugLog;
 
   var seen = {}, deduped = [];
