@@ -1,4 +1,4 @@
-<!-- GM Command v0.3.7 | Updated: 2026-05-02 -->
+<!-- GM Command v0.3.8 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -3715,6 +3715,8 @@ function removeTFTablePlayer(id) {
       <div style="display:flex;align-items:center;gap:7px"><div style="width:6px;height:6px;border-radius:50%;background:#0ea86b;animation:blink 2s ease infinite"></div><span style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:1.5px;color:#7a8fb5;text-transform:uppercase" id="news-screen-status">Live · Synced</span></div>
       <button onclick="refreshAllNews()" style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#1a56ff;background:none;border:none;cursor:pointer">↻ Refresh</button>
     </div>
+    <!-- Debug panel — shows feed counts, tap to dismiss -->
+    <div id="news-debug-panel" style="background:#f4f6fb;border:1px solid #dce2f0;border-radius:10px;margin:0 12px 10px;cursor:pointer" onclick="this.style.display='none'" title="Tap to dismiss"></div>
     <div id="news-feed-list"></div>
   </div>
   <div class="bnav">
