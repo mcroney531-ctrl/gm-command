@@ -1,4 +1,4 @@
-<!-- GM Command v0.2.5 | Updated: 2026-04-27 -->
+<!-- GM Command v0.3.3 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -609,11 +609,11 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     <div class="search-bar"><span class="search-icon">🔍</span><span class="search-txt">Search players, trades, news...</span></div>
   </div>
   <div class="chips">
-    <div class="chip active"><span>Dashboard</span></div>
-    <div class="chip" onclick="nav('roster')"><span>📋</span><span>My Roster</span></div>
-    <div class="chip"><span>📡</span><span>News</span><em>7</em></div>
-    <div class="chip"><span>👥</span><span>Rivals</span></div>
-    <div class="chip"><span>👁️</span><span>Watchlist</span><em>4</em></div>
+    <div class="chip active" onclick="setHomeChip(this);document.querySelector('#screen-home .scroll').scrollTo({top:0,behavior:'smooth'})"><span>Dashboard</span></div>
+    <div class="chip" onclick="setHomeChip(this);nav('roster')"><span>📋</span><span>My Roster</span></div>
+    <div class="chip" onclick="setHomeChip(this);nav('news')"><span>📡</span><span>News</span><em id="home-news-count">7</em></div>
+    <div class="chip" onclick="setHomeChip(this);nav('rivals')"><span>👥</span><span>Rivals</span></div>
+    <div class="chip" onclick="setHomeChip(this);alert('Watchlist coming soon!')"><span>👁️</span><span>Watchlist</span><em>4</em></div>
   </div>
   <div class="scroll">
     <!-- snapshot -->
@@ -665,7 +665,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     </div>
     <!-- news tray -->
     <div class="ntray">
-      <div class="nth"><div class="nth-l"><div class="ndot"></div><span class="nlbl" id="news-tray-label">Rotowire · Loading...</span></div><button class="nexp">See All ›</button></div>
+      <div class="nth"><div class="nth-l"><div class="ndot"></div><span class="nlbl" id="news-tray-label">Rotowire · Loading...</span></div><button class="nexp" onclick="nav('news')">See All ›</button></div>
       <div class="nscroll" id="news-tray-scroll">
         <div style="padding:14px 16px;font-family:DM Mono,monospace;font-size:9px;color:#7a8fb5;letter-spacing:1px">Syncing feed...</div>
       </div>
@@ -1347,17 +1347,26 @@ var rotowireItems = [];
 
 async function fetchRotoFeed(url) {
   var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
-  var res = await fetch(proxyUrl);
-  var data = await res.json();
-  var xml = new DOMParser().parseFromString(data.contents, 'text/xml');
-  return Array.from(xml.querySelectorAll('item')).map(function(item) {
-    var title = item.querySelector('title') ? item.querySelector('title').textContent : '';
-    var desc  = item.querySelector('description') ? item.querySelector('description').textContent : '';
-    var pub   = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
-    var playerName = title.split(/[:\-–]/)[0].trim();
-    var teamMatch = desc.match(/\b([A-Z]{2,3})\b/);
-    return { title:title, desc:desc, playerName:playerName, team:teamMatch?teamMatch[1]:'', timeAgo:getTimeAgo(new Date(pub)), pubDate:pub };
+  // Use Promise.race for timeout — avoids AbortSignal which can't be cloned by service worker
+  var timeoutPromise = new Promise(function(_, reject) {
+    setTimeout(function(){ reject(new Error('timeout')); }, 8000);
   });
+  try {
+    var res = await Promise.race([fetch(proxyUrl), timeoutPromise]);
+    var data = await res.json();
+    var xml = new DOMParser().parseFromString(data.contents, 'text/xml');
+    return Array.from(xml.querySelectorAll('item')).map(function(item) {
+      var title = item.querySelector('title') ? item.querySelector('title').textContent : '';
+      var desc  = item.querySelector('description') ? item.querySelector('description').textContent : '';
+      var pub   = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
+      var playerName = title.split(/[:\-–]/)[0].trim();
+      var teamMatch = desc.match(/([A-Z]{2,3})/);
+      return { title:title, desc:desc, playerName:playerName, team:teamMatch?teamMatch[1]:'', timeAgo:getTimeAgo(new Date(pub)), pubDate:pub };
+    });
+  } catch (e) {
+    console.warn('Roto feed timeout/error:', e.message);
+    return [];
+  }
 }
 
 async function loadRotowireFeed(silent) {
@@ -1419,6 +1428,125 @@ function getOwnershipBadge(playerName) {
   return null;
 }
 
+function setHomeChip(el) {
+  document.querySelectorAll('#screen-home .chips .chip').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+// ─────────────────────────────────
+// FULL NEWS SCREEN
+// ─────────────────────────────────
+var currentNewsFilter = 'all';
+var newsScreenLoading = false;
+
+function renderNewsScreen() {
+  var list = document.getElementById('news-feed-list');
+  var status = document.getElementById('news-screen-status');
+  if (!list) return;
+
+  if (!rotowireItems || !rotowireItems.length) {
+    if (newsScreenLoading) {
+      list.innerHTML = '<div style="text-align:center;padding:40px 20px;font-family:DM Mono,monospace;font-size:10px;color:#7a8fb5;letter-spacing:1px">Loading feed...</div>';
+      if (status) status.textContent = 'Syncing...';
+      return;
+    }
+    // Trigger a one-time fetch
+    newsScreenLoading = true;
+    list.innerHTML = '<div style="text-align:center;padding:40px 20px;font-family:DM Mono,monospace;font-size:10px;color:#7a8fb5;letter-spacing:1px">Loading feed...</div>';
+    if (status) status.textContent = 'Syncing...';
+    loadRotowireFeed(false).finally(function(){
+      newsScreenLoading = false;
+      if (!rotowireItems || !rotowireItems.length) {
+        list.innerHTML = '<div style="background:#fff5f5;border:1.5px solid rgba(224,48,64,.3);border-radius:10px;padding:20px;text-align:center;color:#9b1f30;font-size:12px;line-height:1.6">' +
+          '<div style="font-family:Bebas Neue,sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:8px">Feed Unavailable</div>' +
+          '<div style="font-family:DM Mono,monospace;font-size:9px;color:#7a8fb5;letter-spacing:.5px;line-height:1.7">The Rotowire RSS proxy isn\'t responding right now. This usually clears up in a few minutes.</div>' +
+          '<button onclick="refreshAllNews()" style="margin-top:14px;padding:8px 18px;font-family:DM Mono,monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;background:#1a56ff;color:white;border:none;border-radius:8px;cursor:pointer">↻ Try Again</button>' +
+          '</div>';
+        if (status) status.textContent = 'Offline';
+      } else {
+        renderNewsScreen();
+      }
+    });
+    return;
+  }
+
+  // Compute filter counts
+  var mineItems = rotowireItems.filter(function(item){
+    var b = getOwnershipBadge(item.playerName);
+    return b && b.cls === 'bm';
+  });
+  var rivalsItems = rotowireItems.filter(function(item){
+    var b = getOwnershipBadge(item.playerName);
+    return b && b.cls === 'br';
+  });
+
+  document.getElementById('nf-all-count').textContent = rotowireItems.length;
+  document.getElementById('nf-mine-count').textContent = mineItems.length;
+  document.getElementById('nf-rivals-count').textContent = rivalsItems.length;
+  if (status) status.textContent = 'Live · ' + rotowireItems.length + ' items';
+
+  // Apply current filter
+  var filtered = rotowireItems;
+  if (currentNewsFilter === 'mine') filtered = mineItems;
+  else if (currentNewsFilter === 'rivals') filtered = rivalsItems;
+  else if (currentNewsFilter === 'injury') filtered = rotowireItems.filter(function(item){
+    var t = ((item.title||'')+(item.desc||'')).toLowerCase();
+    return t.includes('injur') || t.includes('out ') || t.includes(' ir ') || t.includes('questionable') || t.includes('doubtful') || t.includes('day-to-day');
+  });
+  else if (currentNewsFilter === 'trans') filtered = rotowireItems.filter(function(item){
+    var t = ((item.title||'')+(item.desc||'')).toLowerCase();
+    return t.includes('trade') || t.includes('sign') || t.includes('waiv') || t.includes('release') || t.includes('claim');
+  });
+
+  if (!filtered.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 20px;font-family:DM Mono,monospace;font-size:10px;color:#7a8fb5;letter-spacing:1px">No items match this filter</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(function(item) {
+    var badge = getOwnershipBadge(item.playerName);
+    var badgeBg = badge ? (badge.cls === 'bm' ? '#0ea86b' : '#1a56ff') : '';
+    var badgeHtml = badge ? '<span style="font-family:DM Mono,monospace;font-size:7px;font-weight:600;padding:2px 7px;border-radius:8px;margin-left:auto;background:'+badgeBg+';color:#ffffff;letter-spacing:.5px">'+badge.label+'</span>' : '';
+    var descLower = (item.desc||'').toLowerCase();
+    var accentColor = '#7a8fb5';
+    var accentLabel = '';
+    if (descLower.includes('injur') || descLower.includes('out ') || descLower.includes('questionable') || descLower.includes('doubtful')) {
+      accentColor = '#e03040';
+      accentLabel = 'Injury';
+    } else if (descLower.includes('trade') || descLower.includes('sign') || descLower.includes('waiv')) {
+      accentColor = '#1a56ff';
+      accentLabel = 'Move';
+    } else {
+      accentColor = '#d4900a';
+      accentLabel = 'News';
+    }
+    var cleanDesc = (item.desc||'').replace(/<[^>]+>/g,'').slice(0,180);
+    var dateStr = item.timeAgo || item.date || '';
+    return '<div style="background:#ffffff;border:1.5px solid #dce2f0;border-left:4px solid '+accentColor+';border-radius:10px;padding:11px 13px;margin-bottom:8px;box-shadow:0 2px 0 #c4ceea">' +
+      '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">' +
+        '<span style="font-family:DM Mono,monospace;font-size:8px;font-weight:600;color:'+accentColor+';letter-spacing:1px;text-transform:uppercase">'+accentLabel+'</span>' +
+        (item.team ? '<span style="font-family:DM Mono,monospace;font-size:8px;color:#7a8fb5;letter-spacing:1px">· '+item.team+'</span>' : '') +
+        (dateStr ? '<span style="font-family:DM Mono,monospace;font-size:7px;color:#b0bcd4">· '+dateStr+'</span>' : '') +
+        badgeHtml +
+      '</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#0f1f3d;line-height:1.3;margin-bottom:4px">'+(item.title||'')+'</div>' +
+      '<div style="font-size:11px;color:#5a6a85;line-height:1.5">'+cleanDesc+(cleanDesc.length>=180?'…':'')+'</div>' +
+    '</div>';
+  }).join('');
+}
+
+function setNewsFilter(el, filter) {
+  document.querySelectorAll('#screen-news .chips .chip').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  currentNewsFilter = filter;
+  renderNewsScreen();
+}
+
+function refreshAllNews() {
+  rotowireItems = [];
+  renderNewsScreen();
+}
+
 function renderNewsTray() {
   var scroll = document.getElementById('news-tray-scroll');
   var label = document.getElementById('news-tray-label');
@@ -1428,6 +1556,9 @@ function renderNewsTray() {
     return;
   }
   label.textContent = 'Rotowire · ' + rotowireItems.length + ' items';
+  // Update home chip badge count
+  var countEl = document.getElementById('home-news-count');
+  if (countEl) countEl.textContent = rotowireItems.length;
   // Show up to 8 items, prioritize owned players
   var owned = rotowireItems.filter(function(item) { return getOwnershipBadge(item.playerName); });
   var others = rotowireItems.filter(function(item) { return !getOwnershipBadge(item.playerName); });
@@ -1605,10 +1736,40 @@ function buildSystemPrompt() {
   var rosterStr = liveMyRoster.map(function(p) {
     return p.name + ' (' + p.pos + ', ' + p.team + ', age ' + p.age + (p.status && p.status !== 'Active' ? ', ' + p.status : '') + ')';
   }).join('; ');
-  window.liveSystemPrompt = systemPrompt.replace(
-    /Current roster:.*?(?=\n\n|Recent news)/s,
-    'Current roster: ' + rosterStr + '\n\n'
-  );
+
+  // Build news summary from rotowireItems if available
+  var newsStr = 'No recent news loaded.';
+  if (window.rotowireItems && rotowireItems.length) {
+    var myNames = liveMyRoster.map(function(p){ return p.name.toLowerCase(); });
+    var myNews = rotowireItems.filter(function(item){
+      var t = ((item.title||'')+(item.desc||'')).toLowerCase();
+      return myNames.some(function(n){ return t.includes(n.split(' ').pop()); });
+    }).slice(0,5);
+    if (myNews.length) {
+      newsStr = myNews.map(function(n){ return n.title + ': ' + (n.desc||'').slice(0,120); }).join(' | ');
+    }
+  }
+
+  // Build leaguemate intel string
+  var intelStr = leaguemates && leaguemates.length
+    ? leaguemates.map(function(lm){ return lm.name + ' (' + lm.team + '): ' + (lm.synthesis || lm.notes || 'No intel yet'); }).join('. ')
+    : 'No leaguemate intel loaded.';
+
+  // Build rival roster summary
+  var rivalStr = '';
+  if (window.rivalTeams && rivalTeams.length) {
+    rivalStr = '\n\nLeague rivals (top teams): ' + rivalTeams.slice(0,4).map(function(t){
+      return t.name + ' (' + t.record + ')';
+    }).join(', ') + '.';
+  }
+
+  window.liveSystemPrompt = 'You are the GM Assistant for a dynasty fantasy football team called "The Psych Ward" in a 12-team superflex, half-PPR Sleeper league. The user\'s team is TitansTrev55.\n\n' +
+    'Current roster (' + liveMyRoster.length + ' players): ' + rosterStr + '\n\n' +
+    'Recent news on my players: ' + newsStr + '\n\n' +
+    'Leaguemate intel: ' + intelStr +
+    rivalStr + '\n\n' +
+    'Your trusted analyst sources (reference appropriately): Matt Waldman for RBs, Josh Norris/Hayden Winks for overall, Nate Tice for QBs, Matt Harmon/Steve Smith Sr. for WRs, Robert Mays for all positions.\n\n' +
+    'Be direct, opinionated, and analytical. Keep responses concise — this is a mobile app. When evaluating trades give a clear verdict. Always cite sources briefly at the end.';
 }
 
 // ── Re-render roster screen from live data ──
@@ -1773,7 +1934,13 @@ function nav(target) {
   if (target === 'settings') renderSettings();
   if (target === 'intel') renderIntel();
   if (target === 'rivals') renderRivalsList();
+  if (target === 'news') renderNewsScreen();
   if (target === 'scout') { scLoadBoard(); renderScBoard(); }
+  if (target === 'home') {
+    var homeChips = document.querySelectorAll('#screen-home .chips .chip');
+    homeChips.forEach(function(c){ c.classList.remove('active'); });
+    if (homeChips[0]) homeChips[0].classList.add('active');
+  }
 }
 
 // ─────────────────────────────────
@@ -2029,6 +2196,9 @@ async function sendChat() {
   if (!text) return;
   input.value = '';
   input.style.height = 'auto';
+
+  // Always rebuild if live roster is available — ensures latest data
+  if (liveMyRoster && liveMyRoster.length) buildSystemPrompt();
 
   addFCMsg('you', text);
   chatHistory.push({ role: 'user', content: text });
@@ -3198,64 +3368,75 @@ async function scFetchRotoPage() {
 async function scFetchGoogleNews(p) {
   var results = [];
   var debugLog = [];
-  var nameLower = p.name.toLowerCase();
-  var parts = nameLower.split(' ').filter(function(n){ return n.length > 2; });
-  var firstName = parts[0] || '';
-  var lastName = parts[parts.length-1] || '';
+  var isDrafted = !!(p.drafted || (p.proTeam && p.proTeam !== ''));
+  var league = isDrafted ? 'nfl' : 'college-football';
+  var baseUrl = 'https://site.api.espn.com/apis/site/v2/sports/football/';
 
-  function nameMatch(text) {
-    var t = (text||'').toLowerCase();
-    if (t.includes(nameLower)) return true;
-    if (firstName.length > 3 && lastName.length > 3 && t.includes(firstName) && t.includes(lastName)) return true;
-    if (lastName.length > 5 && t.includes(lastName)) return true;
-    return false;
-  }
-
-  // Source 1: ESPN CFB news feed — public CORS, no proxy needed
+  // Step 1: Find athlete ID by name
   try {
-    var isDrafted = !!(p.drafted || (p.proTeam && p.proTeam !== ''));
-    var sport = isDrafted ? 'nfl' : 'college-football';
-    var espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/football/' + sport + '/news?limit=100';
-    var res = await fetch(espnUrl);
-    var data = await res.json();
-    var articles = data.articles || data.items || [];
-    debugLog.push('ESPN ' + sport + ' status: ' + res.status + ', articles: ' + articles.length);
-    articles.forEach(function(a) {
-      var headline = (a.headline || a.title || '').trim();
-      var desc = (a.description || a.summary || '').replace(/<[^>]+>/g,'').slice(0,220);
-      var combined = headline + ' ' + desc + ' ' + (a.categories||[]).map(function(c){return c.description||'';}).join(' ');
-      if (!nameMatch(combined)) return;
-      var dateStr = '';
-      try { dateStr = new Date(a.published || a.lastModified).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
-      results.push({ title: headline, desc: headline + (desc?' \u2014 '+desc:''), timeAgo: dateStr, date: dateStr, source: 'espn' });
-    });
-    debugLog.push('ESPN hits matched: ' + results.length);
+    var searchUrl = baseUrl + league + '/athletes?search=' + encodeURIComponent(p.name) + '&limit=5';
+    var sRes = await fetch(searchUrl);
+    var sData = await sRes.json();
+    var athletes = sData.athletes || sData.items || [];
+    debugLog.push('ESPN athlete search: ' + sRes.status + ', found: ' + athletes.length);
+
+    var athleteId = null;
+    if (athletes.length) {
+      // Try to match name closely
+      var nameLower = p.name.toLowerCase();
+      var match = athletes.find(function(a) {
+        var fn = ((a.fullName||a.displayName||'') + ' ' + (a.firstName||'') + ' ' + (a.lastName||'')).toLowerCase();
+        return fn.includes(nameLower) || nameLower.includes((a.lastName||'').toLowerCase());
+      });
+      athleteId = (match || athletes[0]).id;
+      debugLog.push('Athlete ID: ' + athleteId + ' (' + ((match||athletes[0]).displayName||(match||athletes[0]).fullName||'?') + ')');
+    }
+
+    // Step 2: Fetch athlete-specific news
+    if (athleteId) {
+      var newsUrl = baseUrl + league + '/athletes/' + athleteId + '/news?limit=20';
+      var nRes = await fetch(newsUrl);
+      var nData = await nRes.json();
+      var articles = nData.articles || nData.items || [];
+      debugLog.push('Athlete news: ' + nRes.status + ', articles: ' + articles.length);
+
+      articles.forEach(function(a) {
+        var headline = (a.headline || a.title || '').trim();
+        var desc = (a.description || a.summary || '').replace(/<[^>]+>/g,'').slice(0,220);
+        var dateStr = '';
+        try { dateStr = new Date(a.published||a.lastModified).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
+        if (headline) results.push({ title: headline, desc: headline+(desc?' \u2014 '+desc:''), timeAgo: dateStr, date: dateStr, source: 'espn' });
+      });
+      debugLog.push('Results from athlete feed: ' + results.length);
+    }
   } catch(e) { debugLog.push('ESPN error: ' + e.message); }
 
-  // Source 2: Google News via allorigins/get — same proxy we use for Rotowire successfully
-  try {
-    var gnQuery = encodeURIComponent(p.name + ' football');
-    var gnRss = 'https://news.google.com/rss/search?q=' + gnQuery + '&hl=en-US&gl=US&ceid=US:en';
-    var aoUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(gnRss);
-    var res2 = await fetch(aoUrl);
-    var data2 = await res2.json();
-    var xml = data2.contents || '';
-    debugLog.push('GNews allorigins status: ' + res2.status + ', xml len: ' + xml.length + ', preview: ' + xml.slice(0,80));
-    var doc = new DOMParser().parseFromString(xml, 'text/xml');
-    var items = Array.from(doc.querySelectorAll('item')).slice(0,15);
-    debugLog.push('GNews items: ' + items.length);
-    items.forEach(function(item) {
-      var title = ((item.querySelector('title')||{}).textContent||'').replace(/\s*-\s*[^-]{1,40}$/, '').trim();
-      var desc = ((item.querySelector('description')||{}).textContent||'').replace(/<[^>]+>/g,'').slice(0,220);
-      var pubDate = (item.querySelector('pubDate')||{}).textContent || '';
-      var dateStr = '';
-      try { dateStr = new Date(pubDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
-      if (title && title.length > 5) results.push({ title: title, desc: title+(desc?' \u2014 '+desc:''), timeAgo: dateStr, date: dateStr, source: 'google' });
-    });
-  } catch(e) { debugLog.push('GNews error: ' + e.message); }
+  // Fallback: general ESPN CFB/NFL feed with name filter (wider net)
+  if (results.length < 3) {
+    try {
+      var feedUrl = baseUrl + league + '/news?limit=300';
+      var fRes = await fetch(feedUrl);
+      var fData = await fRes.json();
+      var all = fData.articles || fData.items || [];
+      debugLog.push('General feed fallback: ' + all.length + ' articles');
+      var nameLow = p.name.toLowerCase();
+      var lastName = nameLow.split(' ').pop();
+      var filtered = all.filter(function(a) {
+        var text = ((a.headline||'') + ' ' + (a.description||a.summary||'')).toLowerCase();
+        return text.includes(nameLow) || (lastName.length > 4 && text.includes(lastName));
+      });
+      debugLog.push('General feed matched: ' + filtered.length);
+      filtered.forEach(function(a) {
+        var headline = (a.headline || a.title || '').trim();
+        var desc = (a.description || a.summary || '').replace(/<[^>]+>/g,'').slice(0,220);
+        var dateStr = '';
+        try { dateStr = new Date(a.published||a.lastModified).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
+        if (headline) results.push({ title: headline, desc: headline+(desc?' \u2014 '+desc:''), timeAgo: dateStr, date: dateStr, source: 'espn-general' });
+      });
+    } catch(e) { debugLog.push('General feed error: ' + e.message); }
+  }
 
   p._newsDebug = debugLog;
-
   var seen = {}, deduped = [];
   results.forEach(function(item) {
     var key = item.title.slice(0,50).toLowerCase();
@@ -3439,8 +3620,40 @@ function removeTFTablePlayer(id) {
 </script>
 
 <!-- ═══════════════════════════════
-     RIVALS LIST SCREEN
+     NEWS FEED SCREEN
 ═══════════════════════════════ -->
+<div class="screen" id="screen-news">
+  <div class="app-header">
+    <div class="header-row">
+      <button class="back-btn" onclick="nav('home')" style="color:rgba(255,255,255,.6);font-family:DM Mono,monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;background:none;border:none;cursor:pointer">&#x2039; Home</button>
+      <div class="logo"><span class="logo-gm">News</span><span class="logo-cmd">Feed</span></div>
+      <div style="width:50px"></div>
+    </div>
+  </div>
+  <div class="chips">
+    <div class="chip active" id="news-filter-all" onclick="setNewsFilter(this,'all')"><span>All</span><em id="nf-all-count">0</em></div>
+    <div class="chip" id="news-filter-mine" onclick="setNewsFilter(this,'mine')"><span>Mine</span><em id="nf-mine-count">0</em></div>
+    <div class="chip" id="news-filter-rivals" onclick="setNewsFilter(this,'rivals')"><span>Rivals</span><em id="nf-rivals-count">0</em></div>
+    <div class="chip" id="news-filter-injury" onclick="setNewsFilter(this,'injury')"><span>🩹</span><span>Injury</span></div>
+    <div class="chip" id="news-filter-trans" onclick="setNewsFilter(this,'trans')"><span>🔁</span><span>Trans</span></div>
+  </div>
+  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 90px;background:#f4f6fb">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:7px"><div style="width:6px;height:6px;border-radius:50%;background:#0ea86b;animation:blink 2s ease infinite"></div><span style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:1.5px;color:#7a8fb5;text-transform:uppercase" id="news-screen-status">Live · Synced</span></div>
+      <button onclick="refreshAllNews()" style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#1a56ff;background:none;border:none;cursor:pointer">↻ Refresh</button>
+    </div>
+    <div id="news-feed-list"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="nav('home')"><span class="ni-icon">🏠</span><span class="ni-lbl">Home</span></div>
+    <div class="ni" onclick="nav('roster')"><span class="ni-icon">📋</span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════
      RIVALS LIST SCREEN
 ═══════════════════════════════ -->
