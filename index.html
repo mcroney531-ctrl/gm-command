@@ -1,4 +1,4 @@
-<!-- GM Command v0.3.3 | Updated: 2026-05-02 -->
+<!-- GM Command v0.3.4 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1346,27 +1346,53 @@ function renderTFPartnerChips() {
 var rotowireItems = [];
 
 async function fetchRotoFeed(url) {
-  var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
-  // Use Promise.race for timeout — avoids AbortSignal which can't be cloned by service worker
-  var timeoutPromise = new Promise(function(_, reject) {
-    setTimeout(function(){ reject(new Error('timeout')); }, 8000);
-  });
-  try {
-    var res = await Promise.race([fetch(proxyUrl), timeoutPromise]);
-    var data = await res.json();
-    var xml = new DOMParser().parseFromString(data.contents, 'text/xml');
-    return Array.from(xml.querySelectorAll('item')).map(function(item) {
-      var title = item.querySelector('title') ? item.querySelector('title').textContent : '';
-      var desc  = item.querySelector('description') ? item.querySelector('description').textContent : '';
-      var pub   = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
-      var playerName = title.split(/[:\-–]/)[0].trim();
-      var teamMatch = desc.match(/([A-Z]{2,3})/);
-      return { title:title, desc:desc, playerName:playerName, team:teamMatch?teamMatch[1]:'', timeAgo:getTimeAgo(new Date(pub)), pubDate:pub };
-    });
-  } catch (e) {
-    console.warn('Roto feed timeout/error:', e.message);
-    return [];
+  // Try two proxies in sequence — allorigins first, corsproxy as fallback
+  var proxies = [
+    'https://api.allorigins.win/get?url=' + encodeURIComponent(url),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
+  ];
+
+  for (var pi = 0; pi < proxies.length; pi++) {
+    try {
+      var timeoutPromise = new Promise(function(_, reject) {
+        setTimeout(function(){ reject(new Error('timeout')); }, 10000);
+      });
+      var res = await Promise.race([fetch(proxies[pi]), timeoutPromise]);
+      if (!res.ok) continue;
+
+      var text = await res.text();
+      // allorigins /get returns JSON wrapper; /raw returns XML directly
+      var xmlStr = text;
+      if (text.trim().startsWith('{')) {
+        try { xmlStr = JSON.parse(text).contents || text; } catch(e) {}
+      }
+
+      var xml = new DOMParser().parseFromString(xmlStr, 'text/xml');
+      var items = Array.from(xml.querySelectorAll('item'));
+      if (!items.length) continue; // try next proxy
+
+      console.log('[Feed] ' + url.split('?')[0].split('/').pop() + ' via proxy ' + pi + ': ' + items.length + ' items');
+
+      return items.map(function(item) {
+        var title = item.querySelector('title') ? item.querySelector('title').textContent : '';
+        var desc  = item.querySelector('description') ? item.querySelector('description').textContent : '';
+        var pub   = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
+        var playerName = title.split(/[:–\-]/)[0].trim();
+        var teamMatch = (title + ' ' + desc).match(/(ARI|ATL|BAL|BUF|CAR|CHI|CIN|CLE|DAL|DEN|DET|GB|HOU|IND|JAC|KC|LAC|LAR|LV|MIA|MIN|NE|NO|NYG|NYJ|PHI|PIT|SEA|SF|TB|TEN|WAS)/);
+        return {
+          title: title,
+          desc: desc.replace(/<!\[CDATA\[|\]\]>/g, '').trim(),
+          playerName: playerName,
+          team: teamMatch ? teamMatch[1] : '',
+          timeAgo: getTimeAgo(new Date(pub)),
+          pubDate: pub
+        };
+      });
+    } catch(e) {
+      console.warn('[Feed] proxy ' + pi + ' failed for ' + url + ':', e.message);
+    }
   }
+  return [];
 }
 
 async function loadRotowireFeed(silent) {
@@ -1378,13 +1404,24 @@ async function loadRotowireFeed(silent) {
       fetchRotoFeed('https://www.rotowire.com/rss/news.php?sport=NFL&type=transactions')
     ]);
     var all = [];
-    results.forEach(function(r) { if (r.status === 'fulfilled') all = all.concat(r.value); });
+    var feedCounts = [];
+    results.forEach(function(r) {
+      if (r.status === 'fulfilled') {
+        feedCounts.push(r.value.length);
+        all = all.concat(r.value);
+      } else {
+        feedCounts.push(0);
+      }
+    });
+    console.log('[Feeds] raw counts per feed:', feedCounts, 'total before dedup:', all.length);
     var seen = {};
     rotowireItems = all.filter(function(item) {
-      if (seen[item.title]) return false;
-      seen[item.title] = true;
+      var key = (item.title||'').toLowerCase().slice(0,80);
+      if (seen[key]) return false;
+      seen[key] = true;
       return true;
     }).sort(function(a,b){ return new Date(b.pubDate) - new Date(a.pubDate); });
+    console.log('[Feeds] after dedup:', rotowireItems.length, 'items');
     renderNewsTray();
     if (typeof currentProspect !== 'undefined' && currentProspect) scFetchProspectNews(currentProspect);
   } catch(err) {
