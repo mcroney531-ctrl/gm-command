@@ -1,4 +1,4 @@
-<!-- GM Command v0.3.4 | Updated: 2026-05-02 -->
+<!-- GM Command v0.3.5 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1346,6 +1346,39 @@ function renderTFPartnerChips() {
 var rotowireItems = [];
 
 async function fetchRotoFeed(url) {
+  var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url) + '&count=50';
+  try {
+    var timeoutPromise = new Promise(function(_, reject) {
+      setTimeout(function(){ reject(new Error('timeout')); }, 10000);
+    });
+    var res = await Promise.race([fetch(apiUrl), timeoutPromise]);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+    if (data.status !== 'ok' || !data.items) {
+      console.warn('[Feed] rss2json status:', data.status);
+      return [];
+    }
+    console.log('[Feed]', url.split('/').pop().split('?')[0], ':', data.items.length, 'items');
+    return data.items.map(function(item) {
+      var title = item.title || '';
+      var desc = (item.description || item.content || '').replace(/<[^>]+>/g, '').trim();
+      var pub = item.pubDate || '';
+      var playerName = title.split(/[:]/)[0].trim();
+      var teamMatch = (title + ' ' + desc).match(/\b(ARI|ATL|BAL|BUF|CAR|CHI|CIN|CLE|DAL|DEN|DET|GB|HOU|IND|JAC|KC|LAC|LAR|LV|MIA|MIN|NE|NO|NYG|NYJ|PHI|PIT|SEA|SF|TB|TEN|WAS)\b/);
+      return {
+        title: title,
+        desc: desc,
+        playerName: playerName,
+        team: teamMatch ? teamMatch[1] : '',
+        timeAgo: getTimeAgo(new Date(pub)),
+        pubDate: pub
+      };
+    });
+  } catch(e) {
+    console.warn('[Feed] rss2json failed:', e.message);
+    return [];
+  }
+}async function fetchRotoFeed(url) {
   // Try two proxies in sequence — allorigins first, corsproxy as fallback
   var proxies = [
     'https://api.allorigins.win/get?url=' + encodeURIComponent(url),
