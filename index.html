@@ -1,4 +1,4 @@
-<!-- GM Command v0.3.5 | Updated: 2026-05-02 -->
+<!-- GM Command v0.3.7 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1431,10 +1431,13 @@ async function fetchRotoFeed(url) {
 async function loadRotowireFeed(silent) {
   try {
     var lbl = document.getElementById('news-tray-label');
-    if (!silent && lbl) lbl.textContent = 'Rotowire · Syncing...';
+    if (!silent && lbl) lbl.textContent = 'News · Syncing...';
     var results = await Promise.allSettled([
       fetchRotoFeed('https://www.rotowire.com/rss/news.php?sport=NFL'),
-      fetchRotoFeed('https://www.rotowire.com/rss/news.php?sport=NFL&type=transactions')
+      fetchRotoFeed('https://www.rotowire.com/rss/news.php?sport=NFL&type=transactions'),
+      fetchRotoFeed('https://www.espn.com/espn/rss/nfl/news'),
+      fetchRotoFeed('https://www.nfl.com/rss/rsslanding?searchString=news'),
+      fetchRotoFeed('https://www.pff.com/news/feed')
     ]);
     var all = [];
     var feedCounts = [];
@@ -1460,7 +1463,7 @@ async function loadRotowireFeed(silent) {
   } catch(err) {
     console.error('Rotowire fetch error:', err);
     var lbl2 = document.getElementById('news-tray-label');
-    if (lbl2) lbl2.textContent = 'Rotowire · Unavailable';
+    if (lbl2) lbl2.textContent = 'News · Unavailable';
   }
 }
 
