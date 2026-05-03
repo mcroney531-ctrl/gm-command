@@ -1,4 +1,4 @@
-<!-- GM Command v0.4.5 | Updated: 2026-05-02 -->
+<!-- GM Command v0.4.6 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2120,11 +2120,11 @@ const tfSheetData = [
   }
 ];
 
-async function openTFSheet(idx) {
+async function openTFSheet(modeIdx) {
   var modeLabels = ['🔀 Cook It Up', '🎯 Find That Player', '📤 Shop My Assets', '🌐 Open Market'];
   var modeAccents = ['#e03040', '#0ea86b', '#1a56ff', '#d4900a'];
-  document.getElementById('tf-sheet-title').innerHTML = modeLabels[idx] || 'Trade Finder';
-  document.getElementById('tf-sheet-accent').style.background = modeAccents[idx] || '#0f1f3d';
+  document.getElementById('tf-sheet-title').innerHTML = modeLabels[modeIdx] || 'Trade Finder';
+  document.getElementById('tf-sheet-accent').style.background = modeAccents[modeIdx] || '#0f1f3d';
   document.getElementById('tf-overlay').classList.add('open');
   document.getElementById('tf-sheet').classList.add('open');
 
@@ -2170,7 +2170,7 @@ async function openTFSheet(idx) {
     (tableStr ? tableStr + nl + nl : '') +
     'Trade structure: ' + structure + '. Intent: ' + intent + '. Position priority: ' + posStr + '.' + nl + nl +
     rivalStr + nl + nl +
-    modeInstructions[idx] + nl + nl +
+    modeInstructions[modeIdx] + nl + nl +
     'Format your response as 2-3 trade packages. For each:' + nl +
     'PACKAGE [N]: [Label]' + nl + 'YOU SEND: [players]' + nl + 'YOU GET: [players]' + nl + 'TARGET: [team]' + nl + 'VERDICT: [1 sentence]' + nl + nl +
     'Use real player names from my roster. Mobile display — keep concise.';
@@ -2189,9 +2189,9 @@ async function openTFSheet(idx) {
     var text = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Could not generate packages — try again.';
 
     // Parse and render packages
-    body.innerHTML = renderTFPackages(text, modeAccents[idx]);
+    body.innerHTML = renderTFPackages(text, modeAccents[modeIdx]);
   } catch(e) {
-    body.innerHTML = '<div style="padding:20px;font-family:DM Mono,monospace;font-size:10px;color:#e03040;text-align:center">Error generating packages.<br>Check connection and try again.</div>';
+    body.innerHTML = '<div style="padding:20px;font-family:DM Mono,monospace;font-size:10px;color:#e03040;text-align:center">Error: ' + e.message + '<br><br>Check connection and try again.</div>';
   }
 }
 
@@ -2494,7 +2494,7 @@ function selectTFMode(idx) {
   if (el) el.innerHTML = labels[idx];
 }
 function submitTFWidget() {
-  openTFSheet(currentTFMode);
+  openTFSheet(currentTFMode).catch(function(e){ console.error('TF sheet error:', e); });
 }
 
 function toggleIntent(el) {
