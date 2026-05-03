@@ -1,4 +1,4 @@
-<!-- GM Command v0.5.0 | Updated: 2026-05-02 -->
+<!-- GM Command v0.5.1 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2372,23 +2372,23 @@ let chatHistory = [];
 
 function sendChatMessage(text) {
   nav('chat');
-  // Pre-fill the input and trigger sendChat via user-gesture-originated click
   setTimeout(function() {
     var input = document.getElementById('fc-input');
-    var btn = document.querySelector('#screen-chat .send');
-    if (input && btn) {
-      // Set value and trigger input event so any listeners fire
+    if (input) {
       input.value = text;
-      input.dispatchEvent(new Event('input'));
-      // Click the send button — this counts as a user gesture chain
-      btn.click();
-    } else {
-      // Fallback: just push to history and let user send manually
-      if (typeof chatHistory !== 'undefined') chatHistory.push({ role: 'user', content: text });
-      addFCMsg('you', text);
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+      input.focus();
+      // Flash the send button to hint user to tap it
+      var btn = document.querySelector('#screen-chat .send');
+      if (btn) {
+        btn.style.background = '#0ea86b';
+        setTimeout(function(){ btn.style.background = ''; }, 800);
+      }
     }
   }, 150);
 }
+
 
 
 async function sendChat() {
