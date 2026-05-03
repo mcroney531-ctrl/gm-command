@@ -1,4 +1,4 @@
-<!-- GM Command v0.5.2 | Updated: 2026-05-02 -->
+<!-- GM Command v0.5.3 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2121,42 +2121,37 @@ const tfSheetData = [
 ];
 
 function openTFSheet(modeIdx) {
-  // Build prompt from widget state
-  var myRosterStr = liveMyRoster && liveMyRoster.length
-    ? liveMyRoster.map(function(p){ return p.name + ' (' + p.pos + ', ' + p.team + ')'; }).join(', ')
-    : 'Roster not loaded';
-
+  // Build a SHORT prompt — system prompt already has full roster context
   var intentEl = document.querySelector('.tf-ichip.sel');
   var intent = intentEl ? intentEl.querySelector('.tf-ichip-lbl').textContent : 'general';
   var posSel = Array.from(document.querySelectorAll('.tf-pbtn[class*="sel-"]')).map(function(b){ return b.textContent; });
   var posStr = posSel.length ? posSel.join(', ') : 'any position';
   var structure = tradeType === 'multi' ? teamCount + '-team trade' : '2-way trade';
-
   var tableStr = tfTablePlayers.length
-    ? 'Players I am willing to trade: ' + tfTablePlayers.map(function(p){ return p.name + ' (' + p.pos + ')'; }).join(', ') + '.'
+    ? 'Shopping: ' + tfTablePlayers.map(function(p){ return p.name; }).join(', ') + '. '
     : '';
 
-  var rivalStr = rivalTeams.length
-    ? 'League rivals: ' + rivalTeams.slice(0,6).map(function(t){ return t.name + ' (' + t.record + ')'; }).join(', ') + '.'
-    : '';
-
-  var modeInstructions = [
-    'Generate 2-3 specific trade packages I could offer or receive. For each show: what I send, what I get, which rival to target, and a 1-sentence verdict.',
-    'Find 1-2 specific players I should target via trade based on my roster needs. For each: the player, why they fit, which rival likely has them, and a realistic offer.',
-    'Suggest 1-2 players from my roster I should consider trading away right now, and what I could realistically get back.',
-    'Scan all rival rosters and identify the best trade opportunity available in this league right now.'
+  var modePrompts = [
+    'Cook up 2 realistic trade packages for me. ' + tableStr + 'Structure: ' + structure + '. Intent: ' + intent + '. Priority: ' + posStr + '. Use PACKAGE 1 / YOU SEND / YOU GET / TARGET / VERDICT format.',
+    'Find me 1-2 players to target via trade. ' + tableStr + 'Intent: ' + intent + '. I need: ' + posStr + '. Which rivals likely have them and what would a fair offer look like?',
+    'Which players on my roster should I sell right now? ' + tableStr + 'Intent: ' + intent + '. What can I realistically get back?',
+    'Scan all rival rosters in this league. What is the single best trade opportunity available to me right now?'
   ];
 
-  var nl = '\n';
-  var prompt = 'Dynasty fantasy football trade analysis.' + nl + nl +
-    'My roster: ' + myRosterStr + nl + nl +
-    (tableStr ? tableStr + nl + nl : '') +
-    'Trade structure: ' + structure + '. Intent: ' + intent + '. Position priority: ' + posStr + '.' + nl + nl +
-    (rivalStr ? rivalStr + nl + nl : '') +
-    modeInstructions[modeIdx] + nl + nl +
-    'Format as 2-3 packages using: PACKAGE N: Label / YOU SEND: ... / YOU GET: ... / TARGET: team / VERDICT: one sentence. Use real player names from my roster.';
+  var prompt = modePrompts[modeIdx] || modePrompts[0];
 
-  // Send directly through chat with auto-response
+  // Clear previous trade prompts from history to avoid payload bloat
+  if (typeof chatHistory !== 'undefined') {
+    chatHistory = chatHistory.filter(function(m) {
+      return !m.content || (m.content.length < 500);
+    });
+    // Cap at last 6 messages
+    if (chatHistory.length > 6) chatHistory = chatHistory.slice(-6);
+  }
+
+  // Rebuild system prompt with live data
+  if (liveMyRoster && liveMyRoster.length) buildSystemPrompt();
+
   sendChatMessage(prompt);
 }
 
