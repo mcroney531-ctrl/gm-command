@@ -1,4 +1,4 @@
-<!-- GM Command v0.4.1 | Updated: 2026-05-02 -->
+<!-- GM Command v0.4.4 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -702,7 +702,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
   <div class="fc-msgs" id="fc-msgs">
     <div class="fc-msg">
       <span class="fc-who">GM Assistant</span>
-      <div class="fc-bubble"><span id="home-chat-preview-msg">War room is live. <strong>24-man roster loaded</strong> — Caleb Williams, Jayden Daniels, Bijan Robinson, Pacheco, Jefferson, McConkey, McBride and the rest. Rotowire synced 4 minutes ago, two items flagged on your guys.<br><br>What are we working on?<div class="fc-note">// Roster auto-injected · Rotowire NFL feed · All 12 rosters pulled from Sleeper</div></div>
+      <div class="fc-bubble"><span id="chat-opening-msg">War room is live. <strong>Roster loaded</strong>, Rotowire synced. What are we working on?<div class="fc-note">// Roster live from Sleeper · All 12 rosters pulled from Sleeper</div></div>
     </div>
   </div>
   <div class="fc-input-wrap">
@@ -1313,14 +1313,18 @@ function setLiveStatus(text, color) {
 
 // ── Main load sequence ──
 function updateHomeChatPreview() {
-  // Update the home screen chat card opening message with live roster
   if (!liveMyRoster || !liveMyRoster.length) return;
-  var el = document.getElementById('home-chat-preview-msg');
-  if (!el) return;
   var count = liveMyRoster.length;
-  var names = liveMyRoster.slice(0,4).map(function(p){ return p.name.split(' ')[1]; }).join(', ');
-  el.innerHTML = 'War room is live. <strong>' + count + '-man roster loaded</strong> — ' + names + ' and the rest. Rotowire synced. What are we working on?' +
-    '<div class="src-note">// Roster live from Sleeper · All 12 rosters pulled</div>';
+  var names = liveMyRoster.slice(0,4).map(function(p){ return p.name.split(' ').pop(); }).join(', ');
+  var msg = 'War room is live. <strong>' + count + '-man roster loaded</strong> — ' + names + ' and the rest. Rotowire synced. What are we working on?';
+
+  // Update home preview card
+  var el = document.getElementById('home-chat-preview-msg');
+  if (el) el.innerHTML = msg + '<div class="src-note">// Roster live from Sleeper · All 12 rosters pulled</div>';
+
+  // Update full chat screen opening message
+  var el2 = document.getElementById('chat-opening-msg');
+  if (el2) el2.innerHTML = msg + '<div class="fc-note">// Roster auto-injected · All 12 rosters pulled from Sleeper</div>';
 }
 
 function renderTFPartnerChips() {
@@ -2109,13 +2113,124 @@ const tfSheetData = [
   }
 ];
 
-function openTFSheet(idx) {
-  const d = tfSheetData[idx];
-  document.getElementById('tf-sheet-title').innerHTML = d.title;
-  document.getElementById('tf-sheet-accent').style.background = d.accent;
-  document.getElementById('tf-sheet-body').innerHTML = d.html();
+async function openTFSheet(idx) {
+  var modeLabels = ['🔀 Cook It Up', '🎯 Find That Player', '📤 Shop My Assets', '🌐 Open Market'];
+  var modeAccents = ['#e03040', '#0ea86b', '#1a56ff', '#d4900a'];
+  document.getElementById('tf-sheet-title').innerHTML = modeLabels[idx] || 'Trade Finder';
+  document.getElementById('tf-sheet-accent').style.background = modeAccents[idx] || '#0f1f3d';
   document.getElementById('tf-overlay').classList.add('open');
   document.getElementById('tf-sheet').classList.add('open');
+
+  // Show loading state
+  var body = document.getElementById('tf-sheet-body');
+  body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;gap:12px">' +
+    '<div style="font-family:DM Mono,monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5">Generating packages...</div>' +
+    '<div style="display:flex;gap:5px">' +
+      '<div style="width:6px;height:6px;border-radius:50%;background:#1a56ff;animation:tdot 1.2s ease infinite"></div>' +
+      '<div style="width:6px;height:6px;border-radius:50%;background:#1a56ff;animation:tdot 1.2s .2s ease infinite"></div>' +
+      '<div style="width:6px;height:6px;border-radius:50%;background:#1a56ff;animation:tdot 1.2s .4s ease infinite"></div>' +
+    '</div></div>';
+
+  // Build prompt from widget state
+  var myRosterStr = liveMyRoster && liveMyRoster.length
+    ? liveMyRoster.map(function(p){ return p.name + ' (' + p.pos + ', ' + p.team + ')'; }).join(', ')
+    : 'Roster not loaded';
+
+  var intentEl = document.querySelector('.tf-ichip.sel');
+  var intent = intentEl ? intentEl.querySelector('.tf-ichip-lbl').textContent : 'general';
+  var posSel = Array.from(document.querySelectorAll('.tf-pbtn[class*="sel-"]')).map(function(b){ return b.textContent; });
+  var posStr = posSel.length ? posSel.join(', ') : 'any position';
+  var structure = tradeType === 'multi' ? teamCount + '-team trade' : '2-way trade';
+
+  var tableStr = tfTablePlayers.length
+    ? 'Players I am willing to trade: ' + tfTablePlayers.map(function(p){ return p.name + ' (' + p.pos + ')'; }).join(', ') + '.'
+    : '';
+
+  var rivalStr = rivalTeams.length
+    ? 'League rivals: ' + rivalTeams.slice(0,6).map(function(t){ return t.name + ' (' + t.record + ')'; }).join(', ') + '.'
+    : '';
+
+  var modeInstructions = [
+    'Generate 2-3 specific trade packages I could offer or receive. For each package show: what I send, what I get, which rival to target, and a 1-sentence verdict.',
+    'Find 1-2 specific players I should target via trade based on my roster needs. For each: the player, why they fit, which rival likely has them, and a realistic offer.',
+    'Suggest 1-2 players from my roster I should consider trading away right now, and what I could realistically get back.',
+    'Scan all rival rosters and identify the single best trade opportunity available in this league right now.'
+  ];
+
+  var nl = '\n';
+  var prompt = 'You are a dynasty fantasy football GM assistant.' + nl + nl +
+    'My roster: ' + myRosterStr + nl + nl +
+    (tableStr ? tableStr + nl + nl : '') +
+    'Trade structure: ' + structure + '. Intent: ' + intent + '. Position priority: ' + posStr + '.' + nl + nl +
+    rivalStr + nl + nl +
+    modeInstructions[idx] + nl + nl +
+    'Format your response as 2-3 trade packages. For each:' + nl +
+    'PACKAGE [N]: [Label]' + nl + 'YOU SEND: [players]' + nl + 'YOU GET: [players]' + nl + 'TARGET: [team]' + nl + 'VERDICT: [1 sentence]' + nl + nl +
+    'Use real player names from my roster. Mobile display — keep concise.';
+
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    var data = await res.json();
+    var text = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Could not generate packages — try again.';
+
+    // Parse and render packages
+    body.innerHTML = renderTFPackages(text, modeAccents[idx]);
+  } catch(e) {
+    body.innerHTML = '<div style="padding:20px;font-family:DM Mono,monospace;font-size:10px;color:#e03040;text-align:center">Error generating packages.<br>Check connection and try again.</div>';
+  }
+}
+
+function renderTFPackages(text, accent) {
+  // Parse PACKAGE blocks from Claude response
+  var packages = text.split(/PACKAGE\s+\d+:/i).filter(function(s){ return s.trim(); });
+  if (!packages.length) {
+    // Fallback: show raw text nicely
+    return '<div style="padding:16px;font-size:13px;line-height:1.7;color:#0f1f3d">' + text.split('\n').join('<br>') + '</div>';
+  }
+
+  return packages.map(function(pkg, i) {
+    var lines = pkg.trim().split('\n').filter(Boolean);
+    var label = lines[0] || ('Package ' + (i+1));
+    var sendLine = '', getLine = '', targetLine = '', verdictLine = '';
+    lines.forEach(function(l) {
+      if (/YOU SEND:/i.test(l)) sendLine = l.replace(/YOU SEND:/i,'').trim();
+      if (/YOU GET:/i.test(l)) getLine = l.replace(/YOU GET:/i,'').trim();
+      if (/TARGET:/i.test(l)) targetLine = l.replace(/TARGET:/i,'').trim();
+      if (/VERDICT:/i.test(l)) verdictLine = l.replace(/VERDICT:/i,'').trim();
+    });
+
+    return '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 6px rgba(15,31,61,.06)">' +
+      '<div style="padding:10px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb;display:flex;align-items:center;justify-content:space-between">' +
+        '<span style="font-size:12px;font-weight:700;color:#0f1f3d">Package ' + (i+1) + (label ? ' · ' + label.trim() : '') + '</span>' +
+        (targetLine ? '<span style="font-family:DM Mono,monospace;font-size:8px;color:#7a8fb5;letter-spacing:1px">vs ' + targetLine + '</span>' : '') +
+      '</div>' +
+      '<div style="padding:12px 14px">' +
+        '<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:10px">' +
+          '<div>' +
+            '<div style="font-family:DM Mono,monospace;font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">You Send</div>' +
+            '<div style="font-size:12px;font-weight:600;color:#e03040">' + (sendLine||'—') + '</div>' +
+          '</div>' +
+          '<div style="font-size:18px;color:#c8d2e8">⇄</div>' +
+          '<div>' +
+            '<div style="font-family:DM Mono,monospace;font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">You Get</div>' +
+            '<div style="font-size:12px;font-weight:600;color:#0ea86b">' + (getLine||'—') + '</div>' +
+          '</div>' +
+        '</div>' +
+        (verdictLine ? '<div style="font-size:11px;color:#3a4e72;line-height:1.55;padding:8px 10px;background:#f4f6fb;border-radius:8px;border-left:3px solid ' + (accent||'#1a56ff') + '">' + verdictLine + '</div>' : '') +
+      '</div>' +
+      '<div style="padding:8px 14px;border-top:1px solid #dce2f0;display:flex;justify-content:flex-end">' +
+        '<button onclick="goToChat()" style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#1a56ff;background:none;border:none;cursor:pointer">Dig Deeper in Chat &#x203A;</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
 function closeTFSheet() {
@@ -2368,26 +2483,7 @@ function selectTFMode(idx) {
   if (el) el.innerHTML = labels[idx];
 }
 function submitTFWidget() {
-  // Build context string for GM chat
-  if (tfTablePlayers.length > 0) {
-    var playerNames = tfTablePlayers.map(function(p){
-      return p.name + ' (' + p.pos + (p.number ? ', #' + p.number : '') + ')';
-    }).join(', ');
-    var context = 'I want to explore trading ' + playerNames + '. ';
-    // Add intent if selected
-    var intentEl = document.querySelector('.tf-ichip.sel');
-    if (intentEl) context += 'My goal: ' + intentEl.querySelector('.tf-ichip-lbl').textContent + '. ';
-    // Add position priority
-    var posSel = Array.from(document.querySelectorAll('.tf-pbtn[class*="sel-"]')).map(function(b){ return b.textContent; });
-    if (posSel.length) context += 'Targeting: ' + posSel.join(', ') + '. ';
-    // Add structure
-    context += 'Trade structure: ' + (tradeType === 'multi' ? teamCount + '-team trade.' : '2-way trade.');
-    // Push to chat
-    if (typeof chatHistory !== "undefined") chatHistory.push({role:"user", content: context});
-    nav("chat");
-  } else {
-    openTFSheet(currentTFMode);
-  }
+  openTFSheet(currentTFMode);
 }
 
 function toggleIntent(el) {
@@ -3731,8 +3827,7 @@ function removeTFTablePlayer(id) {
       <div style="display:flex;align-items:center;gap:7px"><div style="width:6px;height:6px;border-radius:50%;background:#0ea86b;animation:blink 2s ease infinite"></div><span style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:1.5px;color:#7a8fb5;text-transform:uppercase" id="news-screen-status">Live · Synced</span></div>
       <button onclick="refreshAllNews()" style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#1a56ff;background:none;border:none;cursor:pointer">↻ Refresh</button>
     </div>
-    <!-- Debug panel — shows feed counts, tap to dismiss -->
-    <div id="news-debug-panel" style="background:#f4f6fb;border:1px solid #dce2f0;border-radius:10px;margin:0 12px 10px;cursor:pointer" onclick="this.style.display='none'" title="Tap to dismiss"></div>
+
     <div id="news-feed-list"></div>
   </div>
   <div class="bnav">
