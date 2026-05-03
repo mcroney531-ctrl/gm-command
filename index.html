@@ -1,4 +1,4 @@
-<!-- GM Command v0.4.9 | Updated: 2026-05-02 -->
+<!-- GM Command v0.5.0 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2370,36 +2370,26 @@ Be direct, opinionated, and analytical. Keep responses concise — this is a mob
 
 let chatHistory = [];
 
-async function sendChatMessage(text) {
-  // Navigate to chat first
+function sendChatMessage(text) {
   nav('chat');
-  // Rebuild system prompt with live data
-  if (liveMyRoster && liveMyRoster.length) buildSystemPrompt();
-  // Display user message
-  addFCMsg('you', text);
-  chatHistory.push({ role: 'user', content: text });
-  const typingEl = addTyping();
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: (window.liveSystemPrompt || systemPrompt),
-        messages: chatHistory
-      })
-    });
-    const data = await res.json();
-    const reply = data.content?.[0]?.text || 'Something went wrong — try again.';
-    typingEl.remove();
-    addFCMsg('ai', reply);
-    chatHistory.push({ role: 'assistant', content: reply });
-  } catch(e) {
-    typingEl.remove();
-    addFCMsg('ai', 'Connection error. Check your network and try again.');
-  }
+  // Pre-fill the input and trigger sendChat via user-gesture-originated click
+  setTimeout(function() {
+    var input = document.getElementById('fc-input');
+    var btn = document.querySelector('#screen-chat .send');
+    if (input && btn) {
+      // Set value and trigger input event so any listeners fire
+      input.value = text;
+      input.dispatchEvent(new Event('input'));
+      // Click the send button — this counts as a user gesture chain
+      btn.click();
+    } else {
+      // Fallback: just push to history and let user send manually
+      if (typeof chatHistory !== 'undefined') chatHistory.push({ role: 'user', content: text });
+      addFCMsg('you', text);
+    }
+  }, 150);
 }
+
 
 async function sendChat() {
   const input = document.getElementById('fc-input');
