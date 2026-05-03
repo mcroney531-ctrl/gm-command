@@ -1,4 +1,4 @@
-<!-- GM Command v0.4.7 | Updated: 2026-05-02 -->
+<!-- GM Command v0.4.8 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2120,24 +2120,7 @@ const tfSheetData = [
   }
 ];
 
-async function openTFSheet(modeIdx) {
-  var modeLabels = ['🔀 Cook It Up', '🎯 Find That Player', '📤 Shop My Assets', '🌐 Open Market'];
-  var modeAccents = ['#e03040', '#0ea86b', '#1a56ff', '#d4900a'];
-  document.getElementById('tf-sheet-title').innerHTML = modeLabels[modeIdx] || 'Trade Finder';
-  document.getElementById('tf-sheet-accent').style.background = modeAccents[modeIdx] || '#0f1f3d';
-  document.getElementById('tf-overlay').classList.add('open');
-  document.getElementById('tf-sheet').classList.add('open');
-
-  // Show loading state
-  var body = document.getElementById('tf-sheet-body');
-  body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;gap:12px">' +
-    '<div style="font-family:DM Mono,monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5">Generating packages...</div>' +
-    '<div style="display:flex;gap:5px">' +
-      '<div style="width:6px;height:6px;border-radius:50%;background:#1a56ff;animation:tdot 1.2s ease infinite"></div>' +
-      '<div style="width:6px;height:6px;border-radius:50%;background:#1a56ff;animation:tdot 1.2s .2s ease infinite"></div>' +
-      '<div style="width:6px;height:6px;border-radius:50%;background:#1a56ff;animation:tdot 1.2s .4s ease infinite"></div>' +
-    '</div></div>';
-
+function openTFSheet(modeIdx) {
   // Build prompt from widget state
   var myRosterStr = liveMyRoster && liveMyRoster.length
     ? liveMyRoster.map(function(p){ return p.name + ' (' + p.pos + ', ' + p.team + ')'; }).join(', ')
@@ -2158,48 +2141,24 @@ async function openTFSheet(modeIdx) {
     : '';
 
   var modeInstructions = [
-    'Generate 2-3 specific trade packages I could offer or receive. For each package show: what I send, what I get, which rival to target, and a 1-sentence verdict.',
+    'Generate 2-3 specific trade packages I could offer or receive. For each show: what I send, what I get, which rival to target, and a 1-sentence verdict.',
     'Find 1-2 specific players I should target via trade based on my roster needs. For each: the player, why they fit, which rival likely has them, and a realistic offer.',
     'Suggest 1-2 players from my roster I should consider trading away right now, and what I could realistically get back.',
-    'Scan all rival rosters and identify the single best trade opportunity available in this league right now.'
+    'Scan all rival rosters and identify the best trade opportunity available in this league right now.'
   ];
 
   var nl = '\n';
-  var prompt = 'You are a dynasty fantasy football GM assistant.' + nl + nl +
+  var prompt = 'Dynasty fantasy football trade analysis.' + nl + nl +
     'My roster: ' + myRosterStr + nl + nl +
     (tableStr ? tableStr + nl + nl : '') +
     'Trade structure: ' + structure + '. Intent: ' + intent + '. Position priority: ' + posStr + '.' + nl + nl +
-    rivalStr + nl + nl +
+    (rivalStr ? rivalStr + nl + nl : '') +
     modeInstructions[modeIdx] + nl + nl +
-    'Format your response as 2-3 trade packages. For each:' + nl +
-    'PACKAGE [N]: [Label]' + nl + 'YOU SEND: [players]' + nl + 'YOU GET: [players]' + nl + 'TARGET: [team]' + nl + 'VERDICT: [1 sentence]' + nl + nl +
-    'Use real player names from my roster. Mobile display — keep concise.';
+    'Format as 2-3 packages using: PACKAGE N: Label / YOU SEND: ... / YOU GET: ... / TARGET: team / VERDICT: one sentence. Use real player names from my roster.';
 
-  try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 800,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    if (!res.ok) {
-      var errText = await res.text();
-      throw new Error('HTTP ' + res.status + ': ' + errText.slice(0, 100));
-    }
-    var data = await res.json();
-    var text = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Could not generate packages — try again.';
-
-    // Parse and render packages
-    body.innerHTML = renderTFPackages(text, modeAccents[modeIdx]);
-  } catch(e) {
-    body.innerHTML = '<div style="padding:20px;font-family:DM Mono,monospace;font-size:10px;color:#e03040;text-align:center">Error: ' + e.message + '<br><br>Check connection and try again.</div>';
-  }
+  // Inject into chat and navigate there
+  if (typeof chatHistory !== 'undefined') chatHistory.push({ role: 'user', content: prompt });
+  nav('chat');
 }
 
 function renderTFPackages(text, accent) {
