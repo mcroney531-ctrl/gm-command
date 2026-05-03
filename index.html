@@ -1,4 +1,4 @@
-<!-- GM Command v0.5.1 | Updated: 2026-05-02 -->
+<!-- GM Command v0.5.2 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -651,7 +651,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
         </div>
         <div class="cc-input">
           <input type="text" placeholder="Ask anything..." onclick="nav('chat')">
-          <button class="send" onclick="nav('chat')"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+          <button class="send" onclick="sendChat()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
         </div>
       </div>
     </div>
@@ -2379,15 +2379,10 @@ function sendChatMessage(text) {
       input.style.height = 'auto';
       input.style.height = Math.min(input.scrollHeight, 120) + 'px';
       input.focus();
-      // Flash the send button to hint user to tap it
-      var btn = document.querySelector('#screen-chat .send');
-      if (btn) {
-        btn.style.background = '#0ea86b';
-        setTimeout(function(){ btn.style.background = ''; }, 800);
-      }
     }
   }, 150);
 }
+
 
 
 
