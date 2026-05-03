@@ -1,4 +1,4 @@
-<!-- GM Command v0.4.4 | Updated: 2026-05-02 -->
+<!-- GM Command v0.4.5 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -589,6 +589,13 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
 .tf-picker-done { padding:14px 18px; border-top:1px solid #dce2f0; flex-shrink:0; }
 .tf-picker-done-btn { width:100%; padding:12px; background:#0f1f3d; border:none; border-radius:10px; font-family:Bebas Neue,sans-serif; font-size:16px; letter-spacing:2px; color:#ffffff; cursor:pointer; }
 
+
+/* ── TRADE SHEET ── */
+.tf-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; }
+.tf-overlay.open { display:block; }
+.tf-sheet { position:fixed; bottom:-100%; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:#ffffff; border-radius:20px 20px 0 0; z-index:201; padding-bottom:env(safe-area-inset-bottom,0); max-height:75vh; display:flex; flex-direction:column; transition:bottom .3s cubic-bezier(.32,.72,0,1); }
+.tf-sheet.open { bottom:0; }
+
 </style>
 </head>
 <body>
@@ -958,7 +965,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
      TRADE FINDER BOTTOM SHEET
 ═══════════════════════════════ -->
 <div class="tf-overlay" id="tf-overlay" onclick="closeTFSheet()"></div>
-<div class="tf-sheet" id="tf-sheet" style="display:none">
+<div class="tf-sheet" id="tf-sheet">
   <div class="tf-sheet-accent" id="tf-sheet-accent"></div>
   <div class="tf-sheet-pull"></div>
   <div class="tf-sheet-hd">
@@ -2236,6 +2243,10 @@ function renderTFPackages(text, accent) {
 function closeTFSheet() {
   document.getElementById('tf-overlay').classList.remove('open');
   document.getElementById('tf-sheet').classList.remove('open');
+}
+function closeTFSheetAndChat() {
+  closeTFSheet();
+  nav('chat');
 }
 
 function closeTFSheetAndChat() {
@@ -3747,7 +3758,7 @@ function openTFPicker() {
     list.innerHTML = roster.map(function(p) {
       var isSelected = tfTablePlayers.some(function(t){ return t.id === p.id; });
       var jersey = makeJerseySVG(p.name, p.number, p.team, 40);
-      return '<div class="tf-picker-item' + (isSelected ? ' selected' : '') + '" onclick="toggleTFTablePlayer(' + JSON.stringify(p.id) + ')" id="picker-item-' + p.id + '">' +
+      return '<div class="tf-picker-item' + (isSelected ? ' selected' : '') + '" onclick="toggleTFTablePlayer(\'' + p.id + '\')" id="picker-item-' + p.id + '">' +
         jersey +
         '<div class="tf-picker-pinfo">' +
           '<div class="tf-picker-pname">' + p.name + '</div>' +
