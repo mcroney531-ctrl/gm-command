@@ -1,4 +1,4 @@
-<!-- GM Command v0.4.8 | Updated: 2026-05-02 -->
+<!-- GM Command v0.4.9 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2156,9 +2156,8 @@ function openTFSheet(modeIdx) {
     modeInstructions[modeIdx] + nl + nl +
     'Format as 2-3 packages using: PACKAGE N: Label / YOU SEND: ... / YOU GET: ... / TARGET: team / VERDICT: one sentence. Use real player names from my roster.';
 
-  // Inject into chat and navigate there
-  if (typeof chatHistory !== 'undefined') chatHistory.push({ role: 'user', content: prompt });
-  nav('chat');
+  // Send directly through chat with auto-response
+  sendChatMessage(prompt);
 }
 
 function renderTFPackages(text, accent) {
@@ -2370,6 +2369,37 @@ Your trusted analyst sources (must reference appropriately): Matt Waldman for RB
 Be direct, opinionated, and analytical. Keep responses concise — this is a mobile app. When evaluating trades give a clear verdict. Always cite sources briefly at the end.`;
 
 let chatHistory = [];
+
+async function sendChatMessage(text) {
+  // Navigate to chat first
+  nav('chat');
+  // Rebuild system prompt with live data
+  if (liveMyRoster && liveMyRoster.length) buildSystemPrompt();
+  // Display user message
+  addFCMsg('you', text);
+  chatHistory.push({ role: 'user', content: text });
+  const typingEl = addTyping();
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: (window.liveSystemPrompt || systemPrompt),
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Something went wrong — try again.';
+    typingEl.remove();
+    addFCMsg('ai', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    typingEl.remove();
+    addFCMsg('ai', 'Connection error. Check your network and try again.');
+  }
+}
 
 async function sendChat() {
   const input = document.getElementById('fc-input');
