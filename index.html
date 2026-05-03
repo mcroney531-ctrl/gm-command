@@ -1,4 +1,4 @@
-<!-- GM Command v0.5.4 | Updated: 2026-05-03 -->
+<!-- GM Command v0.5.5 | Updated: 2026-05-03 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2218,10 +2218,16 @@ async function sendChat() {
       })
     });
     const data = await res.json();
-    const reply = data.content?.[0]?.text || 'Something went wrong — try again.';
+    const reply = data.content?.[0]?.text;
     typingEl.remove();
-    addFCMsg('ai', reply);
-    chatHistory.push({ role: 'assistant', content: reply });
+    if (reply) {
+      addFCMsg('ai', reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+    } else {
+      // Show actual error for debugging
+      var errMsg = data.error?.message || data.error?.type || JSON.stringify(data).slice(0,120);
+      addFCMsg('ai', 'API error (' + res.status + '): ' + errMsg);
+    }
   } catch (e) {
     typingEl.remove();
     addFCMsg('ai', 'Connection error. Check your network and try again.');
