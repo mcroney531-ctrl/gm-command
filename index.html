@@ -1,4 +1,4 @@
-<!-- GM Command v0.3.8 | Updated: 2026-05-02 -->
+<!-- GM Command v0.4.0 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1346,38 +1346,50 @@ function renderTFPartnerChips() {
 var rotowireItems = [];
 
 async function fetchRotoFeed(url) {
-  var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url) + '&count=50';
-  try {
-    var timeoutPromise = new Promise(function(_, reject) {
-      setTimeout(function(){ reject(new Error('timeout')); }, 10000);
-    });
-    var res = await Promise.race([fetch(apiUrl), timeoutPromise]);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    var data = await res.json();
-    if (data.status !== 'ok' || !data.items) {
-      console.warn('[Feed] rss2json status:', data.status);
-      return [];
+  // Try allorigins /get (JSON wrapper) then /raw (direct XML)
+  // Add timestamp to bust allorigins cache of the target feed
+  var cacheBust = '?_t=' + Math.floor(Date.now()/60000); // changes every minute
+  var bustUrl = url + (url.includes('?') ? '&' : '?') + '_cb=' + Math.floor(Date.now()/60000);
+  var proxies = [
+    { url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(bustUrl), mode: 'json' },
+    { url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(bustUrl), mode: 'xml' }
+  ];
+  for (var pi = 0; pi < proxies.length; pi++) {
+    try {
+      var res = await fetch(proxies[pi].url, { cache: 'no-store' });
+      if (!res.ok) { console.warn('[Feed] proxy', pi, 'HTTP', res.status); continue; }
+      var xmlStr;
+      if (proxies[pi].mode === 'json') {
+        var data = await res.json();
+        xmlStr = data.contents || '';
+      } else {
+        xmlStr = await res.text();
+      }
+      if (!xmlStr || xmlStr.length < 100) { console.warn('[Feed] proxy', pi, 'empty response'); continue; }
+      var xml = new DOMParser().parseFromString(xmlStr, 'text/xml');
+      var parseErr = xml.querySelector('parsererror');
+      if (parseErr) { console.warn('[Feed] proxy', pi, 'XML parse error'); continue; }
+      var items = Array.from(xml.querySelectorAll('item'));
+      console.log('[Feed]', url.split('?')[0].split('/').pop(), 'via proxy', pi, ':', items.length, 'items, xml len:', xmlStr.length);
+      if (!items.length) continue;
+      return items.map(function(item) {
+        var getT = function(tag) {
+          var el = item.querySelector(tag);
+          return el ? (el.textContent || el.innerHTML || '').replace(/<!\[CDATA\[|\]\]>/g,'').trim() : '';
+        };
+        var title = getT('title');
+        var desc = getT('description').replace(/<[^>]+>/g,'');
+        var pub = getT('pubDate');
+        var playerName = title.split(/[:]/)[0].trim();
+        var teamMatch = (title+' '+desc).match(/\b(ARI|ATL|BAL|BUF|CAR|CHI|CIN|CLE|DAL|DEN|DET|GB|HOU|IND|JAC|KC|LAC|LAR|LV|MIA|MIN|NE|NO|NYG|NYJ|PHI|PIT|SEA|SF|TB|TEN|WAS)\b/);
+        return { title:title, desc:desc, playerName:playerName, team:teamMatch?teamMatch[1]:'', timeAgo:getTimeAgo(new Date(pub)), pubDate:pub };
+      });
+    } catch(e) {
+      console.warn('[Feed] proxy', pi, 'error:', e.message);
     }
-    console.log('[Feed]', url.split('/').pop().split('?')[0], ':', data.items.length, 'items');
-    return data.items.map(function(item) {
-      var title = item.title || '';
-      var desc = (item.description || item.content || '').replace(/<[^>]+>/g, '').trim();
-      var pub = item.pubDate || '';
-      var playerName = title.split(/[:]/)[0].trim();
-      var teamMatch = (title + ' ' + desc).match(/\b(ARI|ATL|BAL|BUF|CAR|CHI|CIN|CLE|DAL|DEN|DET|GB|HOU|IND|JAC|KC|LAC|LAR|LV|MIA|MIN|NE|NO|NYG|NYJ|PHI|PIT|SEA|SF|TB|TEN|WAS)\b/);
-      return {
-        title: title,
-        desc: desc,
-        playerName: playerName,
-        team: teamMatch ? teamMatch[1] : '',
-        timeAgo: getTimeAgo(new Date(pub)),
-        pubDate: pub
-      };
-    });
-  } catch(e) {
-    console.warn('[Feed] rss2json failed:', e.message);
-    return [];
   }
+  console.warn('[Feed] all proxies failed for', url);
+  return [];
 }async function fetchRotoFeed(url) {
   // Try two proxies in sequence — allorigins first, corsproxy as fallback
   var proxies = [
