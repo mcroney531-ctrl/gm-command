@@ -1,4 +1,4 @@
-<!-- GM Command v0.4.0 | Updated: 2026-05-02 -->
+<!-- GM Command v0.4.1 | Updated: 2026-05-02 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1444,13 +1444,15 @@ async function loadRotowireFeed(silent) {
   try {
     var lbl = document.getElementById('news-tray-label');
     if (!silent && lbl) lbl.textContent = 'News · Syncing...';
-    var results = await Promise.allSettled([
-      fetchRotoFeed('https://www.rotowire.com/rss/news.php?sport=NFL'),
-      fetchRotoFeed('https://www.rotowire.com/rss/news.php?sport=NFL&type=transactions'),
-      fetchRotoFeed('https://www.espn.com/espn/rss/nfl/news'),
-      fetchRotoFeed('https://www.nfl.com/rss/rsslanding?searchString=news'),
-      fetchRotoFeed('https://www.pff.com/news/feed')
-    ]);
+    var feedDefs = [
+      { url: 'https://www.rotowire.com/rss/news.php?sport=NFL', name: 'Rotowire' },
+      { url: 'https://www.rotowire.com/rss/news.php?sport=NFL&type=transactions', name: 'Roto Trans' },
+      { url: 'https://www.espn.com/espn/rss/nfl/news', name: 'ESPN' },
+      { url: 'https://profootballtalk.nbcsports.com/feed/', name: 'PFT' },
+      { url: 'https://www.cbssports.com/rss/headlines/nfl/', name: 'CBS' },
+      { url: 'https://www.pff.com/news/feed', name: 'PFF' }
+    ];
+    var results = await Promise.allSettled(feedDefs.map(function(f){ return fetchRotoFeed(f.url); }));
     var all = [];
     var feedCounts = [];
     results.forEach(function(r) {
@@ -1462,6 +1464,8 @@ async function loadRotowireFeed(silent) {
       }
     });
     console.log('[Feeds] raw counts per feed:', feedCounts, 'total before dedup:', all.length);
+    // Store feed names for debug panel
+    window._feedDebug = feedDefs ? feedDefs.map(function(f,i){ return {name:f.name, count:feedCounts[i]||0}; }) : [];
     var seen = {};
     rotowireItems = all.filter(function(item) {
       var key = (item.title||'').toLowerCase().slice(0,80);
