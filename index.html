@@ -1,4 +1,4 @@
-<!-- GM Command v0.5.6 | Updated: 2026-05-03 -->
+<!-- GM Command v0.5.7 | Updated: 2026-05-06 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -698,6 +698,7 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     <div class="fc-hrow">
       <button class="back-btn" onclick="nav('home')">‹ &nbsp;Home</button>
       <div><div class="fc-title">GM Assistant</div><div class="fc-meta">Claude Sonnet · Roster + News injected</div></div>
+      <button onclick="clearChat()" style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.5);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:4px 8px;cursor:pointer;flex-shrink:0">New Chat</button>
       <div style="width:60px"></div>
     </div>
   </div>
@@ -1831,6 +1832,19 @@ function buildRivalTeams() {
 }
 
 // ── Rebuild system prompt with live roster ──
+
+function clearChat() {
+  chatHistory = [];
+  var msgs = document.getElementById('fc-msgs');
+  if (msgs) {
+    msgs.innerHTML = '<div class="msg msg-ai"><span class="msg-who">GM Assistant</span><div class="bubble"><span id="chat-opening-msg">War room is live. <strong>Roster loaded</strong>, Rotowire synced. What are we working on?<div class="fc-note">// Roster auto-injected · All 12 rosters pulled from Sleeper</div></span></div></div>';
+  }
+  if (liveMyRoster && liveMyRoster.length) {
+    buildSystemPrompt();
+    updateHomeChatPreview();
+  }
+}
+
 function buildSystemPrompt() {
   if (!liveMyRoster || !liveMyRoster.length) return;
   var rosterStr = liveMyRoster.map(function(p) {
@@ -2147,6 +2161,7 @@ function openTFSheet(modeIdx) {
   // Rebuild system prompt with live data
   if (liveMyRoster && liveMyRoster.length) buildSystemPrompt();
 
+  clearChat();
   sendChatMessage(prompt);
 }
 
@@ -2403,15 +2418,10 @@ async function sendChat() {
       })
     });
     const data = await res.json();
-    const reply = data.content?.[0]?.text;
+    const reply = data.content?.[0]?.text || 'Something went wrong — try again.';
     typingEl.remove();
-    if (reply) {
-      addFCMsg('ai', reply);
-      chatHistory.push({ role: 'assistant', content: reply });
-    } else {
-      var errDetail = data.error?.message || data.error?.type || JSON.stringify(data).slice(0, 150);
-      addFCMsg('ai', 'API error (' + res.status + '): ' + errDetail);
-    }
+    addFCMsg('ai', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
   } catch (e) {
     typingEl.remove();
     addFCMsg('ai', 'Connection error. Check your network and try again.');
