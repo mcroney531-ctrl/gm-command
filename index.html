@@ -1,4 +1,4 @@
-<!-- GM Command v0.5.7 | Updated: 2026-05-06 -->
+<!-- GM Command v0.5.8 | Updated: 2026-05-06 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2397,14 +2397,14 @@ async function sendChat() {
   if (!text) return;
   input.value = '';
   input.style.height = 'auto';
-
-  // Always rebuild if live roster is available — ensures latest data
-  if (liveMyRoster && liveMyRoster.length) buildSystemPrompt();
-
   addFCMsg('you', text);
   chatHistory.push({ role: 'user', content: text });
-
   const typingEl = addTyping();
+
+  // ── Build per-message context: look up players mentioned + matching news ──
+  var contextAddendum = buildMessageContext(text);
+  var sysPrompt = (window.liveSystemPrompt || systemPrompt);
+  if (contextAddendum) sysPrompt = sysPrompt + '\n\n' + contextAddendum;
 
   try {
     const res = await fetch('/.netlify/functions/chat', {
@@ -2413,19 +2413,111 @@ async function sendChat() {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
-        system: (window.liveSystemPrompt || systemPrompt),
+        system: sysPrompt,
         messages: chatHistory
       })
     });
+    if (!res.ok) {
+      var errText = await res.text();
+      throw new Error('API error (' + res.status + '): ' + errText.slice(0, 200));
+    }
     const data = await res.json();
-    const reply = data.content?.[0]?.text || 'Something went wrong — try again.';
+    const reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Something went wrong — try again.';
     typingEl.remove();
     addFCMsg('ai', reply);
     chatHistory.push({ role: 'assistant', content: reply });
-  } catch (e) {
+  } catch(e) {
     typingEl.remove();
-    addFCMsg('ai', 'Connection error. Check your network and try again.');
+    addFCMsg('ai', e.message || 'Connection error. Check your network and try again.');
   }
+}
+
+// Extract player references and build live context addendum
+function buildMessageContext(userText) {
+  if (!sleeperPlayers || !window.rotowireItems) return '';
+  var blocks = [];
+
+  // Extract capitalized name candidates (2+ words starting with caps) AND last-name-only patterns
+  var matches = userText.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+\b/g) || [];
+  // Also catch lowercase variants user might type
+  var words = userText.split(/\s+/);
+  var possibleNames = new Set(matches);
+
+  // Build last-name index of all NFL players for fast lookup
+  var lastNameMap = {};
+  for (var pid in sleeperPlayers) {
+    var pl = sleeperPlayers[pid];
+    if (!pl || !pl.full_name || !pl.position) continue;
+    if (['QB','RB','WR','TE'].indexOf(pl.position) < 0) continue;
+    var ln = (pl.last_name || pl.full_name.split(' ').pop() || '').toLowerCase();
+    if (!ln) continue;
+    if (!lastNameMap[ln]) lastNameMap[ln] = [];
+    lastNameMap[ln].push(pl);
+  }
+
+  // Resolve full-name matches first
+  var resolved = [];
+  possibleNames.forEach(function(name) {
+    for (var pid in sleeperPlayers) {
+      var pl = sleeperPlayers[pid];
+      if (pl && pl.full_name && pl.full_name.toLowerCase() === name.toLowerCase()) {
+        resolved.push(pl);
+        return;
+      }
+    }
+  });
+
+  // Resolve last-name-only references (e.g. "trade for Bech")
+  // Look at each word — if it matches a unique NFL last name, add it
+  words.forEach(function(w) {
+    var clean = w.replace(/[^A-Za-z]/g, '').toLowerCase();
+    if (clean.length < 4) return; // skip short words to avoid noise
+    var hits = lastNameMap[clean];
+    if (hits && hits.length === 1) {
+      // Unambiguous last-name match
+      if (!resolved.some(function(r){ return r.player_id === hits[0].player_id; })) {
+        resolved.push(hits[0]);
+      }
+    }
+  });
+
+  if (!resolved.length) return '';
+
+  // Build authoritative facts block
+  var factLines = resolved.slice(0, 5).map(function(pl) {
+    var parts = [pl.full_name, pl.position, pl.team || 'FA'];
+    if (pl.age) parts.push('age ' + pl.age);
+    if (pl.years_exp !== undefined && pl.years_exp !== null) parts.push((pl.years_exp === 0 ? 'rookie' : pl.years_exp + 'yr vet'));
+    if (pl.depth_chart_position && pl.depth_chart_order) parts.push('depth: ' + pl.depth_chart_position + (pl.depth_chart_order > 1 ? '#' + pl.depth_chart_order : ''));
+    if (pl.injury_status && pl.injury_status !== 'Healthy') parts.push(pl.injury_status);
+    return '- ' + parts.join(' | ');
+  });
+
+  blocks.push('AUTHORITATIVE PLAYER FACTS (Sleeper, current as of today — use these over any prior knowledge):\n' + factLines.join('\n'));
+
+  // Find news matching any resolved player
+  var newsHits = [];
+  resolved.slice(0, 5).forEach(function(pl) {
+    var ln = (pl.last_name || pl.full_name.split(' ').pop() || '').toLowerCase();
+    var fn = (pl.first_name || pl.full_name.split(' ')[0] || '').toLowerCase();
+    rotowireItems.forEach(function(item) {
+      var combined = ((item.title||'') + ' ' + (item.desc||'')).toLowerCase();
+      // Need both first AND last name (or unique last name 6+ chars)
+      var match = (combined.indexOf(fn) >= 0 && combined.indexOf(ln) >= 0) ||
+                  (ln.length >= 6 && combined.indexOf(ln) >= 0);
+      if (match && newsHits.length < 8) {
+        newsHits.push('[' + pl.full_name + '] ' + (item.title || '').slice(0, 100) + ' — ' + (item.desc || '').slice(0, 150));
+      }
+    });
+  });
+
+  if (newsHits.length) {
+    blocks.push('RECENT NEWS ON MENTIONED PLAYERS:\n' + newsHits.join('\n'));
+  }
+
+  blocks.push('CRITICAL: If your prior knowledge about any player above conflicts with the authoritative facts, DEFER to the facts. Do not claim a player is on a team different from what is listed above.');
+
+  return blocks.join('\n\n');
 }
 
 function addFCMsg(role, text) {
