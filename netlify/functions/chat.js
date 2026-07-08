@@ -13,8 +13,10 @@ const TOOLS = [
     name: 'get_player_value',
     description:
       'Look up dynasty and redraft fantasy value for a player by name. ' +
-      'Returns FantasyCalc dynasty value, position rank, redraft value, and 30-day trend. ' +
-      'Use for any question about what a player is worth in dynasty.',
+      'Returns FantasyCalc dynasty value, position rank, redraft value, 30-day trend, ' +
+      'AND current Sleeper data: team, depth_chart_order (1=starter), status, and injury_status. ' +
+      'Use for any question about what a player is worth in dynasty. ' +
+      'Each result includes a player_id — pass it to get_player_news for full injury/practice details.',
     input_schema: {
       type: 'object',
       properties: {
@@ -71,6 +73,25 @@ const TOOLS = [
       required: [],
     },
   },
+  {
+    name: 'get_player_news',
+    description:
+      'Get a player\'s CURRENT NFL status from live Sleeper data: team, depth chart position ' +
+      '(depth_chart_order=1 means starter), injury status, and practice participation. ' +
+      'Call this whenever you need to verify present-day facts — roster cuts, team changes, ' +
+      'depth chart shifts — because your training data is ~1 year behind. ' +
+      'Requires the Sleeper player_id returned by get_player_value.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        sleeper_id: {
+          type: 'string',
+          description: "Sleeper player ID (the player_id field from get_player_value results)",
+        },
+      },
+      required: ['sleeper_id'],
+    },
+  },
 ];
 
 async function executeTool(name, input, apiBase) {
@@ -96,6 +117,12 @@ async function executeTool(name, input, apiBase) {
     case 'get_league_info': {
       const resp = await fetch(`${apiBase}/league`);
       if (!resp.ok) return { error: `League info fetch failed (HTTP ${resp.status})` };
+      return resp.json();
+    }
+    case 'get_player_news': {
+      const id = encodeURIComponent(input.sleeper_id || '');
+      const resp = await fetch(`${apiBase}/players/${id}/news`);
+      if (!resp.ok) return { error: `Player news fetch failed (HTTP ${resp.status})` };
       return resp.json();
     }
     default:
@@ -126,9 +153,18 @@ exports.handler = async function (event, context) {
     const body = JSON.parse(event.body);
 
     // Strip any tools the frontend may have sent; we control tool injection.
-    const { messages: incomingMessages, tools: _tools, ...rest } = body;
+    // Also override the system prompt to inject today's date — Claude's training
+    // data is ~1 year behind, so without this it reasons from a stale NFL reality.
+    const { messages: incomingMessages, tools: _tools, system: frontendSystem, ...rest } = body;
     const messages = [...(incomingMessages || [])];
     const tools = reportCardsUrl ? TOOLS : undefined;
+    const today = new Date().toISOString().split('T')[0];
+    const system =
+      `Today's date is ${today}. Your NFL training data has a cutoff around mid-2025 — roughly one full season behind. ` +
+      `Do NOT rely on training-data knowledge for current player situations (team, depth chart, injuries, roster cuts). ` +
+      `Always call get_player_value first to get live FantasyCalc values and current Sleeper team/status, ` +
+      `then call get_player_news for any player whose current depth chart position or team membership matters to the answer. ` +
+      (frontendSystem ? `\n\n${frontendSystem}` : '');
 
     let finalResponse = null;
 
@@ -144,6 +180,7 @@ exports.handler = async function (event, context) {
         },
         body: JSON.stringify({
           ...rest,
+          system,
           messages,
           ...(tools ? { tools } : {}),
         }),
