@@ -2031,6 +2031,8 @@ var liveMyRoster = [];
 // Kick off load
 window.addEventListener('DOMContentLoaded', function() {
   loadSleeperData();
+  // Pre-warm the Render API so it isn't cold on the first chat message.
+  fetch('/.netlify/functions/warmup').catch(function() {});
 });
 
 // ─────────────────────────────────
