@@ -2411,7 +2411,7 @@ async function sendChat() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 1000,
         system: sysPrompt,
         messages: chatHistory
@@ -2668,7 +2668,7 @@ async function addIntel(id) {
     const res = await fetch('/.netlify/functions/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
     });
     const data = await res.json();
     const updated = data.content?.[0]?.text?.trim();
@@ -3497,7 +3497,7 @@ async function scAddNote(id) {
     ? 'Dynasty fantasy football scout notes on a prospect. Existing notes: ' + p.notes + ' New observation: ' + note + ' Rewrite as a single cohesive paragraph incorporating the new observation. Analytical scouting tone. Return only the updated notes.'
     : 'Dynasty fantasy football scout. First observation on a prospect: ' + note + ' Write a short scouting note (2-3 sentences). Analytical tone. Return only the text.';
   try {
-    var res=await fetch('/.netlify/functions/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:prompt}]})});
+    var res=await fetch('/.netlify/functions/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:500,messages:[{role:'user',content:prompt}]})});
     var data=await res.json();
     var updated=data.content&&data.content[0]?data.content[0].text.trim():null;
     if(updated){
