@@ -74,6 +74,25 @@ const TOOLS = [
     },
   },
   {
+    name: 'get_team_roster',
+    description:
+      'Get all current skill-position players on an NFL team, sorted by position and depth chart order. ' +
+      'depth_chart_order=1 means the starter. ' +
+      'ALWAYS call this before naming a player\'s competition or backfield situation — ' +
+      'never assume from training data who is on a team, because players get cut and traded. ' +
+      'Example: call get_team_roster("LAC") before saying who the Chargers RB1 is.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        team: {
+          type: 'string',
+          description: 'NFL team abbreviation (e.g. "LAC", "JAX", "WAS", "KC", "SF")',
+        },
+      },
+      required: ['team'],
+    },
+  },
+  {
     name: 'get_player_news',
     description:
       'Get a player\'s CURRENT NFL status from live Sleeper data: team, depth chart position ' +
@@ -119,6 +138,12 @@ async function executeTool(name, input, apiBase) {
       if (!resp.ok) return { error: `League info fetch failed (HTTP ${resp.status})` };
       return resp.json();
     }
+    case 'get_team_roster': {
+      const team = encodeURIComponent((input.team || '').toUpperCase());
+      const resp = await fetch(`${apiBase}/teams/${team}/roster`);
+      if (!resp.ok) return { error: `Team roster fetch failed (HTTP ${resp.status})` };
+      return resp.json();
+    }
     case 'get_player_news': {
       const id = encodeURIComponent(input.sleeper_id || '');
       const resp = await fetch(`${apiBase}/players/${id}/news`);
@@ -161,9 +186,12 @@ exports.handler = async function (event, context) {
     const today = new Date().toISOString().split('T')[0];
     const system =
       `Today's date is ${today}. Your NFL training data has a cutoff around mid-2025 — roughly one full season behind. ` +
-      `Do NOT rely on training-data knowledge for current player situations (team, depth chart, injuries, roster cuts). ` +
-      `Always call get_player_value first to get live FantasyCalc values and current Sleeper team/status, ` +
-      `then call get_player_news for any player whose current depth chart position or team membership matters to the answer. ` +
+      `CRITICAL RULES — always follow before answering:\n` +
+      `1. Call get_player_value for any player you discuss to get their live team, depth_chart_order, and status.\n` +
+      `2. Call get_team_roster before naming ANY player's competition or describing a backfield/WR corps — ` +
+      `never assume from training data who is on a team. Players get cut, traded, and replaced every offseason.\n` +
+      `3. Call get_player_news for any player whose current depth chart position, injury, or team membership is central to the answer.\n` +
+      `4. If a player's team in tool results is null or missing, they are a free agent or out of the league — do not claim they compete with anyone.\n` +
       (frontendSystem ? `\n\n${frontendSystem}` : '');
 
     let finalResponse = null;
