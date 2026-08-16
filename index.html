@@ -275,6 +275,55 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
 .psv.g{color:var(--green)} .psv.r{color:var(--red)} .psv.go{color:var(--gold)}
 .psl { font-family: 'DM Mono', monospace; font-size: 7px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
 
+/* ── Rival Detail screen ── */
+.rd-hero { background: var(--white); padding: 16px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.rd-hero-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.rd-team-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; color: var(--navy); line-height: 1.1; }
+.rd-manager-lbl { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dim); margin-top: 3px; }
+.rd-rec { text-align: right; flex-shrink: 0; }
+.rd-rec-num { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 600; color: var(--navy); }
+.rd-rec-lbl { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
+.rd-stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.rd-stat { background: var(--off); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center; }
+.rd-stat-val { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; color: var(--navy); display: block; margin-bottom: 3px; }
+.rd-stat-lbl { font-family: 'DM Mono', monospace; font-size: 7px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
+
+.rd-scroll { flex: 1; overflow-y: auto; padding-bottom: 20px; }
+.rd-scroll::-webkit-scrollbar { display: none; }
+.rd-pos-group { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); padding: 12px 18px 6px; background: var(--off); }
+.rd-player-row { display: flex; align-items: center; gap: 12px; padding: 11px 18px; border-bottom: 1px solid var(--border); cursor: pointer; background: var(--white); }
+.rd-pinfo { flex: 1; min-width: 0; }
+.rd-pname { font-size: 13px; font-weight: 600; color: var(--navy); }
+.rd-psub { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--dim); margin-top: 1px; }
+.rd-pright { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0; }
+.rd-pktc { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 600; color: var(--navy); }
+.rd-pktc-lbl { font-family: 'DM Mono', monospace; font-size: 7px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
+
+.rd-empty { padding: 40px 20px; text-align: center; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dim); }
+.rd-news-item { padding: 12px 18px; border-bottom: 1px solid var(--border); background: var(--white); }
+.rd-news-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+
+.rd-intel-body, .rd-trade-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+.rd-intel-blurb { font-size: 12px; line-height: 1.6; color: var(--text); background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.rd-intel-log-item { display: flex; gap: 8px; padding: 7px 10px; background: var(--white); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 4px; }
+.rd-intel-log-date { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--dim); flex-shrink: 0; }
+.rd-intel-log-txt { font-size: 11px; color: var(--mid); }
+.rd-btn-primary, .rd-btn-secondary { width: 100%; border-radius: 10px; padding: 12px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
+.rd-btn-primary { background: var(--navy); color: var(--white); border: none; }
+.rd-btn-secondary { background: var(--white); color: var(--navy); border: 1px solid var(--border2); }
+
+.rd-trade-intro { font-size: 12px; line-height: 1.6; color: var(--text); }
+.rd-trade-assets { display: flex; flex-direction: column; gap: 6px; }
+.rd-trade-asset-lbl { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); margin-bottom: 2px; }
+.rd-asset-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--white); border: 1px solid var(--border); border-radius: 8px; }
+.rd-asset-pos { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 600; color: var(--accent); background: rgba(26,86,255,.1); padding: 2px 6px; border-radius: 5px; flex-shrink: 0; }
+.rd-asset-name { flex: 1; font-size: 12px; font-weight: 500; color: var(--navy); }
+.rd-asset-ktc { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dim); }
+
+.rbadge { font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: .5px; text-transform: uppercase; padding: 2px 7px; border-radius: 6px; flex-shrink: 0; }
+.rbadge-intel { background: rgba(26,86,255,.12); color: var(--accent); }
+.rbadge-news { background: rgba(212,144,10,.12); color: var(--gold); }
+
 .blk { background: var(--white); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 1px 8px rgba(15,31,61,.05); }
 .blk-hd { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid var(--border); background: var(--off); }
 .blk-title { font-size: 12px; font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: 7px; }
@@ -1822,6 +1871,7 @@ function buildRivalTeams() {
     var rosterPlayers = (roster.players || []).map(function(pid) {
       var p = sleeperPlayers[pid] || {};
       return {
+        id: pid,
         pos: p.position || '?',
         name: (p.first_name || '') + ' ' + (p.last_name || pid),
         team: p.team || 'FA',
@@ -3175,7 +3225,7 @@ function renderRdTab(idx) {
         const flagHtml = p.flag==='trade' ? '<span class="rbadge rbadge-intel" style="margin-left:auto">Trade?</span>' :
                          p.flag==='news'  ? '<span class="rbadge rbadge-news" style="margin-left:auto">News</span>' : '';
         return `<div class="rd-player-row" onclick="nav('chat')">
-          ${makeJerseySVG(p.name, null, p.team, 44)}
+          ${playerAvatarHtml(p.id, p.name, null, p.team, 44)}
           <div class="rd-pinfo">
             <div class="rd-pname">${p.name}</div>
             <div class="rd-psub">${p.team} · Age ${p.age}</div>
@@ -4200,7 +4250,7 @@ function removeTFTablePlayer(id) {
     </div>
     <div class="rd-stat-grid" id="rd-stats"></div>
   </div>
-  <div class="section-tabs" style="flex-shrink:0">
+  <div class="pc-tabs" style="flex-shrink:0">
     <div class="pc-tab active" onclick="rdTab(0,this)">Roster</div>
     <div class="pc-tab" onclick="rdTab(1,this)">News<span class="tab-pip" style="background:var(--gold)"></span></div>
     <div class="pc-tab" onclick="rdTab(2,this)">Intel</div>
