@@ -46,6 +46,20 @@ const TOOLS = [
     },
   },
   {
+    name: 'get_league_rosters_summary',
+    description:
+      'Get position-group depth (player count, total dynasty value, top single-asset value at ' +
+      'QB/RB/WR/TE) for every team in the league in one call. Use this to find trade partners: a ' +
+      'team thin at a position you\'re deep in is a target to sell to; a team overloaded at a ' +
+      'position you need may be willing to move a piece there. Also useful for ranking teams by ' +
+      'overall asset value.',
+    input_schema: {
+      type: 'object',
+      properties: {},
+      required: [],
+    },
+  },
+  {
     name: 'get_trending_players',
     description:
       'Get current trending add activity on Sleeper — players being picked up most in ' +
@@ -170,6 +184,11 @@ async function executeTool(name, input, apiBase) {
       const owner = encodeURIComponent(input.owner || '');
       const resp = await fetch(`${apiBase}/roster/${owner}`);
       if (!resp.ok) return { error: `Roster fetch failed (HTTP ${resp.status})` };
+      return resp.json();
+    }
+    case 'get_league_rosters_summary': {
+      const resp = await fetch(`${apiBase}/league/rosters/summary`);
+      if (!resp.ok) return { error: `League rosters summary fetch failed (HTTP ${resp.status})` };
       return resp.json();
     }
     case 'get_trending_players': {
