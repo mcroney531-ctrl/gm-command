@@ -589,6 +589,12 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
 .tf-picker-done { padding:14px 18px; border-top:1px solid #dce2f0; flex-shrink:0; }
 .tf-picker-done-btn { width:100%; padding:12px; background:#0f1f3d; border:none; border-radius:10px; font-family:Bebas Neue,sans-serif; font-size:16px; letter-spacing:2px; color:#ffffff; cursor:pointer; }
 
+/* Chat history sheet — reuses .tf-picker-* chrome, adds per-row actions */
+.ch-hist-item.selected { background:#f0f4ff; }
+.ch-hist-rename, .ch-hist-delete { font-size:14px; color:#7a8fb5; flex-shrink:0; padding:6px; line-height:1; cursor:pointer; }
+.ch-hist-rename:hover, .ch-hist-delete:hover { color:#0f1f3d; }
+.ch-hist-delete:hover { color:#e03040; }
+
 
 /* ── TRADE SHEET ── */
 .tf-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; }
@@ -698,8 +704,10 @@ body { font-family: 'Figtree', sans-serif; max-width: 430px; margin: 0 auto; dis
     <div class="fc-hrow">
       <button class="back-btn" onclick="nav('home')">‹ &nbsp;Home</button>
       <div><div class="fc-title">GM Assistant</div><div class="fc-meta">Claude Sonnet · Roster + News injected</div></div>
-      <button onclick="clearChat()" style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.5);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:4px 8px;cursor:pointer;flex-shrink:0">New Chat</button>
-      <div style="width:60px"></div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button onclick="openChatHistory()" style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.5);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:4px 8px;cursor:pointer">History</button>
+        <button onclick="clearChat()" style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.5);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:4px 8px;cursor:pointer">New Chat</button>
+      </div>
     </div>
   </div>
   <div class="fc-ctx">
@@ -1075,6 +1083,26 @@ function makeJerseySVG(playerName, number, teamAbbr, size) {
 // CSS container for jersey avatars
 function jerseyContainer(svg, extraStyle) {
   return '<div style="display:flex;align-items:center;justify-content:center;flex-shrink:0;' + (extraStyle||'') + '">' + svg + '</div>';
+}
+
+// Swaps a broken headshot <img> back to the mock jersey SVG — used as the
+// onerror handler below. Deep-bench/practice-squad players and recent
+// signings often have no photo yet on Sleeper's CDN.
+function avFallback(imgEl, name, number, teamAbbr, size) {
+  imgEl.outerHTML = makeJerseySVG(name, number, teamAbbr, size);
+}
+
+// Real player headshot from Sleeper's CDN, falling back to the jersey SVG
+// if the photo 404s or no sleeperId is available. Only call this where a
+// live Sleeper player_id is on hand — mock/demo player data has none.
+function playerAvatarHtml(sleeperId, playerName, number, teamAbbr, size) {
+  size = size || 56;
+  if (!sleeperId) return makeJerseySVG(playerName, number, teamAbbr, size);
+  var url = 'https://sleepercdn.com/content/nfl/players/thumb/' + encodeURIComponent(sleeperId) + '.jpg';
+  var bg = getTeamColor(teamAbbr) || '#0f1f3d';
+  return '<img src="' + url + '" alt="" width="' + size + '" height="' + size + '" ' +
+    'style="width:' + size + 'px;height:' + size + 'px;object-fit:cover;border-radius:6px;display:block;flex-shrink:0;background:' + bg + '" ' +
+    "onerror='avFallback(this, " + JSON.stringify(playerName || '') + ", " + JSON.stringify(number || '') + ", " + JSON.stringify(teamAbbr || '') + ", " + size + ")'>";
 }
 
 // NFL Team Colors
@@ -1834,11 +1862,13 @@ function buildRivalTeams() {
 // ── Rebuild system prompt with live roster ──
 
 function clearChat() {
-  chatHistory = [];
-  var msgs = document.getElementById('fc-msgs');
-  if (msgs) {
-    msgs.innerHTML = '<div class="msg msg-ai"><span class="msg-who">GM Assistant</span><div class="bubble"><span id="chat-opening-msg">War room is live. <strong>Roster loaded</strong>, Rotowire synced. What are we working on?<div class="fc-note">// Roster auto-injected · All 12 rosters pulled from Sleeper</div></span></div></div>';
-  }
+  var s = chatNewSessionObj();
+  chatSessions.unshift(s);
+  activeChatId = s.id;
+  chatHistory = s.messages;
+  chatSaveSessions();
+  chatPersistActiveId();
+  renderChatFromHistory();
   if (liveMyRoster && liveMyRoster.length) {
     buildSystemPrompt();
     updateHomeChatPreview();
@@ -1904,7 +1934,7 @@ function renderHomeRosterStrip() {
       ? nameParts[0][0] + '. ' + nameParts[nameParts.length-1]
       : p.name;
     return '<div class="' + chipCls + '" onclick="openLivePlayer(' + JSON.stringify(p.id) + ')">' +
-      makeJerseySVG(p.name, p.number, p.team, 44) +
+      playerAvatarHtml(p.id, p.name, p.number, p.team, 44) +
       '<span class="ppos ' + posClass + '">' + p.pos + '</span>' +
       '<span class="pname">' + shortName + '</span>' +
     '</div>';
@@ -1928,7 +1958,7 @@ function renderRosterScreen() {
       var injFlag = (p.status && p.status !== 'Active' && p.status !== 'active')
         ? '<span class="rrow-flag pf-i" style="background:#e03040">!</span>' : '';
       html += '<div class="rrow" onclick="openLivePlayer(' + JSON.stringify(p.id) + ')">'  +
-        makeJerseySVG(p.name, p.number, p.team, 48) +
+        playerAvatarHtml(p.id, p.name, p.number, p.team, 48) +
         '<div class="rrow-info">' +
           '<div class="rrow-name">' + p.name + '</div>' +
           '<div class="rrow-sub">' + p.team + ' · ' + p.pos + (p.age ? ' · Age ' + p.age : '') + (p.status && p.status !== 'Active' ? ' · ' + p.status : '') + '</div>' +
@@ -1983,7 +2013,7 @@ function openLivePlayer(pid) {
   // Build minimal player object for unknown players
   var teamAbbr2 = getTeamAbbr(p.team || '');
   var pcAv2 = document.getElementById('pc-avatar');
-  pcAv2.innerHTML = makeJerseySVG(p.name, null, teamAbbr2, 62);
+  pcAv2.innerHTML = playerAvatarHtml(p.id, p.name, null, teamAbbr2, 62);
   pcAv2.style.cssText = 'background:transparent;border:none;';
   document.getElementById('pc-avatar').style.cssText = teamAvatarStyle(p.team);
   document.getElementById('pc-pos-badge').className = 'pc-pos-badge ' + (p.pos === 'QB' ? 'qb-badge' : p.pos === 'RB' ? 'rb-badge' : p.pos === 'WR' ? 'wr-badge' : 'te-badge');
@@ -2031,6 +2061,7 @@ var liveMyRoster = [];
 // Kick off load
 window.addEventListener('DOMContentLoaded', function() {
   loadSleeperData();
+  chatInitSessions();
   // Pre-warm the Render API so it isn't cold on the first chat message.
   fetch('/.netlify/functions/warmup').catch(function() {});
 });
@@ -2377,6 +2408,162 @@ Be direct, opinionated, and analytical. Keep responses concise — this is a mob
 
 let chatHistory = [];
 
+// ─────────────────────────────────
+// CHAT HISTORY — persisted sessions, switchable + renameable
+// ─────────────────────────────────
+var CHAT_SESSIONS_KEY = 'gmc_chat_sessions';
+var CHAT_ACTIVE_KEY = 'gmc_active_chat_id';
+var CHAT_OPENING_HTML = '<div class="fc-msg"><span class="fc-who">GM Assistant</span><div class="fc-bubble"><span id="chat-opening-msg">War room is live. <strong>Roster loaded</strong>, Rotowire synced. What are we working on?<div class="fc-note">// Roster live from Sleeper · All 12 rosters pulled from Sleeper</div></span></div></div>';
+var chatSessions = [];
+var activeChatId = null;
+
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
+function chatLoadSessions() {
+  try {
+    var s = localStorage.getItem(CHAT_SESSIONS_KEY);
+    chatSessions = s ? JSON.parse(s) : [];
+  } catch(e) { chatSessions = []; }
+}
+function chatSaveSessions() {
+  try { localStorage.setItem(CHAT_SESSIONS_KEY, JSON.stringify(chatSessions)); } catch(e) {}
+}
+function chatPersistActiveId() {
+  try { localStorage.setItem(CHAT_ACTIVE_KEY, activeChatId); } catch(e) {}
+}
+function chatNewSessionObj() {
+  return {
+    id: 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+    title: 'New Chat',
+    messages: [],
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
+}
+function chatAutoTitle(text) {
+  var t = (text || '').trim().replace(/\s+/g, ' ');
+  if (!t) return 'New Chat';
+  return t.length > 42 ? t.slice(0, 42) + '…' : t;
+}
+
+// Call after pushing a message onto chatHistory — auto-titles on the first
+// user message and persists the session (chatHistory IS session.messages,
+// same array reference, so the push is already reflected).
+function chatTouchActiveSession(userText) {
+  var s = chatSessions.find(function(x) { return x.id === activeChatId; });
+  if (!s) return;
+  if (s.title === 'New Chat' && userText) s.title = chatAutoTitle(userText);
+  s.updatedAt = Date.now();
+  chatSaveSessions();
+}
+
+// Repaint #fc-msgs from chatHistory (used on load and session switch —
+// normal turns still append incrementally via addFCMsg for speed).
+function renderChatFromHistory() {
+  var msgs = document.getElementById('fc-msgs');
+  if (!msgs) return;
+  if (!chatHistory.length) { msgs.innerHTML = CHAT_OPENING_HTML; return; }
+  msgs.innerHTML = '';
+  chatHistory.forEach(function(m) {
+    var text = typeof m.content === 'string' ? m.content : '';
+    if (!text) return;
+    addFCMsg(m.role === 'user' ? 'you' : 'ai', text);
+  });
+}
+
+// Restores the last-active session on load, or starts a fresh one.
+function chatInitSessions() {
+  chatLoadSessions();
+  try { activeChatId = localStorage.getItem(CHAT_ACTIVE_KEY); } catch(e) {}
+  var active = chatSessions.find(function(x) { return x.id === activeChatId; });
+  if (!active) {
+    active = chatNewSessionObj();
+    chatSessions.unshift(active);
+    activeChatId = active.id;
+    chatSaveSessions();
+    chatPersistActiveId();
+  }
+  chatHistory = active.messages;
+  renderChatFromHistory();
+}
+
+function openChatHistory() {
+  renderChatHistoryList();
+  document.getElementById('ch-history-overlay').classList.add('show');
+  document.getElementById('ch-history-sheet').style.display = 'flex';
+}
+function closeChatHistory() {
+  document.getElementById('ch-history-overlay').classList.remove('show');
+  document.getElementById('ch-history-sheet').style.display = 'none';
+}
+function renderChatHistoryList() {
+  var list = document.getElementById('ch-history-list');
+  if (!list) return;
+  var sorted = chatSessions.slice().sort(function(a, b) { return b.updatedAt - a.updatedAt; });
+  if (!sorted.length) {
+    list.innerHTML = '<div style="padding:20px 18px;font-family:DM Mono,monospace;font-size:10px;color:#7a8fb5;text-align:center">No conversations yet</div>';
+    return;
+  }
+  list.innerHTML = sorted.map(function(s) {
+    var dateStr = new Date(s.updatedAt).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    var count = s.messages.length;
+    return '<div class="tf-picker-item ch-hist-item' + (s.id === activeChatId ? ' selected' : '') + '" onclick="switchChatSession(' + JSON.stringify(s.id) + ')">' +
+      '<div class="tf-picker-pinfo">' +
+        '<div class="tf-picker-pname">' + escapeHtml(s.title || 'New Chat') + '</div>' +
+        '<div class="tf-picker-pmeta">' + dateStr + ' · ' + count + ' message' + (count !== 1 ? 's' : '') + '</div>' +
+      '</div>' +
+      '<span class="ch-hist-rename" title="Rename" onclick="event.stopPropagation();renameChatSession(' + JSON.stringify(s.id) + ')">&#9998;</span>' +
+      '<span class="ch-hist-delete" title="Delete" onclick="event.stopPropagation();deleteChatSession(' + JSON.stringify(s.id) + ')">&#128465;</span>' +
+    '</div>';
+  }).join('');
+}
+function switchChatSession(id) {
+  var s = chatSessions.find(function(x) { return x.id === id; });
+  if (!s) return;
+  activeChatId = id;
+  chatHistory = s.messages;
+  chatPersistActiveId();
+  renderChatFromHistory();
+  closeChatHistory();
+  nav('chat');
+}
+function renameChatSession(id) {
+  var s = chatSessions.find(function(x) { return x.id === id; });
+  if (!s) return;
+  var newTitle = prompt('Rename conversation', s.title || 'New Chat');
+  if (newTitle === null) return;
+  newTitle = newTitle.trim();
+  if (!newTitle) return;
+  s.title = newTitle.slice(0, 60);
+  chatSaveSessions();
+  renderChatHistoryList();
+}
+function deleteChatSession(id) {
+  var idx = chatSessions.findIndex(function(x) { return x.id === id; });
+  if (idx === -1) return;
+  if (!confirm('Delete this conversation? This can\'t be undone.')) return;
+  chatSessions.splice(idx, 1);
+  chatSaveSessions();
+  if (id === activeChatId) {
+    chatSessions.sort(function(a, b) { return b.updatedAt - a.updatedAt; });
+    var next = chatSessions[0];
+    if (!next) {
+      next = chatNewSessionObj();
+      chatSessions.unshift(next);
+      chatSaveSessions();
+    }
+    activeChatId = next.id;
+    chatHistory = next.messages;
+    chatPersistActiveId();
+    renderChatFromHistory();
+  }
+  renderChatHistoryList();
+}
+
 function sendChatMessage(text) {
   nav('chat');
   setTimeout(function() {
@@ -2401,6 +2588,7 @@ async function sendChat() {
   input.style.height = 'auto';
   addFCMsg('you', text);
   chatHistory.push({ role: 'user', content: text });
+  chatTouchActiveSession(text);
   const typingEl = addTyping();
 
   // ── Build per-message context: look up players mentioned + matching news ──
@@ -2428,6 +2616,7 @@ async function sendChat() {
     typingEl.remove();
     addFCMsg('ai', reply);
     chatHistory.push({ role: 'assistant', content: reply });
+    chatTouchActiveSession();
   } catch(e) {
     typingEl.remove();
     addFCMsg('ai', e.message || 'Connection error. Check your network and try again.');
@@ -3862,7 +4051,7 @@ function openTFPicker() {
   } else {
     list.innerHTML = roster.map(function(p) {
       var isSelected = tfTablePlayers.some(function(t){ return t.id === p.id; });
-      var jersey = makeJerseySVG(p.name, p.number, p.team, 40);
+      var jersey = playerAvatarHtml(p.id, p.name, p.number, p.team, 40);
       return '<div class="tf-picker-item' + (isSelected ? ' selected' : '') + '" onclick="toggleTFTablePlayer(\'' + p.id + '\')" id="picker-item-' + p.id + '">' +
         jersey +
         '<div class="tf-picker-pinfo">' +
@@ -3905,7 +4094,7 @@ function renderTFTableChips() {
   }
   container.innerHTML = tfTablePlayers.map(function(p) {
     return '<div class="tf-table-chip">' +
-      '<div class="tf-table-chip-jersey">' + makeJerseySVG(p.name, p.number, p.team, 28) + '</div>' +
+      '<div class="tf-table-chip-jersey">' + playerAvatarHtml(p.id, p.name, p.number, p.team, 28) + '</div>' +
       '<span class="tf-table-chip-name">' + p.name.split(' ').pop() + (p.number ? ' #'+p.number : '') + '</span>' +
       '<span class="tf-table-chip-x" onclick="removeTFTablePlayer(' + JSON.stringify(p.id) + ')">✕</span>' +
     '</div>';
@@ -4141,6 +4330,22 @@ function removeTFTablePlayer(id) {
   <div class="tf-picker-list" id="tf-picker-list"></div>
   <div class="tf-picker-done">
     <button class="tf-picker-done-btn" onclick="closeTFPicker()">Done</button>
+  </div>
+</div>
+
+<!-- CHAT HISTORY SHEET -->
+<div class="tf-picker-overlay" id="ch-history-overlay" onclick="closeChatHistory()"></div>
+<div class="tf-picker-sheet" id="ch-history-sheet" style="display:none">
+  <div class="tf-picker-header">
+    <div>
+      <div class="tf-picker-title">Chat History</div>
+      <div class="tf-picker-sub">Tap to resume a conversation</div>
+    </div>
+    <button class="tf-picker-close" onclick="closeChatHistory()">✕</button>
+  </div>
+  <div class="tf-picker-list" id="ch-history-list"></div>
+  <div class="tf-picker-done">
+    <button class="tf-picker-done-btn" onclick="clearChat();closeChatHistory();">+ New Chat</button>
   </div>
 </div>
 
