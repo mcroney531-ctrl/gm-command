@@ -2607,6 +2607,30 @@ const leaguemates = [
   { id:'kb', initials:'KB', name:'K. Birch', team:'The Algorithm · 8–4', blurb:'Runs a tight analytically-driven operation. Extremely reluctant to trade within the top 6 of his roster. Tends to undervalue TE relative to market. Competitive but fair negotiator.', log:[{date:'Mar 22',text:'Confirmed undervalues TEs — offered Otton and got laughed out of the room.'}] }
 ];
 
+// Intel notes (blurb + log) persist to localStorage, keyed by leaguemate id —
+// without this, every "Add Intel" note was lost on the next page load.
+function lmLoadNotes() {
+  try {
+    var saved = localStorage.getItem('gmc_leaguemate_notes');
+    if (!saved) return;
+    var overrides = JSON.parse(saved);
+    leaguemates.forEach(function(lm) {
+      if (overrides[lm.id]) {
+        lm.blurb = overrides[lm.id].blurb;
+        lm.log = overrides[lm.id].log;
+      }
+    });
+  } catch(e) {}
+}
+function lmSaveNotes() {
+  try {
+    var overrides = {};
+    leaguemates.forEach(function(lm) { overrides[lm.id] = { blurb: lm.blurb, log: lm.log }; });
+    localStorage.setItem('gmc_leaguemate_notes', JSON.stringify(overrides));
+  } catch(e) {}
+}
+lmLoadNotes();
+
 function renderIntel() {
   const sec = document.getElementById('lm-section');
   sec.innerHTML = leaguemates.map(lm => `
@@ -2678,6 +2702,7 @@ async function addIntel(id) {
       lm.blurb = updated;
       const today = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
       lm.log.unshift({ date: today, text: note });
+      lmSaveNotes();
       blurbEl.textContent = updated;
       blurbEl.classList.remove('empty');
       blurbEl.classList.add('blurb-hl');
