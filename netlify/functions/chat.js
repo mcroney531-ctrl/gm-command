@@ -111,6 +111,26 @@ const TOOLS = [
       required: ['sleeper_id'],
     },
   },
+  {
+    name: 'get_player_blurb',
+    description:
+      'Get a short LLM-written narrative blurb about a player from LeagueLogs — context on ' +
+      'role changes, injury notes, or hot/cold streaks beyond raw stats. Not every player has ' +
+      'one; blurb will be null if there is no recent material. ' +
+      'LeagueLogs attribution is required whenever you use this data: if blurb is non-null, ' +
+      'end your response with a short plain-text attribution line, e.g. "Powered by LeagueLogs (leaguelogs.com)". ' +
+      'Requires the Sleeper player_id returned by get_player_value.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        sleeper_id: {
+          type: 'string',
+          description: "Sleeper player ID (the player_id field from get_player_value results)",
+        },
+      },
+      required: ['sleeper_id'],
+    },
+  },
 ];
 
 async function executeTool(name, input, apiBase) {
@@ -148,6 +168,12 @@ async function executeTool(name, input, apiBase) {
       const id = encodeURIComponent(input.sleeper_id || '');
       const resp = await fetch(`${apiBase}/players/${id}/news`);
       if (!resp.ok) return { error: `Player news fetch failed (HTTP ${resp.status})` };
+      return resp.json();
+    }
+    case 'get_player_blurb': {
+      const id = encodeURIComponent(input.sleeper_id || '');
+      const resp = await fetch(`${apiBase}/players/${id}/blurb`);
+      if (!resp.ok) return { error: `Player blurb fetch failed (HTTP ${resp.status})` };
       return resp.json();
     }
     default:
@@ -192,6 +218,8 @@ exports.handler = async function (event, context) {
       `never assume from training data who is on a team. Players get cut, traded, and replaced every offseason.\n` +
       `3. Call get_player_news for any player whose current depth chart position, injury, or team membership is central to the answer.\n` +
       `4. If a player's team in tool results is null or missing, they are a free agent or out of the league — do not claim they compete with anyone.\n` +
+      `5. If you use a non-null blurb from get_player_blurb, end your response with a short plain-text ` +
+      `attribution line: "Powered by LeagueLogs (leaguelogs.com)" — required by their terms.\n` +
       (frontendSystem ? `\n\n${frontendSystem}` : '');
 
     let finalResponse = null;
