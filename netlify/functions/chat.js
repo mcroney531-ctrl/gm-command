@@ -131,6 +131,31 @@ const TOOLS = [
       required: ['sleeper_id'],
     },
   },
+  {
+    name: 'evaluate_trade',
+    description:
+      'Evaluate a proposed trade using actual FantasyCalc dynasty values — not a guess. ' +
+      'Give the sleeper_ids each side is sending away; returns each side\'s total value sent, ' +
+      'the net value delta, and a fairness read (even trade / slight edge / lopsided). ' +
+      'ALWAYS use this for any trade-fairness question instead of estimating values from memory — ' +
+      'get sleeper_ids from get_player_value or get_roster first.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        team_a_sends: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Sleeper player_ids that side A is giving up (going to side B)',
+        },
+        team_b_sends: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Sleeper player_ids that side B is giving up (going to side A)',
+        },
+      },
+      required: ['team_a_sends', 'team_b_sends'],
+    },
+  },
 ];
 
 async function executeTool(name, input, apiBase) {
@@ -174,6 +199,18 @@ async function executeTool(name, input, apiBase) {
       const id = encodeURIComponent(input.sleeper_id || '');
       const resp = await fetch(`${apiBase}/players/${id}/blurb`);
       if (!resp.ok) return { error: `Player blurb fetch failed (HTTP ${resp.status})` };
+      return resp.json();
+    }
+    case 'evaluate_trade': {
+      const resp = await fetch(`${apiBase}/trade/evaluate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          team_a_sends: input.team_a_sends || [],
+          team_b_sends: input.team_b_sends || [],
+        }),
+      });
+      if (!resp.ok) return { error: `Trade evaluation failed (HTTP ${resp.status})` };
       return resp.json();
     }
     default:
@@ -220,6 +257,8 @@ exports.handler = async function (event, context) {
       `4. If a player's team in tool results is null or missing, they are a free agent or out of the league — do not claim they compete with anyone.\n` +
       `5. If you use a non-null blurb from get_player_blurb, end your response with a short plain-text ` +
       `attribution line: "Powered by LeagueLogs (leaguelogs.com)" — required by their terms.\n` +
+      `6. For any question about whether a trade is fair, call evaluate_trade with the sleeper_ids on ` +
+      `each side — never estimate the value delta yourself.\n` +
       (frontendSystem ? `\n\n${frontendSystem}` : '');
 
     let finalResponse = null;
