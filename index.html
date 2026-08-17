@@ -1435,53 +1435,46 @@ function renderTFPartnerChips() {
 var rotowireItems = [];
 
 async function fetchRotoFeed(url) {
-  // Try two proxies in sequence — allorigins first, corsproxy as fallback
-  var proxies = [
-    'https://api.allorigins.win/get?url=' + encodeURIComponent(url),
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
-  ];
+  // Fetched server-side by our own Netlify function -- no third-party CORS
+  // proxy dependency (that used to be a single point of failure for all
+  // six feeds at once whenever it was slow or rate-limited).
+  try {
+    var timeoutPromise = new Promise(function(_, reject) {
+      setTimeout(function(){ reject(new Error('timeout')); }, 10000);
+    });
+    var res = await Promise.race([
+      fetch('/.netlify/functions/fetch-proxy?url=' + encodeURIComponent(url)),
+      timeoutPromise
+    ]);
+    if (!res.ok) return [];
 
-  for (var pi = 0; pi < proxies.length; pi++) {
-    try {
-      var timeoutPromise = new Promise(function(_, reject) {
-        setTimeout(function(){ reject(new Error('timeout')); }, 10000);
-      });
-      var res = await Promise.race([fetch(proxies[pi]), timeoutPromise]);
-      if (!res.ok) continue;
+    var data = await res.json();
+    var xmlStr = data.contents || '';
+    if (!xmlStr) return [];
 
-      var text = await res.text();
-      // allorigins /get returns JSON wrapper; /raw returns XML directly
-      var xmlStr = text;
-      if (text.trim().startsWith('{')) {
-        try { xmlStr = JSON.parse(text).contents || text; } catch(e) {}
-      }
+    var xml = new DOMParser().parseFromString(xmlStr, 'text/xml');
+    var items = Array.from(xml.querySelectorAll('item'));
+    console.log('[Feed] ' + url.split('?')[0].split('/').pop() + ': ' + items.length + ' items');
 
-      var xml = new DOMParser().parseFromString(xmlStr, 'text/xml');
-      var items = Array.from(xml.querySelectorAll('item'));
-      if (!items.length) continue; // try next proxy
-
-      console.log('[Feed] ' + url.split('?')[0].split('/').pop() + ' via proxy ' + pi + ': ' + items.length + ' items');
-
-      return items.map(function(item) {
-        var title = item.querySelector('title') ? item.querySelector('title').textContent : '';
-        var desc  = item.querySelector('description') ? item.querySelector('description').textContent : '';
-        var pub   = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
-        var playerName = title.split(/[:–\-]/)[0].trim();
-        var teamMatch = (title + ' ' + desc).match(/(ARI|ATL|BAL|BUF|CAR|CHI|CIN|CLE|DAL|DEN|DET|GB|HOU|IND|JAC|KC|LAC|LAR|LV|MIA|MIN|NE|NO|NYG|NYJ|PHI|PIT|SEA|SF|TB|TEN|WAS)/);
-        return {
-          title: title,
-          desc: desc.replace(/<!\[CDATA\[|\]\]>/g, '').trim(),
-          playerName: playerName,
-          team: teamMatch ? teamMatch[1] : '',
-          timeAgo: getTimeAgo(new Date(pub)),
-          pubDate: pub
-        };
-      });
-    } catch(e) {
-      console.warn('[Feed] proxy ' + pi + ' failed for ' + url + ':', e.message);
-    }
+    return items.map(function(item) {
+      var title = item.querySelector('title') ? item.querySelector('title').textContent : '';
+      var desc  = item.querySelector('description') ? item.querySelector('description').textContent : '';
+      var pub   = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : '';
+      var playerName = title.split(/[:–\-]/)[0].trim();
+      var teamMatch = (title + ' ' + desc).match(/(ARI|ATL|BAL|BUF|CAR|CHI|CIN|CLE|DAL|DEN|DET|GB|HOU|IND|JAC|KC|LAC|LAR|LV|MIA|MIN|NE|NO|NYG|NYJ|PHI|PIT|SEA|SF|TB|TEN|WAS)/);
+      return {
+        title: title,
+        desc: desc.replace(/<!\[CDATA\[|\]\]>/g, '').trim(),
+        playerName: playerName,
+        team: teamMatch ? teamMatch[1] : '',
+        timeAgo: getTimeAgo(new Date(pub)),
+        pubDate: pub
+      };
+    });
+  } catch(e) {
+    console.warn('[Feed] fetch failed for ' + url + ':', e.message);
+    return [];
   }
-  return [];
 }
 
 async function loadRotowireFeed(silent) {
@@ -3852,7 +3845,7 @@ async function scFetchRotoPage() {
   var statusEl = document.getElementById('sc-roto-status');
   if (statusEl) statusEl.innerHTML = '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#1a56ff;margin-bottom:10px;letter-spacing:1px">Fetching...</div>';
   try {
-    var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(p.rotowireUrl);
+    var proxyUrl = '/.netlify/functions/fetch-proxy?url=' + encodeURIComponent(p.rotowireUrl);
     var res = await fetch(proxyUrl);
     var data = await res.json();
     var html = data.contents;
