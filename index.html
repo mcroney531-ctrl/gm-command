@@ -1563,7 +1563,54 @@ function setHomeChip(el) {
 // FULL NEWS SCREEN
 // ─────────────────────────────────
 var currentNewsFilter = 'all';
+var currentNewsSort = 'recent';
 var newsScreenLoading = false;
+
+// Resolves each item's playerName to a live Sleeper player (once, cached
+// on the item itself) so news can be sorted by position — not just the
+// team code regex-extracted from the headline text, which is often blank.
+function resolveNewsPlayerMeta(items) {
+  var unresolved = items.filter(function(it){ return !it._metaResolved; });
+  if (!unresolved.length || !sleeperPlayers) return;
+
+  var byFullName = {};
+  var byLastName = {};
+  for (var pid in sleeperPlayers) {
+    var pl = sleeperPlayers[pid];
+    if (!pl || !pl.full_name || ['QB','RB','WR','TE'].indexOf(pl.position) < 0) continue;
+    byFullName[pl.full_name.toLowerCase()] = pl;
+    var ln = (pl.last_name || pl.full_name.split(' ').pop() || '').toLowerCase();
+    if (!ln) continue;
+    if (!byLastName[ln]) byLastName[ln] = [];
+    byLastName[ln].push(pl);
+  }
+
+  unresolved.forEach(function(item) {
+    item._metaResolved = true;
+    item._pos = '';
+    item._resolvedTeam = item.team || '';
+    var name = (item.playerName || '').trim();
+    if (!name) return;
+    var exact = byFullName[name.toLowerCase()];
+    if (exact) {
+      item._pos = exact.position;
+      item._resolvedTeam = exact.team || item._resolvedTeam;
+      return;
+    }
+    var parts = name.split(/\s+/);
+    var last = (parts[parts.length - 1] || '').toLowerCase();
+    var hits = byLastName[last];
+    if (last.length >= 3 && hits && hits.length === 1) {
+      item._pos = hits[0].position;
+      item._resolvedTeam = hits[0].team || item._resolvedTeam;
+    }
+  });
+}
+
+function setNewsSort(sort) {
+  currentNewsSort = sort;
+  renderNewsScreen();
+}
 
 function renderNewsScreen() {
   var list = document.getElementById('news-feed-list');
@@ -1624,6 +1671,24 @@ function renderNewsScreen() {
     return t.includes('trade') || t.includes('sign') || t.includes('waiv') || t.includes('release') || t.includes('claim');
   });
 
+  // Apply sort — "recent" is the feed's natural reverse-chronological order.
+  if (currentNewsSort === 'team') {
+    resolveNewsPlayerMeta(filtered);
+    filtered = filtered.slice().sort(function(a, b) {
+      var ta = a._resolvedTeam || a.team || 'ZZZ';
+      var tb = b._resolvedTeam || b.team || 'ZZZ';
+      return ta === tb ? 0 : (ta < tb ? -1 : 1);
+    });
+  } else if (currentNewsSort === 'position') {
+    resolveNewsPlayerMeta(filtered);
+    var posOrder = {QB:0, RB:1, WR:2, TE:3};
+    filtered = filtered.slice().sort(function(a, b) {
+      var pa = posOrder.hasOwnProperty(a._pos) ? posOrder[a._pos] : 99;
+      var pb = posOrder.hasOwnProperty(b._pos) ? posOrder[b._pos] : 99;
+      return pa - pb;
+    });
+  }
+
   if (!filtered.length) {
     list.innerHTML = '<div style="text-align:center;padding:40px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#7a8fb5;letter-spacing:1px">No items match this filter</div>';
     return;
@@ -1648,10 +1713,12 @@ function renderNewsScreen() {
     }
     var cleanDesc = (item.desc||'').replace(/<[^>]+>/g,'').slice(0,180);
     var dateStr = item.timeAgo || item.date || '';
+    var displayTeam = item._resolvedTeam || item.team || '';
     return '<div style="background:#ffffff;border:1.5px solid #dce2f0;border-left:4px solid '+accentColor+';border-radius:10px;padding:11px 13px;margin-bottom:8px;box-shadow:0 2px 0 #c4ceea">' +
       '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">' +
         '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;font-weight:600;color:'+accentColor+';letter-spacing:1px;text-transform:uppercase">'+accentLabel+'</span>' +
-        (item.team ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#7a8fb5;letter-spacing:1px">· '+item.team+'</span>' : '') +
+        (item._pos ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#1a56ff;letter-spacing:1px;font-weight:600">· '+item._pos+'</span>' : '') +
+        (displayTeam ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#7a8fb5;letter-spacing:1px">· '+displayTeam+'</span>' : '') +
         (dateStr ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;color:#b0bcd4">· '+dateStr+'</span>' : '') +
         badgeHtml +
       '</div>' +
@@ -4177,9 +4244,16 @@ function removeTFTablePlayer(id) {
     <div class="chip" id="news-filter-trans" onclick="setNewsFilter(this,'trans')"><span>🔁</span><span>Trans</span></div>
   </div>
   <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 90px;background:#f4f6fb">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:7px"><div style="width:6px;height:6px;border-radius:50%;background:#0ea86b;animation:blink 2s ease infinite"></div><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;color:#7a8fb5;text-transform:uppercase" id="news-screen-status">Live · Synced</span></div>
-      <button onclick="refreshAllNews()" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#1a56ff;background:none;border:none;cursor:pointer">↻ Refresh</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px">
+      <div style="display:flex;align-items:center;gap:7px;min-width:0"><div style="width:6px;height:6px;border-radius:50%;background:#0ea86b;animation:blink 2s ease infinite;flex-shrink:0"></div><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;color:#7a8fb5;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="news-screen-status">Live · Synced</span></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <select id="news-sort-select" onchange="setNewsSort(this.value)" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#1a56ff;background:#f4f6fb;border:1px solid #dce2f0;border-radius:6px;padding:4px 6px;cursor:pointer">
+          <option value="recent">Sort: Newest</option>
+          <option value="team">Sort: Team</option>
+          <option value="position">Sort: Position</option>
+        </select>
+        <button onclick="refreshAllNews()" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#1a56ff;background:none;border:none;cursor:pointer;white-space:nowrap">↻ Refresh</button>
+      </div>
     </div>
 
     <div id="news-feed-list"></div>
