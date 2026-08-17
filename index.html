@@ -2673,6 +2673,31 @@ async function sendChat() {
   }
 }
 
+// Precise news-item-to-player matching, shared by chat context and scouting
+// news lookups. Requires the full name as a phrase, or first name AND last
+// name each as separate whole words in the same item — never a bare
+// last-name substring. That looser rule used to match e.g. any "Mitchell"
+// (a different player, a coach, whoever) to a specific "Keaton Mitchell"
+// lookup, or "ward" inside unrelated words, and fed the wrong facts to the
+// GM Assistant as if they were authoritative.
+function newsItemMatchesPlayer(item, firstName, lastName) {
+  var text = (item.title || '') + ' ' + (item.desc || '');
+  var fn = (firstName || '').trim();
+  var ln = (lastName || '').trim();
+  if (!ln) return false;
+  var esc = function(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); };
+  var lnRe = new RegExp('\\b' + esc(ln) + '\\b', 'i');
+  if (fn) {
+    var fullNameRe = new RegExp('\\b' + esc(fn) + '\\s+' + esc(ln) + '\\b', 'i');
+    if (fullNameRe.test(text)) return true;
+    var fnRe = new RegExp('\\b' + esc(fn) + '\\b', 'i');
+    return fnRe.test(text) && lnRe.test(text);
+  }
+  // No first name available — only trust a lone last name if it's
+  // distinctive enough that an accidental collision is unlikely.
+  return ln.length >= 8 && lnRe.test(text);
+}
+
 // Extract player references and build live context addendum
 function buildMessageContext(userText) {
   if (!sleeperPlayers || !window.rotowireItems) return '';
@@ -2739,14 +2764,10 @@ function buildMessageContext(userText) {
   // Find news matching any resolved player
   var newsHits = [];
   resolved.slice(0, 5).forEach(function(pl) {
-    var ln = (pl.last_name || pl.full_name.split(' ').pop() || '').toLowerCase();
-    var fn = (pl.first_name || pl.full_name.split(' ')[0] || '').toLowerCase();
+    var ln = pl.last_name || pl.full_name.split(' ').pop() || '';
+    var fn = pl.first_name || pl.full_name.split(' ')[0] || '';
     rotowireItems.forEach(function(item) {
-      var combined = ((item.title||'') + ' ' + (item.desc||'')).toLowerCase();
-      // Need both first AND last name (or unique last name 6+ chars)
-      var match = (combined.indexOf(fn) >= 0 && combined.indexOf(ln) >= 0) ||
-                  (ln.length >= 6 && combined.indexOf(ln) >= 0);
-      if (match && newsHits.length < 8) {
+      if (newsItemMatchesPlayer(item, fn, ln) && newsHits.length < 8) {
         newsHits.push('[' + pl.full_name + '] ' + (item.title || '').slice(0, 100) + ' — ' + (item.desc || '').slice(0, 150));
       }
     });
@@ -3820,10 +3841,11 @@ function scSearchHL(name) {
 
 function scFetchProspectNews(p) {
   if (!rotowireItems || !rotowireItems.length) return;
-  var nameParts = p.name.toLowerCase().split(' ').filter(function(n){ return n.length > 2; });
+  var nameParts = (p.name || '').trim().split(/\s+/);
+  var firstName = nameParts[0] || '';
+  var lastName = nameParts[nameParts.length - 1] || '';
   p.newsCache = rotowireItems.filter(function(item) {
-    var t = (item.title||'').toLowerCase(), d=(item.desc||'').toLowerCase();
-    return nameParts.some(function(part){ return t.includes(part)||d.includes(part); });
+    return newsItemMatchesPlayer(item, firstName, lastName);
   });
   scSaveBoard();
 }
@@ -4009,18 +4031,12 @@ async function scSaveAndSearch() {
   var nflResults = [], googleResults = [];
   try { await loadRotowireFeed(true); } catch(e) {}
 
-  var name = p.name.toLowerCase();
-  var nameParts = name.split(' ').filter(function(n){ return n.length > 2; });
-  var lastName = nameParts[nameParts.length - 1] || '';
+  var nameParts = (p.name || '').trim().split(/\s+/);
   var firstName = nameParts[0] || '';
+  var lastName = nameParts[nameParts.length - 1] || '';
 
   nflResults = rotowireItems.filter(function(item) {
-    var combined = ((item.title||'') + ' ' + (item.desc||'')).toLowerCase();
-    if (combined.includes(name)) return true;
-    if (firstName.length > 3 && lastName.length > 3 && combined.includes(firstName) && combined.includes(lastName)) return true;
-    if (lastName.length > 6 && combined.includes(lastName)) return true;
-    if (firstName.length > 6 && combined.includes(firstName)) return true;
-    return false;
+    return newsItemMatchesPlayer(item, firstName, lastName);
   });
 
   googleResults = await scFetchGoogleNews(p);
@@ -4049,16 +4065,11 @@ async function scRefreshNews() {
   try { await loadRotowireFeed(false); } catch(e) {}
   var googleResults = await scFetchGoogleNews(currentProspect);
   var p = currentProspect;
-  var name = p.name.toLowerCase();
-  var nameParts = name.split(' ').filter(function(n){ return n.length > 2; });
-  var lastName = nameParts[nameParts.length - 1] || '';
+  var nameParts = (p.name || '').trim().split(/\s+/);
   var firstName = nameParts[0] || '';
+  var lastName = nameParts[nameParts.length - 1] || '';
   var nflResults = rotowireItems.filter(function(item) {
-    var combined = ((item.title||'') + ' ' + (item.desc||'')).toLowerCase();
-    if (combined.includes(name)) return true;
-    if (firstName.length > 3 && lastName.length > 3 && combined.includes(firstName) && combined.includes(lastName)) return true;
-    if (lastName.length > 6 && combined.includes(lastName)) return true;
-    return false;
+    return newsItemMatchesPlayer(item, firstName, lastName);
   });
   var seen = {}, merged = [];
   googleResults.concat(nflResults).forEach(function(item) {
