@@ -51,6 +51,10 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .logo { display: flex; align-items: baseline; gap: 5px; }
 .logo-gm  { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 24px; letter-spacing: 3px; color: var(--white); }
 .logo-cmd { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 24px; letter-spacing: 3px; color: #6daaff; }
+.logo-accent { display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; align-self: center; }
+.logo-accent i { display: block; width: 3px; height: 16px; background: #6daaff; transform: skewX(-18deg); border-radius: 1px; font-style: normal; }
+.logo-accent i:nth-child(2) { opacity: .65; }
+.logo-accent i:nth-child(3) { opacity: .35; }
 .hdr-right { display: flex; align-items: center; gap: 8px; }
 .live-chip { display: flex; align-items: center; gap: 5px; background: rgba(14,168,107,0.18); border: 1px solid rgba(14,168,107,0.35); border-radius: 20px; padding: 4px 10px; }
 .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 2s ease infinite; }
@@ -85,6 +89,9 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 /* ── SNAPSHOT ── */
 .snap { background: linear-gradient(160deg,#162850 0%,#0f1f3d 100%); border-radius: 14px; padding: 16px; position: relative; overflow: hidden; border: 1.5px solid #1e3566; box-shadow: 0 4px 0 #060f1e, 0 6px 20px rgba(15,31,61,.3), inset 0 1px 0 rgba(255,255,255,.07); }
 .snap::before { content: ''; position: absolute; top: -40px; right: -30px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,.04); }
+.snap-status { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.snap-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #6daaff; animation: blink 2s ease infinite; }
+.snap-status-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 2px; color: #6daaff; text-transform: uppercase; }
 .snap-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
 .snap-name { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--white); }
 .snap-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1.5px; color: rgba(255,255,255,.4); text-transform: uppercase; margin-top: 3px; }
@@ -93,6 +100,11 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .snap-rec-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.35); letter-spacing: 1px; text-transform: uppercase; }
 .snap-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
 .snap-stat { background: rgba(255,255,255,.06); border-radius: 8px; padding: 8px 6px; text-align: center; border: 1px solid rgba(255,255,255,.1); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.2); }
+.snap-sync { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.1); }
+.snap-sync-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: rgba(255,255,255,.4); text-transform: uppercase; }
+.snap-sync-btn { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #6daaff; background: rgba(109,170,255,.12); border: 1px solid rgba(109,170,255,.3); border-radius: 6px; padding: 5px 10px; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+.snap-sync-btn:active { opacity: .6; }
+.snap-sync-btn.syncing { opacity: .5; pointer-events: none; }
 .sv { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 14px; font-weight: 500; color: var(--white); display: block; margin-bottom: 2px; }
 .sv.blue { color: #6daaff; } .sv.gold { color: #f5c84a; }
 .sl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color: rgba(255,255,255,.3); letter-spacing: 1px; text-transform: uppercase; }
@@ -137,6 +149,14 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .qi1{background:rgba(26,86,255,.1)} .qi2{background:rgba(14,168,107,.1)} .qi3{background:rgba(212,144,10,.1)} .qi4{background:rgba(224,48,64,.1)}
 .ql { font-size: 12px; font-weight: 700; color: var(--navy); line-height: 1.3; }
 .qs { font-size: 10px; color: var(--dim); }
+
+/* ── LEAGUE TICKER ── */
+.ticker-list { background: var(--navy); border-radius: 12px; overflow: hidden; box-shadow: 0 3px 0 #060f1e, 0 2px 12px rgba(15,31,61,.15); }
+.ticker-item { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.ticker-item:last-child { border-bottom: none; }
+.ticker-icon { font-size: 11px; flex-shrink: 0; }
+.ticker-txt { flex: 1; min-width: 0; font-size: 11px; color: rgba(255,255,255,.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ticker-time { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.35); flex-shrink: 0; }
 
 /* ── ROSTER STRIP ── */
 .rstrip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
@@ -656,7 +676,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 <div class="screen active" id="screen-home">
   <div class="app-header">
     <div class="header-row">
-      <div class="logo"><span class="logo-gm">GM</span><span class="logo-cmd">Command</span></div>
+      <div class="logo"><span class="logo-gm">GM</span><span class="logo-cmd">Command</span><span class="logo-accent"><i></i><i></i><i></i></span></div>
       <div class="hdr-right">
         <div class="live-chip"><div class="live-dot"></div><span class="live-text">Live</span></div>
         <div class="hdr-btn"><span>🔔</span><span class="notif-dot">3</span></div>
@@ -675,6 +695,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
   <div class="scroll">
     <!-- snapshot -->
     <div class="snap">
+      <div class="snap-status"><span class="snap-status-dot"></span><span class="snap-status-txt">War Room Active</span></div>
       <div class="snap-top">
         <div><div class="snap-name" id="snap-team-name">The Psych Ward</div><div class="snap-sub">TitansTrev55 · Offseason 2026</div></div>
         <div class="snap-rec"><div class="snap-rec-num" id="snap-record">7–5</div><div class="snap-rec-lbl">Record</div></div>
@@ -684,6 +705,10 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
         <div class="snap-stat"><span class="sv" id="snap-ir">4</span><span class="sl">IR</span></div>
         <div class="snap-stat"><span class="sv blue">3</span><span class="sl">'27 Picks</span></div>
         <div class="snap-stat"><span class="sv gold">4th</span><span class="sl">Standing</span></div>
+      </div>
+      <div class="snap-sync">
+        <span class="snap-sync-txt">Last synced <span id="snap-sync-time">—</span></span>
+        <button class="snap-sync-btn" id="snap-sync-btn" onclick="syncNow()">↻ Sync Now</button>
       </div>
     </div>
     <!-- chat card -->
@@ -714,6 +739,11 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
         <div class="qcard" onclick="nav('chat')"><div class="qicon qi3">📊</div><div class="ql">Roster Audit</div><div class="qs">Strengths & holes</div></div>
         <div class="qcard" onclick="nav('chat')"><div class="qicon qi4">📈</div><div class="ql">Buy Low / Sell High</div><div class="qs">Market movers now</div></div>
       </div>
+    </div>
+    <!-- league ticker -->
+    <div id="league-ticker-sec" style="display:none">
+      <div class="sec-head"><span class="sec-title">League Ticker</span><button class="sec-link" onclick="setNewsFilter(document.getElementById('news-filter-trans'),'trans');nav('news')">View All ›</button></div>
+      <div class="ticker-list" id="league-ticker-list"></div>
     </div>
     <!-- roster strip -->
     <div>
@@ -1449,6 +1479,7 @@ async function loadRotowireFeed(silent) {
     }).sort(function(a,b){ return new Date(b.pubDate) - new Date(a.pubDate); });
     console.log('[Feeds] after dedup:', rotowireItems.length, 'items');
     renderNewsTray();
+    renderLeagueTicker();
     if (typeof currentProspect !== 'undefined' && currentProspect) scFetchProspectNews(currentProspect);
   } catch(err) {
     console.error('Rotowire fetch error:', err);
@@ -1757,6 +1788,8 @@ async function loadSleeperData() {
 
     sleeperLoaded = true;
     setLiveStatus('Live', '#0ea86b');
+    lastSyncTime = Date.now();
+    updateSyncTime();
 
     // Rebuild app data from live Sleeper data
     buildMyRoster();
@@ -1968,6 +2001,49 @@ function renderRosterScreen() {
     });
   });
   container.innerHTML = html;
+}
+
+// ── Sleeper Sync widget ──
+var lastSyncTime = null;
+
+function updateSyncTime() {
+  var el = document.getElementById('snap-sync-time');
+  if (el) el.textContent = lastSyncTime ? (getTimeAgo(lastSyncTime) + ' ago') : '—';
+}
+
+function syncNow() {
+  var btn = document.getElementById('snap-sync-btn');
+  if (btn) { btn.classList.add('syncing'); btn.textContent = '↻ Syncing…'; }
+  loadSleeperData().finally(function() {
+    if (btn) { btn.classList.remove('syncing'); btn.textContent = '↻ Sync Now'; }
+  });
+}
+
+// ── League Ticker — real trade/transaction items from the Rotowire feed,
+// same detection rule as the News screen's "Trans" filter. ──
+function renderLeagueTicker() {
+  var sec = document.getElementById('league-ticker-sec');
+  var list = document.getElementById('league-ticker-list');
+  if (!sec || !list) return;
+  if (!rotowireItems || !rotowireItems.length) { sec.style.display = 'none'; return; }
+
+  var items = rotowireItems.filter(function(item) {
+    var t = ((item.title||'') + (item.desc||'')).toLowerCase();
+    return t.includes('trade') || t.includes('sign') || t.includes('waiv') || t.includes('release') || t.includes('claim');
+  }).slice(0, 4);
+
+  if (!items.length) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  list.innerHTML = items.map(function(item) {
+    var t = ((item.title||'') + (item.desc||'')).toLowerCase();
+    var icon = t.includes('trade') ? '🔀' : (t.includes('sign') || t.includes('claim')) ? '✍️' : '📤';
+    var text = (item.title || item.playerName || 'League update').replace(/<[^>]+>/g,'');
+    return '<div class="ticker-item">' +
+      '<span class="ticker-icon">' + icon + '</span>' +
+      '<span class="ticker-txt">' + text + '</span>' +
+      '<span class="ticker-time">' + (item.timeAgo||'') + '</span>' +
+    '</div>';
+  }).join('');
 }
 
 // ── Update snapshot card with live record ──
