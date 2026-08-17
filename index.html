@@ -3620,12 +3620,12 @@ function renderPdTab(idx) {
           '<div>' +
             '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">' + (isDrafted ? 'NFL Team' : 'School') + '</div>' +
             (isDrafted
-              ? '<select style="width:100%;background:#f4f6fb;border:1.5px solid '+teamCol+';border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" id="sc-field-school" onchange="scField(currentProspect.id,String.fromCharCode(112,114,111,84,101,97,109),this.value)">'+nflTeamOptsSelected+'</select>'
-              : '<input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" id="sc-field-school" placeholder="College" oninput="scField(currentProspect.id,String.fromCharCode(115,99,104,111,111,108),this.value)">'
+              ? '<select style="width:100%;background:#f4f6fb;border:1.5px solid '+teamCol+';border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" id="sc-field-school" onchange="scField(currentProspect.id,'proTeam',this.value)">'+nflTeamOptsSelected+'</select>'
+              : '<input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" id="sc-field-school" placeholder="College" oninput="scField(currentProspect.id,'school',this.value)">'
             ) +
           '</div>' +
           '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Position</div>' +
-          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" onchange="scField(currentProspect.id,String.fromCharCode(112,111,115),this.value);scUpdateProspectHeader(currentProspect)">' +
+          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" onchange="scField(currentProspect.id,'pos',this.value);scUpdateProspectHeader(currentProspect)">' +
           ['QB','RB','WR','TE'].map(function(pos){ return '<option value="'+pos+'"'+(p.pos===pos?' selected':'')+'>'+pos+'</option>'; }).join('') +
           '</select></div>' +
         '</div>' +
@@ -3676,7 +3676,6 @@ function renderPdTab(idx) {
       '</div>';
 
   } else if (idx===2) {
-    var news = p.newsCache||[];
     var news = p.newsCache || [];
 
     var refreshHtml = '<button onclick="scRefreshNews()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#0f1f3d;cursor:pointer;margin-bottom:10px">&#x21BB; Refresh Feed</button>';
@@ -3894,7 +3893,12 @@ function scSearchHL(name) {
 
 
 
+// Populates newsCache from already-loaded RSS feed data only if there's no
+// cache yet — never overwrites an existing cache (which may include ESPN
+// results merged in by scFetchAllNews). Called on opening a prospect so
+// something shows immediately without firing any new network requests.
 function scFetchProspectNews(p) {
+  if (p.newsCache && p.newsCache.length) return;
   if (!rotowireItems || !rotowireItems.length) return;
   var nameParts = (p.name || '').trim().split(/\s+/);
   var firstName = nameParts[0] || '';
@@ -3905,161 +3909,138 @@ function scFetchProspectNews(p) {
   scSaveBoard();
 }
 
-
-async function scFetchRotoPage() {
-  var p = currentProspect;
-  if (!p || !p.rotowireUrl) return;
-  var statusEl = document.getElementById('sc-roto-status');
-  if (statusEl) statusEl.innerHTML = '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#1a56ff;margin-bottom:10px;letter-spacing:1px">Fetching...</div>';
-  try {
-    var proxyUrl = '/.netlify/functions/fetch-proxy?url=' + encodeURIComponent(p.rotowireUrl);
-    var res = await fetch(proxyUrl);
-    var data = await res.json();
-    var html = data.contents;
-    // Parse news items from the player page HTML
-    var parser = new DOMParser();
-    var doc = parser.parseFromString(html, 'text/html');
-    var items = [];
-    // Rotowire player page news structure
-    var newsBlocks = doc.querySelectorAll('.news-update, .player-news-item, [class*="news"]');
-    // Fallback: grab paragraphs with dates nearby
-    if (!newsBlocks.length) {
-      // Try to extract headline + date + body from the page
-      var allText = doc.body ? doc.body.innerText || doc.body.textContent : '';
-      // Look for date patterns
-      var lines = allText.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
-      var current = null;
-      var dateRe = /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+,\s+\d{4}/i;
-      lines.forEach(function(line) {
-        if (dateRe.test(line)) {
-          if (current && current.body) items.push(current);
-          current = { date: line, desc: '', timeAgo: line };
-        } else if (current && line.length > 20 && line.length < 500) {
-          current.desc += (current.desc ? ' ' : '') + line;
-        }
-      });
-      if (current && current.body) items.push(current);
-    }
-    // Cleaner extraction: look for article/section tags
-    if (!items.length) {
-      var articles = doc.querySelectorAll('article, .article, .news-item, .news-update, p');
-      var paragraphs = Array.from(doc.querySelectorAll('p')).filter(function(p){ return p.textContent.trim().length > 40; });
-      // Group into items using heading siblings
-      var headings = Array.from(doc.querySelectorAll('h1,h2,h3,h4,b,strong')).filter(function(h){ return h.textContent.trim().length > 5 && h.textContent.trim().length < 100; });
-      headings.slice(0, 8).forEach(function(h) {
-        var title = h.textContent.trim();
-        var next = h.nextElementSibling;
-        var body = '';
-        var dateEl = h.previousElementSibling;
-        var date = dateEl ? dateEl.textContent.trim() : '';
-        while (next && next.tagName !== 'H1' && next.tagName !== 'H2' && next.tagName !== 'H3' && body.length < 400) {
-          body += ' ' + next.textContent.trim();
-          next = next.nextElementSibling;
-        }
-        if (body.trim().length > 20) {
-          items.push({ date: date, desc: title + ': ' + body.trim(), timeAgo: date });
-        }
-      });
-    }
-    // Last resort — just grab all meaningful paragraphs
-    if (!items.length) {
-      var paras = Array.from(doc.querySelectorAll('p')).filter(function(el){ return el.textContent.trim().length > 50; });
-      paras.slice(0, 6).forEach(function(el) {
-        items.push({ date: '', desc: el.textContent.trim(), timeAgo: '' });
-      });
-    }
-    if (items.length) {
-      p.newsCache = items;
-      scSaveBoard();
-      renderPdTab(2);
-    } else {
-      if (statusEl) statusEl.innerHTML = '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#e03040;margin-bottom:10px">Could not parse news from page. Try refreshing.</div>';
-    }
-  } catch(e) {
-    console.error('Roto page fetch error:', e);
-    if (statusEl) statusEl.innerHTML = '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#e03040;margin-bottom:10px">Fetch failed. Check URL and try again.</div>';
-  }
+// Verifies an ESPN athlete-search result actually matches the prospect
+// before trusting it — same word-boundary rule as newsItemMatchesPlayer.
+// The old code fell back to the search's first result with no check at
+// all, which could silently attribute a different athlete's news to a
+// prospect forever (it gets cached).
+function scMatchesAthleteName(athlete, firstName, lastName) {
+  var full = ((athlete.fullName || athlete.displayName || '') + ' ' + (athlete.firstName || '') + ' ' + (athlete.lastName || ''));
+  return newsItemMatchesPlayer({ title: full, desc: '' }, firstName, lastName);
 }
 
-
-async function scFetchGoogleNews(p) {
-  var results = [];
-  var debugLog = [];
-  var isDrafted = !!(p.drafted || (p.proTeam && p.proTeam !== ''));
-  var league = isDrafted ? 'nfl' : 'college-football';
-  var baseUrl = 'https://site.api.espn.com/apis/site/v2/sports/football/';
-
-  // Step 1: Find athlete ID by name
+// Resolves and permanently caches the prospect's ESPN athlete ID so future
+// news fetches don't repeat this search every time. Stores null (not
+// undefined) on a confident non-match, so it's not silently retried with a
+// wrong-athlete guess. Invalidated on drafted-status change (nfl vs
+// college-football are different ESPN athlete namespaces) — see
+// scToggleDraftedCurrent / scToggleDrafted / scField.
+async function scResolveEspnAthlete(p) {
+  if (p.espnId !== undefined && p.espnLeague === (p.drafted ? 'nfl' : 'college-football')) return;
+  var league = (p.drafted || (p.proTeam && p.proTeam !== '')) ? 'nfl' : 'college-football';
+  var nameParts = (p.name || '').trim().split(/\s+/);
+  var firstName = nameParts[0] || '';
+  var lastName = nameParts[nameParts.length - 1] || '';
+  p.espnLeague = league;
   try {
-    var searchUrl = baseUrl + league + '/athletes?search=' + encodeURIComponent(p.name) + '&limit=5';
+    var searchUrl = 'https://site.api.espn.com/apis/site/v2/sports/football/' + league + '/athletes?search=' + encodeURIComponent(p.name) + '&limit=5';
     var sRes = await fetch(searchUrl);
     var sData = await sRes.json();
     var athletes = sData.athletes || sData.items || [];
-    debugLog.push('ESPN athlete search: ' + sRes.status + ', found: ' + athletes.length);
+    var match = athletes.find(function(a) { return scMatchesAthleteName(a, firstName, lastName); });
+    p.espnId = match ? match.id : null;
+  } catch (e) {
+    p.espnId = null;
+  }
+  scSaveBoard();
+}
 
-    var athleteId = null;
-    if (athletes.length) {
-      // Try to match name closely
-      var nameLower = p.name.toLowerCase();
-      var match = athletes.find(function(a) {
-        var fn = ((a.fullName||a.displayName||'') + ' ' + (a.firstName||'') + ' ' + (a.lastName||'')).toLowerCase();
-        return fn.includes(nameLower) || nameLower.includes((a.lastName||'').toLowerCase());
-      });
-      athleteId = (match || athletes[0]).id;
-      debugLog.push('Athlete ID: ' + athleteId + ' (' + ((match||athletes[0]).displayName||(match||athletes[0]).fullName||'?') + ')');
-    }
+async function scFetchEspnAthleteNews(p, debugLog) {
+  if (!p.espnId) return [];
+  var results = [];
+  try {
+    var newsUrl = 'https://site.api.espn.com/apis/site/v2/sports/football/' + p.espnLeague + '/athletes/' + p.espnId + '/news?limit=20';
+    var nRes = await fetch(newsUrl);
+    var nData = await nRes.json();
+    var articles = nData.articles || nData.items || [];
+    debugLog.push('ESPN athlete news: ' + nRes.status + ', articles: ' + articles.length);
+    articles.forEach(function(a) {
+      var headline = (a.headline || a.title || '').trim();
+      var desc = (a.description || a.summary || '').replace(/<[^>]+>/g, '').slice(0, 220);
+      var dateStr = '';
+      try { dateStr = new Date(a.published || a.lastModified).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); } catch(e) {}
+      if (headline) results.push({ title: headline, desc: headline + (desc ? ' — ' + desc : ''), timeAgo: dateStr, date: dateStr, source: 'espn' });
+    });
+  } catch (e) {
+    debugLog.push('ESPN athlete news error: ' + e.message);
+  }
+  return results;
+}
 
-    // Step 2: Fetch athlete-specific news
-    if (athleteId) {
-      var newsUrl = baseUrl + league + '/athletes/' + athleteId + '/news?limit=20';
-      var nRes = await fetch(newsUrl);
-      var nData = await nRes.json();
-      var articles = nData.articles || nData.items || [];
-      debugLog.push('Athlete news: ' + nRes.status + ', articles: ' + articles.length);
+// Last-resort fallback: ESPN's general league feed (up to 300 articles),
+// filtered with the same word-boundary matcher used everywhere else — not
+// a raw substring check. Only called when RSS + athlete-specific ESPN news
+// combined are thin, since this is the most expensive call in the pipeline.
+async function scFetchEspnGeneralFeed(p, debugLog) {
+  var results = [];
+  var league = p.espnLeague || ((p.drafted || (p.proTeam && p.proTeam !== '')) ? 'nfl' : 'college-football');
+  var nameParts = (p.name || '').trim().split(/\s+/);
+  var firstName = nameParts[0] || '';
+  var lastName = nameParts[nameParts.length - 1] || '';
+  try {
+    var feedUrl = 'https://site.api.espn.com/apis/site/v2/sports/football/' + league + '/news?limit=300';
+    var fRes = await fetch(feedUrl);
+    var fData = await fRes.json();
+    var all = fData.articles || fData.items || [];
+    debugLog.push('ESPN general feed: ' + all.length + ' articles');
+    all.forEach(function(a) {
+      var headline = (a.headline || a.title || '').trim();
+      var rawDesc = (a.description || a.summary || '');
+      if (!newsItemMatchesPlayer({ title: headline, desc: rawDesc }, firstName, lastName)) return;
+      var desc = rawDesc.replace(/<[^>]+>/g, '').slice(0, 220);
+      var dateStr = '';
+      try { dateStr = new Date(a.published || a.lastModified).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); } catch(e) {}
+      if (headline) results.push({ title: headline, desc: headline + (desc ? ' — ' + desc : ''), timeAgo: dateStr, date: dateStr, source: 'espn-general' });
+    });
+    debugLog.push('ESPN general feed matched: ' + results.length);
+  } catch (e) {
+    debugLog.push('ESPN general feed error: ' + e.message);
+  }
+  return results;
+}
 
-      articles.forEach(function(a) {
-        var headline = (a.headline || a.title || '').trim();
-        var desc = (a.description || a.summary || '').replace(/<[^>]+>/g,'').slice(0,220);
-        var dateStr = '';
-        try { dateStr = new Date(a.published||a.lastModified).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
-        if (headline) results.push({ title: headline, desc: headline+(desc?' \u2014 '+desc:''), timeAgo: dateStr, date: dateStr, source: 'espn' });
-      });
-      debugLog.push('Results from athlete feed: ' + results.length);
-    }
-  } catch(e) { debugLog.push('ESPN error: ' + e.message); }
+// Single entry point for a full news refresh — replaces the old
+// scSaveAndSearch/scRefreshNews duplication and the always-fires 300-
+// article ESPN fallback. opts.forceRefreshFeeds forces a fresh pull of all
+// six RSS feeds (only meaningful on an explicit "Refresh Feed" tap);
+// otherwise whatever's already loaded this session is reused.
+async function scFetchAllNews(p, opts) {
+  opts = opts || {};
+  var debugLog = [];
 
-  // Fallback: general ESPN CFB/NFL feed with name filter (wider net)
-  if (results.length < 3) {
-    try {
-      var feedUrl = baseUrl + league + '/news?limit=300';
-      var fRes = await fetch(feedUrl);
-      var fData = await fRes.json();
-      var all = fData.articles || fData.items || [];
-      debugLog.push('General feed fallback: ' + all.length + ' articles');
-      var nameLow = p.name.toLowerCase();
-      var lastName = nameLow.split(' ').pop();
-      var filtered = all.filter(function(a) {
-        var text = ((a.headline||'') + ' ' + (a.description||a.summary||'')).toLowerCase();
-        return text.includes(nameLow) || (lastName.length > 4 && text.includes(lastName));
-      });
-      debugLog.push('General feed matched: ' + filtered.length);
-      filtered.forEach(function(a) {
-        var headline = (a.headline || a.title || '').trim();
-        var desc = (a.description || a.summary || '').replace(/<[^>]+>/g,'').slice(0,220);
-        var dateStr = '';
-        try { dateStr = new Date(a.published||a.lastModified).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){}
-        if (headline) results.push({ title: headline, desc: headline+(desc?' \u2014 '+desc:''), timeAgo: dateStr, date: dateStr, source: 'espn-general' });
-      });
-    } catch(e) { debugLog.push('General feed error: ' + e.message); }
+  if (opts.forceRefreshFeeds || !rotowireItems || !rotowireItems.length) {
+    try { await loadRotowireFeed(!opts.forceRefreshFeeds); } catch (e) {}
   }
 
-  p._newsDebug = debugLog;
-  var seen = {}, deduped = [];
-  results.forEach(function(item) {
-    var key = item.title.slice(0,50).toLowerCase();
-    if (!seen[key]) { seen[key] = true; deduped.push(item); }
+  var nameParts = (p.name || '').trim().split(/\s+/);
+  var firstName = nameParts[0] || '';
+  var lastName = nameParts[nameParts.length - 1] || '';
+  var rssResults = (rotowireItems || []).filter(function(item) {
+    return newsItemMatchesPlayer(item, firstName, lastName);
   });
-  return deduped;
+  debugLog.push('RSS matches: ' + rssResults.length);
+
+  await scResolveEspnAthlete(p);
+  debugLog.push('ESPN athlete: ' + (p.espnId ? (p.espnLeague + '/' + p.espnId) : 'no confident match'));
+  var espnAthleteResults = await scFetchEspnAthleteNews(p, debugLog);
+
+  var combined = rssResults.concat(espnAthleteResults);
+  if (combined.length < 3) {
+    var generalResults = await scFetchEspnGeneralFeed(p, debugLog);
+    combined = combined.concat(generalResults);
+  }
+
+  var seen = {}, merged = [];
+  combined.forEach(function(item) {
+    var key = (item.title || item.desc || '').slice(0, 60).toLowerCase();
+    if (!seen[key]) { seen[key] = true; merged.push(item); }
+  });
+
+  p.newsCache = merged;
+  p.newsFetchedAt = Date.now();
+  p._newsDebug = debugLog;
+  scSaveBoard();
+  return merged;
 }
 
 async function scSaveAndSearch() {
@@ -4083,31 +4064,11 @@ async function scSaveAndSearch() {
   var saveBtn = document.querySelector('[onclick="scSaveAndSearch()"]');
   if (saveBtn) { saveBtn.textContent = 'Saving...'; saveBtn.style.background = '#7a8fb5'; }
 
-  var nflResults = [], googleResults = [];
-  try { await loadRotowireFeed(true); } catch(e) {}
-
-  var nameParts = (p.name || '').trim().split(/\s+/);
-  var firstName = nameParts[0] || '';
-  var lastName = nameParts[nameParts.length - 1] || '';
-
-  nflResults = rotowireItems.filter(function(item) {
-    return newsItemMatchesPlayer(item, firstName, lastName);
-  });
-
-  googleResults = await scFetchGoogleNews(p);
-
-  var seen = {}, merged = [];
-  googleResults.concat(nflResults).forEach(function(item) {
-    var key = (item.title||item.desc||'').slice(0,60).toLowerCase();
-    if (!seen[key]) { seen[key] = true; merged.push(item); }
-  });
-
-  p.newsCache = merged;
-  scSaveBoard();
+  var merged = await scFetchAllNews(p, { forceRefreshFeeds: false });
   scUpdateProspectHeader(p);
 
   if (saveBtn) {
-    saveBtn.innerHTML = merged.length ? '\u2713 Saved \u00b7 ' + merged.length + ' news hits' : '\u2713 Saved';
+    saveBtn.innerHTML = merged.length ? '✓ Saved · ' + merged.length + ' news hits' : '✓ Saved';
     saveBtn.style.background = '#0ea86b';
   }
   if (currentPdTab === 2) renderPdTab(2);
@@ -4117,23 +4078,8 @@ async function scRefreshNews() {
   if (!currentProspect) return;
   var btn = document.querySelector('[onclick="scRefreshNews()"]');
   if (btn) { btn.textContent = 'Fetching...'; btn.style.opacity = '.6'; }
-  try { await loadRotowireFeed(false); } catch(e) {}
-  var googleResults = await scFetchGoogleNews(currentProspect);
-  var p = currentProspect;
-  var nameParts = (p.name || '').trim().split(/\s+/);
-  var firstName = nameParts[0] || '';
-  var lastName = nameParts[nameParts.length - 1] || '';
-  var nflResults = rotowireItems.filter(function(item) {
-    return newsItemMatchesPlayer(item, firstName, lastName);
-  });
-  var seen = {}, merged = [];
-  googleResults.concat(nflResults).forEach(function(item) {
-    var key = (item.title||item.desc||'').slice(0,60).toLowerCase();
-    if (!seen[key]) { seen[key] = true; merged.push(item); }
-  });
-  p.newsCache = merged;
-  scSaveBoard();
-  if (btn) { btn.textContent = '\u21BB Refresh Feed'; btn.style.opacity = '1'; }
+  await scFetchAllNews(currentProspect, { forceRefreshFeeds: true });
+  if (btn) { btn.textContent = '↻ Refresh Feed'; btn.style.opacity = '1'; }
   renderPdTab(2);
 }
 
