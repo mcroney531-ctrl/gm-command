@@ -2189,7 +2189,8 @@ async function runTradeFinder(modeIdx) {
         model: 'claude-sonnet-4-5',
         max_tokens: 1000,
         system: sysPrompt,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: 'user', content: prompt }],
+        prefetch: ['league_rosters_summary']
       })
     });
     if (!res.ok) {

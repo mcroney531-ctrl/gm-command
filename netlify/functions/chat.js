@@ -262,10 +262,40 @@ exports.handler = async function (event, context) {
     // Strip any tools the frontend may have sent; we control tool injection.
     // Also override the system prompt to inject today's date — Claude's training
     // data is ~1 year behind, so without this it reasons from a stale NFL reality.
-    const { messages: incomingMessages, tools: _tools, system: frontendSystem, ...rest } = body;
+    const { messages: incomingMessages, tools: _tools, system: frontendSystem, prefetch, ...rest } = body;
     const messages = [...(incomingMessages || [])];
     const tools = reportCardsUrl ? TOOLS : undefined;
     const today = new Date().toISOString().split('T')[0];
+
+    // Optional prefetch: some prompts (Trade Finder especially) reliably need
+    // league-wide data the CRITICAL RULES would otherwise make Claude fetch
+    // itself via a tool call — costing a full extra round trip (Anthropic +
+    // Render) per rule triggered. A "cook up trade packages" prompt can chain
+    // 4-5 such round trips and blow Netlify's function timeout. Fetching the
+    // known-needed data up front in parallel, before the first Anthropic
+    // call, cuts that down to 1-2 rounds for the parts Claude still has to
+    // verify per-player (values, depth chart, trade fairness).
+    let prefetchedContext = '';
+    if (prefetch && reportCardsUrl) {
+      const keys = Array.isArray(prefetch) ? prefetch : ['league_rosters_summary'];
+      const results = await Promise.allSettled(
+        keys.map(async (key) => {
+          if (key === 'league_rosters_summary') {
+            const resp = await fetch(`${reportCardsUrl}/league/rosters/summary`);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            return { key, data: await resp.json() };
+          }
+          throw new Error(`unknown prefetch key: ${key}`);
+        })
+      );
+      const fetched = results.filter((r) => r.status === 'fulfilled').map((r) => r.value);
+      if (fetched.length) {
+        prefetchedContext =
+          `\n\nPREFETCHED DATA (already fetched for you — do NOT call the matching tool again, use this directly):\n` +
+          fetched.map((f) => `### ${f.key}\n${JSON.stringify(f.data)}`).join('\n\n');
+      }
+    }
+
     const system =
       `Today's date is ${today}. Your NFL training data has a cutoff around mid-2025 — roughly one full season behind. ` +
       `CRITICAL RULES — always follow before answering:\n` +
@@ -278,7 +308,8 @@ exports.handler = async function (event, context) {
       `attribution line: "Powered by LeagueLogs (leaguelogs.com)" — required by their terms.\n` +
       `6. For any question about whether a trade is fair, call evaluate_trade with the sleeper_ids on ` +
       `each side — never estimate the value delta yourself.\n` +
-      (frontendSystem ? `\n\n${frontendSystem}` : '');
+      (frontendSystem ? `\n\n${frontendSystem}` : '') +
+      prefetchedContext;
 
     let finalResponse = null;
 
