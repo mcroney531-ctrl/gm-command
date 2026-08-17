@@ -38,7 +38,7 @@
   --gold:      #d4900a;
 }
 
-html, body { height: 100%; overflow: hidden; background: var(--off); }
+html, body { height: 100%; overflow: hidden; background: var(--navy); }
 body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; margin: 0 auto; display: flex; flex-direction: column; height: 100dvh; color: var(--text); }
 
 /* ── SCREEN SYSTEM ── */
@@ -194,21 +194,21 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .pbl { font-size: 10px; line-height: 1.45; color: var(--mid); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* ── BOTTOM NAV ── */
-.bnav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: linear-gradient(180deg,#f8faff 0%,#ffffff 100%); border-top: 2px solid var(--border2); display: grid; grid-template-columns: repeat(6,1fr); padding-bottom: env(safe-area-inset-bottom,0); z-index: 100; box-shadow: 0 -4px 20px rgba(15,31,61,.1); }
+.bnav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: linear-gradient(180deg,#132a52 0%,#0f1f3d 100%); border-top: 2px solid #1e3566; display: grid; grid-template-columns: repeat(6,1fr); padding-bottom: env(safe-area-inset-bottom,0); z-index: 100; box-shadow: 0 -4px 20px rgba(0,0,0,.25); }
 .ni { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0 8px; cursor: pointer; gap: 4px; position: relative; transition: opacity .12s; }
 .ni:active { opacity: .55; transform: scale(.93); }
 .ni-icon { font-size: 20px; line-height: 1; }
-.ni-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: .8px; text-transform: uppercase; color: var(--dim); white-space: nowrap; }
-.ni.active .ni-lbl { color: var(--navy); font-weight: 700; }
-.ni.active::after { content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 2.5px; border-radius: 0 0 3px 3px; background: var(--navy); }
+.ni-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: .8px; text-transform: uppercase; color: rgba(255,255,255,.45); white-space: nowrap; }
+.ni.active .ni-lbl { color: #6daaff; font-weight: 700; }
+.ni.active::after { content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 2.5px; border-radius: 0 0 3px 3px; background: #6daaff; }
 .ni.ask-ni { padding-top: 6px; }
 .ask-circle { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(180deg,#1e3566 0%,#0f1f3d 100%); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-top: -18px; border: 2.5px solid var(--white); box-shadow: 0 0 0 1.5px var(--border2), 0 4px 0 #060f1e, 0 6px 16px rgba(15,31,61,.25); flex-shrink: 0; transition: all .12s; }
 .ni.ask-ni:active .ask-circle { transform: translateY(2px); box-shadow: 0 0 0 1.5px var(--border2), 0 2px 0 #060f1e, 0 3px 8px rgba(15,31,61,.2); }
-.ni.ask-ni .ni-lbl { color: var(--navy); font-weight: 600; }
+.ni.ask-ni .ni-lbl { color: #6daaff; font-weight: 600; }
 .ni.ask-ni::after { display: none; }
-.ni.trade-ni .ni-lbl { color: var(--accent); }
+.ni.trade-ni .ni-lbl { color: #6daaff; }
 .ni.trade-ni.active .ni-lbl { font-weight: 700; }
-.ni.trade-ni.active::after { background: var(--accent); }
+.ni.trade-ni.active::after { background: #6daaff; }
 
 /* ════════════════════════════
    FULL CHAT SCREEN
@@ -329,7 +329,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .rd-intel-log-date { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); flex-shrink: 0; }
 .rd-intel-log-txt { font-size: 11px; color: var(--mid); }
 .rd-btn-primary, .rd-btn-secondary { width: 100%; border-radius: 10px; padding: 12px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
-.rd-btn-primary { background: var(--navy); color: var(--white); border: none; }
+.rd-btn-primary { background: var(--accent); color: #ffffff; border: none; box-shadow: 0 3px 0 #0d3ab8; }
 .rd-btn-secondary { background: var(--white); color: var(--navy); border: 1px solid var(--border2); }
 
 .rd-trade-intro { font-size: 12px; line-height: 1.6; color: var(--text); }
@@ -399,7 +399,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .vt-val { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color: var(--mid); width: 34px; text-align: right; flex-shrink: 0; }
 
 /* ask btn */
-.ask-btn { width: 100%; padding: 13px; background: var(--navy); border: none; border-radius: 10px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 16px; letter-spacing: 2.5px; color: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
+.ask-btn { width: 100%; padding: 13px; background: var(--accent); box-shadow: 0 3px 0 #0d3ab8, 0 4px 14px rgba(26,86,255,.3); border: none; border-radius: 10px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 16px; letter-spacing: 2.5px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
 .ask-btn:active { opacity: .8; }
 
 /* ════════════════════════════
@@ -4185,11 +4185,11 @@ function removeTFTablePlayer(id) {
     <div class="chip" id="news-filter-injury" onclick="setNewsFilter(this,'injury')"><span>🩹</span><span>Injury</span></div>
     <div class="chip" id="news-filter-trans" onclick="setNewsFilter(this,'trans')"><span>🔁</span><span>Trans</span></div>
   </div>
-  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 90px;background:#f4f6fb">
+  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 90px;background:#0f1f3d">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px">
-      <div style="display:flex;align-items:center;gap:7px;min-width:0"><div style="width:6px;height:6px;border-radius:50%;background:#0ea86b;animation:blink 2s ease infinite;flex-shrink:0"></div><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;color:#7a8fb5;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="news-screen-status">Live · Synced</span></div>
+      <div style="display:flex;align-items:center;gap:7px;min-width:0"><div style="width:6px;height:6px;border-radius:50%;background:#0ea86b;animation:blink 2s ease infinite;flex-shrink:0"></div><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.5);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="news-screen-status">Live · Synced</span></div>
       <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
-        <select id="news-sort-select" onchange="setNewsSort(this.value)" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#1a56ff;background:#f4f6fb;border:1px solid #dce2f0;border-radius:6px;padding:4px 6px;cursor:pointer">
+        <select id="news-sort-select" onchange="setNewsSort(this.value)" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#6daaff;background:#132a52;border:1px solid #1e3566;border-radius:6px;padding:4px 6px;cursor:pointer">
           <option value="recent">Sort: Newest</option>
           <option value="team">Sort: Team</option>
           <option value="position">Sort: Position</option>
