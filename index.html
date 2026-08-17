@@ -18,19 +18,19 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+SemiExpanded:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color:transparent; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
   --navy:      #0f1f3d;
   --navy-mid:  #162850;
   --navy-lt:   #1e3566;
-  --white:     #141b2c;
-  --off:       #0a0e16;
-  --surface:   #111a2b;
-  --border:    #232d42;
-  --border2:   #2e3a52;
-  --text:      #eef1f8;
-  --mid:       #aab8d1;
+  --white:     #ffffff;
+  --off:       #f4f6fb;
+  --surface:   #eef1f8;
+  --border:    #dce2f0;
+  --border2:   #c8d2e8;
+  --text:      #0f1f3d;
+  --mid:       #3a4e72;
   --dim:       #7a8fb5;
   --accent:    #1a56ff;
   --green:     #0ea86b;
@@ -38,395 +38,395 @@
   --gold:      #d4900a;
 }
 
-html, body { height: 100%; overflow: hidden; background:var(--off); }
-body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; margin: 0 auto; display: flex; flex-direction: column; height: 100dvh; color:var(--text); }
+html, body { height: 100%; overflow: hidden; background: var(--off); }
+body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; margin: 0 auto; display: flex; flex-direction: column; height: 100dvh; color: var(--text); }
 
 /* ── SCREEN SYSTEM ── */
 .screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
 .screen.active { display: flex; }
 
 /* ── SHARED HEADER ── */
-.app-header { background:var(--navy); padding: 14px 18px 12px; flex-shrink: 0; }
+.app-header { background: var(--navy); padding: 14px 18px 12px; flex-shrink: 0; }
 .header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .logo { display: flex; align-items: baseline; gap: 5px; }
-.logo-gm  { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 24px; letter-spacing: 3px; color:var(--text); }
-.logo-cmd { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 24px; letter-spacing: 3px; color:#6daaff; }
+.logo-gm  { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 24px; letter-spacing: 3px; color: var(--white); }
+.logo-cmd { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 24px; letter-spacing: 3px; color: #6daaff; }
 .logo-accent { display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; align-self: center; }
-.logo-accent i { display: block; width: 3px; height: 16px; background:#6daaff; transform: skewX(-18deg); border-radius: 1px; font-style: normal; }
+.logo-accent i { display: block; width: 3px; height: 16px; background: #6daaff; transform: skewX(-18deg); border-radius: 1px; font-style: normal; }
 .logo-accent i:nth-child(2) { opacity: .65; }
 .logo-accent i:nth-child(3) { opacity: .35; }
 .hdr-right { display: flex; align-items: center; gap: 8px; }
-.live-chip { display: flex; align-items: center; gap: 5px; background:rgba(14,168,107,0.18); border:1px solid rgba(14,168,107,0.35); border-radius: 20px; padding: 4px 10px; }
-.live-dot { width: 6px; height: 6px; border-radius: 50%; background:var(--green); animation: blink 2s ease infinite; }
+.live-chip { display: flex; align-items: center; gap: 5px; background: rgba(14,168,107,0.18); border: 1px solid rgba(14,168,107,0.35); border-radius: 20px; padding: 4px 10px; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 2s ease infinite; }
 @keyframes blink { 0%,100%{opacity:1}50%{opacity:.25} }
-.live-text { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; color:var(--green); text-transform: uppercase; }
-.hdr-btn { width: 30px; height: 30px; border-radius: 50%; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; position: relative; transition: background .15s; }
-.hdr-btn:active { background:rgba(255,255,255,0.18); }
-.notif-dot { position: absolute; top: -2px; right: -2px; width: 13px; height: 13px; border-radius: 50%; background:var(--red); font-size: 7px; font-weight: 700; color:white; display: flex; align-items: center; justify-content: center; border:1.5px solid var(--navy); }
-.search-bar { display: flex; align-items: center; gap: 10px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 9px 14px; cursor: text; }
+.live-text { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; color: var(--green); text-transform: uppercase; }
+.hdr-btn { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; position: relative; transition: background .15s; }
+.hdr-btn:active { background: rgba(255,255,255,0.18); }
+.notif-dot { position: absolute; top: -2px; right: -2px; width: 13px; height: 13px; border-radius: 50%; background: var(--red); font-size: 7px; font-weight: 700; color: white; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--navy); }
+.search-bar { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 9px 14px; cursor: text; }
 .search-icon { font-size: 13px; opacity: .5; }
-.search-txt { font-size: 13px; color:rgba(255,255,255,.4); }
+.search-txt { font-size: 13px; color: rgba(255,255,255,.4); }
 
 /* ── CHIPS ── */
-.chips { flex-shrink: 0; padding: 11px 18px; display: flex; gap: 8px; overflow-x: auto; background:var(--white); border-bottom:2px solid var(--border2); }
+.chips { flex-shrink: 0; padding: 11px 18px; display: flex; gap: 8px; overflow-x: auto; background: var(--white); border-bottom: 2px solid var(--border2); }
 .chips::-webkit-scrollbar { display: none; }
-.chip { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 22px; border:1.5px solid var(--border2); background:linear-gradient(180deg,#141b2c 0%,#111a2b 100%); white-space: nowrap; cursor: pointer; transition: all .12s; flex-shrink: 0; box-shadow:0 2px 0 #03060c, 0 1px 4px rgba(15,31,61,.08); }
-.chip:active { transform: translateY(1px); box-shadow:0 1px 0 #03060c, 0 0px 2px rgba(15,31,61,.08); }
-.chip.active { background:linear-gradient(180deg,#1e3566 0%,#0f1f3d 100%); border-color:#0a1628; box-shadow:0 2px 0 #060f1e, inset 0 1px 0 rgba(255,255,255,.1); }
-.chip span { font-size: 12px; font-weight: 600; color:var(--mid); }
-.chip.active span { color:var(--text); }
-.chip em { background:var(--border); border-radius: 10px; padding: 1px 6px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color:var(--dim); font-style: normal; }
-.chip.active em { background:rgba(255,255,255,.15); color:rgba(255,255,255,.7); }
+.chip { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 22px; border: 1.5px solid var(--border2); background: linear-gradient(180deg,#ffffff 0%,#f0f3fb 100%); white-space: nowrap; cursor: pointer; transition: all .12s; flex-shrink: 0; box-shadow: 0 2px 0 #c4ceea, 0 1px 4px rgba(15,31,61,.08); }
+.chip:active { transform: translateY(1px); box-shadow: 0 1px 0 #c4ceea, 0 0px 2px rgba(15,31,61,.08); }
+.chip.active { background: linear-gradient(180deg,#1e3566 0%,#0f1f3d 100%); border-color: #0a1628; box-shadow: 0 2px 0 #060f1e, inset 0 1px 0 rgba(255,255,255,.1); }
+.chip span { font-size: 12px; font-weight: 600; color: var(--mid); }
+.chip.active span { color: var(--white); }
+.chip em { background: var(--border); border-radius: 10px; padding: 1px 6px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color: var(--dim); font-style: normal; }
+.chip.active em { background: rgba(255,255,255,.15); color: rgba(255,255,255,.7); }
 
 /* ── MAIN SCROLL ── */
 .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 14px 18px 90px; display: flex; flex-direction: column; gap: 14px; }
 .scroll::-webkit-scrollbar { display: none; }
 
 .sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
-.sec-title { font-size: 15px; font-weight: 700; color:var(--text); }
-.sec-link { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; color:var(--accent); text-transform: uppercase; cursor: pointer; background:none; border:none; }
+.sec-title { font-size: 15px; font-weight: 700; color: var(--navy); }
+.sec-link { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; cursor: pointer; background: none; border: none; }
 
 /* ── SNAPSHOT ── */
-.snap { background:linear-gradient(160deg,#162850 0%,#0f1f3d 100%); border-radius: 14px; padding: 16px; position: relative; overflow: hidden; border:1.5px solid #1e3566; box-shadow:0 4px 0 #060f1e, 0 6px 20px rgba(15,31,61,.3), inset 0 1px 0 rgba(255,255,255,.07); flex-shrink: 0; }
-.snap::before { content: ''; position: absolute; top: -40px; right: -30px; width: 130px; height: 130px; border-radius: 50%; background:rgba(255,255,255,.04); }
+.snap { background: linear-gradient(160deg,#162850 0%,#0f1f3d 100%); border-radius: 14px; padding: 16px; position: relative; overflow: hidden; border: 1.5px solid #1e3566; box-shadow: 0 4px 0 #060f1e, 0 6px 20px rgba(15,31,61,.3), inset 0 1px 0 rgba(255,255,255,.07); }
+.snap::before { content: ''; position: absolute; top: -40px; right: -30px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,.04); }
 .snap-status { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
-.snap-status-dot { width: 6px; height: 6px; border-radius: 50%; background:#6daaff; animation: blink 2s ease infinite; }
-.snap-status-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 2px; color:#6daaff; text-transform: uppercase; }
+.snap-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #6daaff; animation: blink 2s ease infinite; }
+.snap-status-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 2px; color: #6daaff; text-transform: uppercase; }
 .snap-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
-.snap-name { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 20px; letter-spacing: 2px; color:var(--text); }
-.snap-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1.5px; color:rgba(255,255,255,.4); text-transform: uppercase; margin-top: 3px; }
+.snap-name { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--white); }
+.snap-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1.5px; color: rgba(255,255,255,.4); text-transform: uppercase; margin-top: 3px; }
 .snap-rec { text-align: right; }
-.snap-rec-num { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 30px; color:#6daaff; line-height: 1; }
-.snap-rec-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:rgba(255,255,255,.35); letter-spacing: 1px; text-transform: uppercase; }
+.snap-rec-num { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 30px; color: #6daaff; line-height: 1; }
+.snap-rec-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.35); letter-spacing: 1px; text-transform: uppercase; }
 .snap-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
-.snap-stat { background:rgba(255,255,255,.06); border-radius: 8px; padding: 8px 6px; text-align: center; border:1px solid rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.2); }
-.snap-sync { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top:1px solid rgba(255,255,255,.1); }
-.snap-sync-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color:rgba(255,255,255,.4); text-transform: uppercase; }
-.snap-sync-btn { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color:#6daaff; background:rgba(109,170,255,.12); border:1px solid rgba(109,170,255,.3); border-radius: 6px; padding: 5px 10px; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+.snap-stat { background: rgba(255,255,255,.06); border-radius: 8px; padding: 8px 6px; text-align: center; border: 1px solid rgba(255,255,255,.1); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.2); }
+.snap-sync { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.1); }
+.snap-sync-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: rgba(255,255,255,.4); text-transform: uppercase; }
+.snap-sync-btn { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #6daaff; background: rgba(109,170,255,.12); border: 1px solid rgba(109,170,255,.3); border-radius: 6px; padding: 5px 10px; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
 .snap-sync-btn:active { opacity: .6; }
 .snap-sync-btn.syncing { opacity: .5; pointer-events: none; }
-.sv { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 14px; font-weight: 500; color:var(--text); display: block; margin-bottom: 2px; }
-.sv.blue { color:#6daaff; } .sv.gold { color:#f5c84a; }
-.sl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color:rgba(255,255,255,.3); letter-spacing: 1px; text-transform: uppercase; }
+.sv { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 14px; font-weight: 500; color: var(--white); display: block; margin-bottom: 2px; }
+.sv.blue { color: #6daaff; } .sv.gold { color: #f5c84a; }
+.sl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color: rgba(255,255,255,.3); letter-spacing: 1px; text-transform: uppercase; }
 
 /* ── CHAT CARD ── */
-.chat-card { background:var(--white); border-radius: 14px; border:1.5px solid var(--border2); overflow: hidden; box-shadow:0 3px 0 #03060c, 0 2px 16px rgba(15,31,61,.08); }
-.cc-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background:var(--navy); }
-.cc-title { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 16px; letter-spacing: 2px; color:var(--text); }
-.cc-meta { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:rgba(255,255,255,.35); }
-.cc-ctx { display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-bottom:1px solid var(--border); background:var(--off); }
-.ctx-pill { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: .8px; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; border:1px solid var(--border); color:var(--dim); background:var(--white); }
-.ctx-pill.on { background:rgba(14,168,107,.08); border-color:rgba(14,168,107,.3); color:var(--green); }
-.cc-msgs { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; border-bottom:1px solid var(--border); }
+.chat-card { background: var(--white); border-radius: 14px; border: 1.5px solid var(--border2); overflow: hidden; box-shadow: 0 3px 0 #c4ceea, 0 2px 16px rgba(15,31,61,.08); }
+.cc-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: var(--navy); }
+.cc-title { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 16px; letter-spacing: 2px; color: var(--white); }
+.cc-meta { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.35); }
+.cc-ctx { display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-bottom: 1px solid var(--border); background: var(--off); }
+.ctx-pill { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: .8px; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); color: var(--dim); background: var(--white); }
+.ctx-pill.on { background: rgba(14,168,107,.08); border-color: rgba(14,168,107,.3); color: var(--green); }
+.cc-msgs { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--border); }
 .msg { display: flex; flex-direction: column; gap: 3px; }
-.msg-who { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color:var(--dim); }
-.msg.you .msg-who { color:var(--accent); text-align: right; }
+.msg-who { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
+.msg.you .msg-who { color: var(--accent); text-align: right; }
 .bubble { padding: 10px 13px; border-radius: 10px; font-size: 12px; line-height: 1.6; max-width: 92%; }
-.msg-ai .bubble { background:var(--off); border:1px solid var(--border); color:var(--text); border-radius: 3px 10px 10px 10px; }
+.msg-ai .bubble { background: var(--off); border: 1px solid var(--border); color: var(--text); border-radius: 3px 10px 10px 10px; }
 .msg.you { align-items: flex-end; }
-.msg.you .bubble { background:var(--navy); color:rgba(255,255,255,.88); border-radius: 10px 3px 10px 10px; }
-.bubble strong { color:var(--accent); font-weight: 700; }
-.verdict { display: flex; align-items: center; gap: 8px; margin-top: 7px; padding: 8px 11px; background:var(--navy); border-radius: 7px; }
-.verdict-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 13px; letter-spacing: 2px; color:var(--text); }
-.verdict-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:rgba(255,255,255,.4); margin-left: auto; }
-.src-note { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:var(--dim); margin-top: 5px; }
+.msg.you .bubble { background: var(--navy); color: rgba(255,255,255,.88); border-radius: 10px 3px 10px 10px; }
+.bubble strong { color: var(--accent); font-weight: 700; }
+.verdict { display: flex; align-items: center; gap: 8px; margin-top: 7px; padding: 8px 11px; background: var(--navy); border-radius: 7px; }
+.verdict-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 13px; letter-spacing: 2px; color: var(--white); }
+.verdict-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.4); margin-left: auto; }
+.src-note { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); margin-top: 5px; }
 .typing { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
-.tdot { width: 5px; height: 5px; border-radius: 50%; background:var(--border2); animation: tdot 1.2s ease infinite; }
+.tdot { width: 5px; height: 5px; border-radius: 50%; background: var(--border2); animation: tdot 1.2s ease infinite; }
 .tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
 @keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
 .cc-input { display: flex; gap: 8px; align-items: center; padding: 10px 12px; }
-.cc-input input { flex: 1; background:var(--off); border:1px solid var(--border2); border-radius: 22px; padding: 9px 14px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 12px; color:var(--text); outline: none; transition: border-color .15s; }
-.cc-input input::placeholder { color:var(--dim); }
-.cc-input input:focus { border-color:var(--accent); }
-.send { width: 36px; height: 36px; flex-shrink: 0; background:var(--navy); border:none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.send svg { width: 13px; height: 13px; fill:white; }
+.cc-input input { flex: 1; background: var(--off); border: 1px solid var(--border2); border-radius: 22px; padding: 9px 14px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 12px; color: var(--text); outline: none; transition: border-color .15s; }
+.cc-input input::placeholder { color: var(--dim); }
+.cc-input input:focus { border-color: var(--accent); }
+.send { width: 36px; height: 36px; flex-shrink: 0; background: var(--navy); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.send svg { width: 13px; height: 13px; fill: white; }
 
 /* ── QUICK GRID ── */
 .qgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.qcard { background:linear-gradient(180deg,#141b2c 0%,#0a0e16 100%); border-radius: 13px; padding: 14px; border:1.5px solid var(--border2); cursor: pointer; display: flex; flex-direction: column; gap: 8px; box-shadow:0 3px 0 #03060c, 0 2px 8px rgba(15,31,61,.07); transition: all .12s; }
-.qcard:active { transform: translateY(2px); box-shadow:0 1px 0 #03060c, 0 1px 3px rgba(15,31,61,.06); }
+.qcard { background: linear-gradient(180deg,#ffffff 0%,#f4f6fb 100%); border-radius: 13px; padding: 14px; border: 1.5px solid var(--border2); cursor: pointer; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 3px 0 #c4ceea, 0 2px 8px rgba(15,31,61,.07); transition: all .12s; }
+.qcard:active { transform: translateY(2px); box-shadow: 0 1px 0 #c4ceea, 0 1px 3px rgba(15,31,61,.06); }
 .qicon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
 .qi1{background:rgba(26,86,255,.1)} .qi2{background:rgba(14,168,107,.1)} .qi3{background:rgba(212,144,10,.1)} .qi4{background:rgba(224,48,64,.1)}
-.ql { font-size: 12px; font-weight: 700; color:var(--text); line-height: 1.3; }
-.qs { font-size: 10px; color:var(--dim); }
+.ql { font-size: 12px; font-weight: 700; color: var(--navy); line-height: 1.3; }
+.qs { font-size: 10px; color: var(--dim); }
 
 /* ── LEAGUE TICKER ── */
-.ticker-list { background:var(--navy); border-radius: 12px; overflow: hidden; box-shadow:0 3px 0 #060f1e, 0 2px 12px rgba(15,31,61,.15); }
-.ticker-item { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom:1px solid rgba(255,255,255,.08); }
-.ticker-item:last-child { border-bottom:none; }
+.ticker-list { background: var(--navy); border-radius: 12px; overflow: hidden; box-shadow: 0 3px 0 #060f1e, 0 2px 12px rgba(15,31,61,.15); }
+.ticker-item { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.ticker-item:last-child { border-bottom: none; }
 .ticker-icon { font-size: 11px; flex-shrink: 0; }
-.ticker-txt { flex: 1; min-width: 0; font-size: 11px; color:rgba(255,255,255,.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ticker-time { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:rgba(255,255,255,.35); flex-shrink: 0; }
+.ticker-txt { flex: 1; min-width: 0; font-size: 11px; color: rgba(255,255,255,.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ticker-time { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.35); flex-shrink: 0; }
 
 /* ── ROSTER STRIP ── */
 .rstrip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
 .rstrip::-webkit-scrollbar { display: none; }
-.pchip { background:linear-gradient(180deg,#141b2c 0%,#111a2b 100%); border:1.5px solid var(--border2); border-radius: 12px; padding: 10px 12px; flex-shrink: 0; cursor: pointer; min-width: 84px; display: flex; flex-direction: column; align-items: center; gap: 5px; box-shadow:0 3px 0 #03060c, 0 1px 5px rgba(15,31,61,.06); transition: all .12s; }
-.pchip:active { transform: translateY(2px); box-shadow:0 1px 0 #03060c; }
-.pchip.fl { border-color:rgba(224,48,64,.45); background:linear-gradient(180deg,#2a1418 0%,#331a1e 100%); box-shadow:0 3px 0 rgba(224,48,64,.25); }
-.pchip.nw { border-color:rgba(212,144,10,.45); background:linear-gradient(180deg,#2a2410 0%,#332c12 100%); box-shadow:0 3px 0 rgba(212,144,10,.2); }
-.pavatar { width: 44px; height: 44px; border-radius: 6px; background:transparent; display: flex; align-items: center; justify-content: center; position: relative; border:none; }
-.pflag { position: absolute; bottom: -2px; right: -2px; width: 13px; height: 13px; border-radius: 50%; border:1.5px solid var(--white); font-size: 7px; display: flex; align-items: center; justify-content: center; }
-.pf-i { background:var(--red); } .pf-n { background:var(--gold); }
+.pchip { background: linear-gradient(180deg,#ffffff 0%,#f0f3fb 100%); border: 1.5px solid var(--border2); border-radius: 12px; padding: 10px 12px; flex-shrink: 0; cursor: pointer; min-width: 84px; display: flex; flex-direction: column; align-items: center; gap: 5px; box-shadow: 0 3px 0 #c4ceea, 0 1px 5px rgba(15,31,61,.06); transition: all .12s; }
+.pchip:active { transform: translateY(2px); box-shadow: 0 1px 0 #c4ceea; }
+.pchip.fl { border-color: rgba(224,48,64,.45); background: linear-gradient(180deg,#fff5f5 0%,#ffe8e8 100%); box-shadow: 0 3px 0 rgba(224,48,64,.25); }
+.pchip.nw { border-color: rgba(212,144,10,.45); background: linear-gradient(180deg,#fffbf0 0%,#fff3d0 100%); box-shadow: 0 3px 0 rgba(212,144,10,.2); }
+.pavatar { width: 44px; height: 44px; border-radius: 6px; background: transparent; display: flex; align-items: center; justify-content: center; position: relative; border: none; }
+.pflag { position: absolute; bottom: -2px; right: -2px; width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid var(--white); font-size: 7px; display: flex; align-items: center; justify-content: center; }
+.pf-i { background: var(--red); } .pf-n { background: var(--gold); }
 .ppos { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; }
 .pos-qb{color:var(--accent)} .pos-rb{color:var(--green)} .pos-wr{color:#8a4fcf} .pos-te{color:var(--gold)}
-.pname { font-size: 10px; font-weight: 700; color:var(--text); text-align: center; line-height: 1.2; }
+.pname { font-size: 10px; font-weight: 700; color: var(--navy); text-align: center; line-height: 1.2; }
 
 /* ── NEWS TRAY ── */
-.ntray { background:var(--white); border-radius: 14px; border:1px solid var(--border); overflow: hidden; box-shadow:0 1px 8px rgba(15,31,61,.05); }
-.nth { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px 8px; border-bottom:1px solid var(--border); }
+.ntray { background: var(--white); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 1px 8px rgba(15,31,61,.05); }
+.nth { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px 8px; border-bottom: 1px solid var(--border); }
 .nth-l { display: flex; align-items: center; gap: 7px; }
-.ndot { width: 5px; height: 5px; border-radius: 50%; background:var(--green); animation: blink 2s ease infinite; }
-.nlbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color:var(--dim); }
-.nexp { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color:var(--accent); text-transform: uppercase; background:none; border:none; cursor: pointer; }
+.ndot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: blink 2s ease infinite; }
+.nlbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
+.nexp { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; background: none; border: none; cursor: pointer; }
 .nscroll { display: flex; gap: 8px; overflow-x: auto; padding: 10px 14px 12px; }
 .nscroll::-webkit-scrollbar { display: none; }
-.npill { display: flex; flex-direction: column; gap: 4px; background:var(--off); border:1px solid var(--border); border-radius: 10px; padding: 9px 11px; flex-shrink: 0; min-width: 155px; max-width: 190px; cursor: pointer; }
-.npill.fi { border-left:3px solid var(--red); }
-.npill.fn { border-left:3px solid var(--gold); }
-.npill.ft { border-left:3px solid var(--accent); }
+.npill { display: flex; flex-direction: column; gap: 4px; background: var(--off); border: 1px solid var(--border); border-radius: 10px; padding: 9px 11px; flex-shrink: 0; min-width: 155px; max-width: 190px; cursor: pointer; }
+.npill.fi { border-left: 3px solid var(--red); }
+.npill.fn { border-left: 3px solid var(--gold); }
+.npill.ft { border-left: 3px solid var(--accent); }
 .pm { display: flex; align-items: center; gap: 5px; }
-.pt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; font-weight: 500; color:var(--text); text-transform: uppercase; }
-.pti { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:var(--dim); }
+.pt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; font-weight: 500; color: var(--navy); text-transform: uppercase; }
+.pti { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); }
 .pb { margin-left: auto; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; padding: 1px 6px; border-radius: 8px; }
 .bm{background:rgba(14,168,107,.1);color:var(--green)} .br{background:rgba(26,86,255,.08);color:var(--accent)} .bw{background:rgba(212,144,10,.1);color:var(--gold)}
-.pp { font-size: 12px; font-weight: 700; color:var(--text); }
-.pbl { font-size: 10px; line-height: 1.45; color:var(--mid); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pp { font-size: 12px; font-weight: 700; color: var(--navy); }
+.pbl { font-size: 10px; line-height: 1.45; color: var(--mid); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* ── BOTTOM NAV ── */
-.bnav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background:linear-gradient(180deg,#111a2b 0%,#141b2c 100%); border-top:2px solid var(--border2); display: grid; grid-template-columns: repeat(6,1fr); padding-bottom: env(safe-area-inset-bottom,0); z-index: 100; box-shadow:0 -4px 20px rgba(15,31,61,.1); }
+.bnav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: linear-gradient(180deg,#f8faff 0%,#ffffff 100%); border-top: 2px solid var(--border2); display: grid; grid-template-columns: repeat(6,1fr); padding-bottom: env(safe-area-inset-bottom,0); z-index: 100; box-shadow: 0 -4px 20px rgba(15,31,61,.1); }
 .ni { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0 8px; cursor: pointer; gap: 4px; position: relative; transition: opacity .12s; }
 .ni:active { opacity: .55; transform: scale(.93); }
 .ni-icon { font-size: 20px; line-height: 1; }
-.ni-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: .8px; text-transform: uppercase; color:var(--dim); white-space: nowrap; }
-.ni.active .ni-lbl { color:var(--text); font-weight: 700; }
-.ni.active::after { content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 2.5px; border-radius: 0 0 3px 3px; background:var(--navy); }
+.ni-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: .8px; text-transform: uppercase; color: var(--dim); white-space: nowrap; }
+.ni.active .ni-lbl { color: var(--navy); font-weight: 700; }
+.ni.active::after { content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 2.5px; border-radius: 0 0 3px 3px; background: var(--navy); }
 .ni.ask-ni { padding-top: 6px; }
-.ask-circle { width: 42px; height: 42px; border-radius: 50%; background:linear-gradient(180deg,#1e3566 0%,#0f1f3d 100%); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-top: -18px; border:2.5px solid var(--white); box-shadow:0 0 0 1.5px var(--border2), 0 4px 0 #060f1e, 0 6px 16px rgba(15,31,61,.25); flex-shrink: 0; transition: all .12s; }
-.ni.ask-ni:active .ask-circle { transform: translateY(2px); box-shadow:0 0 0 1.5px var(--border2), 0 2px 0 #060f1e, 0 3px 8px rgba(15,31,61,.2); }
-.ni.ask-ni .ni-lbl { color:var(--text); font-weight: 600; }
+.ask-circle { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(180deg,#1e3566 0%,#0f1f3d 100%); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-top: -18px; border: 2.5px solid var(--white); box-shadow: 0 0 0 1.5px var(--border2), 0 4px 0 #060f1e, 0 6px 16px rgba(15,31,61,.25); flex-shrink: 0; transition: all .12s; }
+.ni.ask-ni:active .ask-circle { transform: translateY(2px); box-shadow: 0 0 0 1.5px var(--border2), 0 2px 0 #060f1e, 0 3px 8px rgba(15,31,61,.2); }
+.ni.ask-ni .ni-lbl { color: var(--navy); font-weight: 600; }
 .ni.ask-ni::after { display: none; }
-.ni.trade-ni .ni-lbl { color:var(--accent); }
+.ni.trade-ni .ni-lbl { color: var(--accent); }
 .ni.trade-ni.active .ni-lbl { font-weight: 700; }
-.ni.trade-ni.active::after { background:var(--accent); }
+.ni.trade-ni.active::after { background: var(--accent); }
 
 /* ════════════════════════════
    FULL CHAT SCREEN
 ════════════════════════════ */
-.fc-header { background:var(--navy); padding: 14px 18px 12px; flex-shrink: 0; }
+.fc-header { background: var(--navy); padding: 14px 18px 12px; flex-shrink: 0; }
 .fc-hrow { display: flex; align-items: center; justify-content: space-between; }
-.back-btn { display: flex; align-items: center; gap: 5px; background:none; border:none; cursor: pointer; color:rgba(255,255,255,.5); font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 0; }
-.fc-title { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 18px; letter-spacing: 2px; color:var(--text); }
-.fc-meta { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:rgba(255,255,255,.3); letter-spacing: .8px; }
-.fc-ctx { display: flex; align-items: center; gap: 5px; padding: 8px 18px; border-bottom:1px solid var(--border); background:var(--off); flex-shrink: 0; }
-.fc-msgs { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; background:var(--white); }
+.back-btn { display: flex; align-items: center; gap: 5px; background: none; border: none; cursor: pointer; color: rgba(255,255,255,.5); font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 0; }
+.fc-title { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--white); }
+.fc-meta { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.3); letter-spacing: .8px; }
+.fc-ctx { display: flex; align-items: center; gap: 5px; padding: 8px 18px; border-bottom: 1px solid var(--border); background: var(--off); flex-shrink: 0; }
+.fc-msgs { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; background: var(--white); }
 .fc-msgs::-webkit-scrollbar { display: none; }
-.fc-input-wrap { display: flex; gap: 8px; align-items: flex-end; padding: 12px 18px; border-top:1px solid var(--border); background:var(--white); flex-shrink: 0; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
-.fc-textarea { flex: 1; background:var(--off); border:1px solid var(--border2); border-radius: 20px; padding: 10px 16px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 13px; color:var(--text); resize: none; outline: none; min-height: 44px; max-height: 120px; line-height: 1.45; transition: border-color .15s; }
-.fc-textarea::placeholder { color:var(--dim); }
-.fc-textarea:focus { border-color:var(--accent); }
-.fc-send { width: 44px; height: 44px; background:var(--navy); border:none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity .15s; }
+.fc-input-wrap { display: flex; gap: 8px; align-items: flex-end; padding: 12px 18px; border-top: 1px solid var(--border); background: var(--white); flex-shrink: 0; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+.fc-textarea { flex: 1; background: var(--off); border: 1px solid var(--border2); border-radius: 20px; padding: 10px 16px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 13px; color: var(--text); resize: none; outline: none; min-height: 44px; max-height: 120px; line-height: 1.45; transition: border-color .15s; }
+.fc-textarea::placeholder { color: var(--dim); }
+.fc-textarea:focus { border-color: var(--accent); }
+.fc-send { width: 44px; height: 44px; background: var(--navy); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity .15s; }
 .fc-send:active { opacity: .75; }
-.fc-send svg { width: 15px; height: 15px; fill:white; }
+.fc-send svg { width: 15px; height: 15px; fill: white; }
 .fc-msg { display: flex; flex-direction: column; gap: 4px; animation: fadeUp .25s ease; }
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.fc-who { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color:var(--dim); }
-.fc-msg.you .fc-who { color:var(--accent); text-align: right; }
+.fc-who { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
+.fc-msg.you .fc-who { color: var(--accent); text-align: right; }
 .fc-bubble { padding: 11px 14px; border-radius: 10px; font-size: 13px; line-height: 1.65; max-width: 88%; }
-.fc-msg .fc-bubble { background:var(--off); border:1px solid var(--border); color:var(--text); border-radius: 3px 10px 10px 10px; }
+.fc-msg .fc-bubble { background: var(--off); border: 1px solid var(--border); color: var(--text); border-radius: 3px 10px 10px 10px; }
 .fc-msg.you { align-items: flex-end; }
-.fc-msg.you .fc-bubble { background:var(--navy); color:rgba(255,255,255,.9); border-radius: 10px 3px 10px 10px; }
-.fc-bubble strong { color:var(--accent); font-weight: 700; }
-.fc-note { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:var(--dim); margin-top: 6px; }
-.fc-verdict { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 9px 12px; background:var(--navy); border-radius: 8px; }
-.fc-vlbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 14px; letter-spacing: 2px; color:var(--text); }
-.fc-vsub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:rgba(255,255,255,.4); margin-left: auto; }
+.fc-msg.you .fc-bubble { background: var(--navy); color: rgba(255,255,255,.9); border-radius: 10px 3px 10px 10px; }
+.fc-bubble strong { color: var(--accent); font-weight: 700; }
+.fc-note { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); margin-top: 6px; }
+.fc-verdict { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 9px 12px; background: var(--navy); border-radius: 8px; }
+.fc-vlbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 14px; letter-spacing: 2px; color: var(--white); }
+.fc-vsub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.4); margin-left: auto; }
 
 /* ════════════════════════════
    ROSTER SCREEN
 ════════════════════════════ */
 .roster-scroll { flex: 1; overflow-y: auto; padding: 0; }
 .roster-scroll::-webkit-scrollbar { display: none; }
-.rpos-group { padding: 10px 18px 4px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 2.5px; text-transform: uppercase; color:var(--dim); background:var(--off); border-bottom:1px solid var(--border); }
-.rrow { display: flex; align-items: center; gap: 12px; padding: 11px 18px; border-bottom:1px solid var(--border); cursor: pointer; transition: background .1s; background:var(--white); }
-.rrow:active { background:var(--off); }
-.rrow-avatar { width: 48px; height: 48px; border-radius: 6px; background:transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; border:none; }
-.rrow-flag { position: absolute; bottom: -3px; right: -3px; width: 13px; height: 13px; border-radius: 50%; border:1.5px solid var(--white); font-size: 7px; display: flex; align-items: center; justify-content: center; }
+.rpos-group { padding: 10px 18px 4px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--dim); background: var(--off); border-bottom: 1px solid var(--border); }
+.rrow { display: flex; align-items: center; gap: 12px; padding: 11px 18px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; background: var(--white); }
+.rrow:active { background: var(--off); }
+.rrow-avatar { width: 48px; height: 48px; border-radius: 6px; background: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; border: none; }
+.rrow-flag { position: absolute; bottom: -3px; right: -3px; width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid var(--white); font-size: 7px; display: flex; align-items: center; justify-content: center; }
 .rrow-info { flex: 1; }
-.rrow-name { font-size: 13px; font-weight: 600; color:var(--text); }
-.rrow-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color:var(--dim); margin-top: 1px; }
+.rrow-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+.rrow-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color: var(--dim); margin-top: 1px; }
 .rrow-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
 .rrow-pos { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; font-weight: 500; }
-.rrow-val { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; color:var(--dim); }
+.rrow-val { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; color: var(--dim); }
 
 /* ════════════════════════════
    PLAYER CARD SCREEN
 ════════════════════════════ */
-.pc-header { background:var(--navy); padding: 14px 18px 0; flex-shrink: 0; }
-.pc-back { display: flex; align-items: center; gap: 5px; background:none; border:none; cursor: pointer; color:rgba(255,255,255,.5); font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; padding: 0; }
+.pc-header { background: var(--navy); padding: 14px 18px 0; flex-shrink: 0; }
+.pc-back { display: flex; align-items: center; gap: 5px; background: none; border: none; cursor: pointer; color: rgba(255,255,255,.5); font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; padding: 0; }
 .pc-hero { display: flex; align-items: flex-end; justify-content: space-between; padding-bottom: 16px; }
 .pc-hero-l { display: flex; align-items: center; gap: 14px; }
-.pc-avatar { width: 62px; height: 62px; border-radius: 8px; background:transparent; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; border:none; overflow: visible; }
-.pc-pos-badge { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; font-weight: 500; padding: 2px 7px; border-radius: 6px; white-space: nowrap; border:1.5px solid var(--navy); }
+.pc-avatar { width: 62px; height: 62px; border-radius: 8px; background: transparent; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; border: none; overflow: visible; }
+.pc-pos-badge { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; font-weight: 500; padding: 2px 7px; border-radius: 6px; white-space: nowrap; border: 1.5px solid var(--navy); }
 .rb-badge{background:rgba(14,168,107,.9);color:white} .wr-badge{background:rgba(138,79,207,.9);color:white} .qb-badge{background:rgba(26,86,255,.9);color:white} .te-badge{background:rgba(212,144,10,.9);color:white}
-.pc-fullname { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 26px; letter-spacing: 2px; color:var(--text); line-height: 1; }
-.pc-team { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; color:rgba(255,255,255,.45); text-transform: uppercase; margin-top: 4px; }
+.pc-fullname { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 26px; letter-spacing: 2px; color: var(--white); line-height: 1; }
+.pc-team { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; color: rgba(255,255,255,.45); text-transform: uppercase; margin-top: 4px; }
 .pc-tags { display: flex; gap: 5px; margin-top: 5px; }
 .st { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; padding: 2px 8px; border-radius: 8px; text-transform: uppercase; }
 .st-inj{background:rgba(224,48,64,.2);color:#ff8a8a;border:1px solid rgba(224,48,64,.3)}
 .st-ok{background:rgba(14,168,107,.2);color:#4dd89a;border:1px solid rgba(14,168,107,.3)}
 .pc-val { text-align: right; }
-.pc-ktc { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 28px; letter-spacing: 1px; color:#6daaff; line-height: 1; }
-.pc-ktc-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:rgba(255,255,255,.3); letter-spacing: 1px; text-transform: uppercase; }
+.pc-ktc { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 28px; letter-spacing: 1px; color: #6daaff; line-height: 1; }
+.pc-ktc-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.3); letter-spacing: 1px; text-transform: uppercase; }
 .pc-trend { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; }
 .tr-dn{color:#ff8a8a} .tr-up{color:#4dd89a}
 
-.pc-tabs { display: flex; background:var(--white); border-bottom:2px solid var(--border2); flex-shrink: 0; }
-.pc-tab { flex: 1; padding: 11px 4px; text-align: center; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.2px; text-transform: uppercase; color:var(--dim); cursor: pointer; border-bottom:2.5px solid transparent; transition: all .15s; position: relative; margin-bottom: -2px; }
-.pc-tab.active { color:var(--text); border-bottom-color:var(--text); font-weight: 600; }
+.pc-tabs { display: flex; background: var(--white); border-bottom: 2px solid var(--border2); flex-shrink: 0; }
+.pc-tab { flex: 1; padding: 11px 4px; text-align: center; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--dim); cursor: pointer; border-bottom: 2.5px solid transparent; transition: all .15s; position: relative; margin-bottom: -2px; }
+.pc-tab.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 600; }
 .tab-pip { position: absolute; top: 8px; right: 50%; transform: translateX(14px); width: 5px; height: 5px; border-radius: 50%; }
 
 .pc-scroll { flex: 1; overflow-y: auto; padding: 16px 18px 30px; display: flex; flex-direction: column; gap: 14px; }
 .pc-scroll::-webkit-scrollbar { display: none; }
 
 .pc-stat-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
-.pst { background:var(--white); border:1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center; box-shadow:0 1px 4px rgba(15,31,61,.05); }
-.psv { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 15px; font-weight: 500; color:var(--text); display: block; margin-bottom: 3px; }
+.pst { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center; box-shadow: 0 1px 4px rgba(15,31,61,.05); }
+.psv { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 15px; font-weight: 500; color: var(--navy); display: block; margin-bottom: 3px; }
 .psv.g{color:var(--green)} .psv.r{color:var(--red)} .psv.go{color:var(--gold)}
-.psl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color:var(--dim); letter-spacing: 1px; text-transform: uppercase; }
+.psl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
 
 /* ── Rival Detail screen ── */
-.rd-hero { background:var(--white); padding: 16px 18px; border-bottom:1px solid var(--border); flex-shrink: 0; }
+.rd-hero { background: var(--white); padding: 16px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .rd-hero-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
-.rd-team-name { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 22px; letter-spacing: 1px; color:var(--text); line-height: 1.1; }
-.rd-manager-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; color:var(--dim); margin-top: 3px; }
+.rd-team-name { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 22px; letter-spacing: 1px; color: var(--navy); line-height: 1.1; }
+.rd-manager-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; color: var(--dim); margin-top: 3px; }
 .rd-rec { text-align: right; flex-shrink: 0; }
-.rd-rec-num { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 18px; font-weight: 600; color:var(--text); }
-.rd-rec-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:var(--dim); letter-spacing: 1px; text-transform: uppercase; }
+.rd-rec-num { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 18px; font-weight: 600; color: var(--navy); }
+.rd-rec-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
 .rd-stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
-.rd-stat { background:var(--off); border:1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center; }
-.rd-stat-val { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 15px; font-weight: 500; color:var(--text); display: block; margin-bottom: 3px; }
-.rd-stat-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color:var(--dim); letter-spacing: 1px; text-transform: uppercase; }
+.rd-stat { background: var(--off); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center; }
+.rd-stat-val { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 15px; font-weight: 500; color: var(--navy); display: block; margin-bottom: 3px; }
+.rd-stat-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
 
 .rd-scroll { flex: 1; overflow-y: auto; padding-bottom: 20px; }
 .rd-scroll::-webkit-scrollbar { display: none; }
-.rd-pos-group { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color:var(--dim); padding: 12px 18px 6px; background:var(--off); }
-.rd-player-row { display: flex; align-items: center; gap: 12px; padding: 11px 18px; border-bottom:1px solid var(--border); cursor: pointer; background:var(--white); }
+.rd-pos-group { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); padding: 12px 18px 6px; background: var(--off); }
+.rd-player-row { display: flex; align-items: center; gap: 12px; padding: 11px 18px; border-bottom: 1px solid var(--border); cursor: pointer; background: var(--white); }
 .rd-pinfo { flex: 1; min-width: 0; }
-.rd-pname { font-size: 13px; font-weight: 600; color:var(--text); }
-.rd-psub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color:var(--dim); margin-top: 1px; }
+.rd-pname { font-size: 13px; font-weight: 600; color: var(--navy); }
+.rd-psub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color: var(--dim); margin-top: 1px; }
 .rd-pright { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0; }
-.rd-pktc { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 12px; font-weight: 600; color:var(--text); }
-.rd-pktc-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color:var(--dim); letter-spacing: 1px; text-transform: uppercase; }
+.rd-pktc { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 12px; font-weight: 600; color: var(--navy); }
+.rd-pktc-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
 
-.rd-empty { padding: 40px 20px; text-align: center; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; color:var(--dim); }
-.rd-news-item { padding: 12px 18px; border-bottom:1px solid var(--border); background:var(--white); }
+.rd-empty { padding: 40px 20px; text-align: center; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; color: var(--dim); }
+.rd-news-item { padding: 12px 18px; border-bottom: 1px solid var(--border); background: var(--white); }
 .rd-news-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 
 .rd-intel-body, .rd-trade-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
-.rd-intel-blurb { font-size: 12px; line-height: 1.6; color:var(--text); background:var(--white); border:1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
-.rd-intel-log-item { display: flex; gap: 8px; padding: 7px 10px; background:var(--white); border:1px solid var(--border); border-radius: 6px; margin-bottom: 4px; }
-.rd-intel-log-date { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:var(--dim); flex-shrink: 0; }
-.rd-intel-log-txt { font-size: 11px; color:var(--mid); }
+.rd-intel-blurb { font-size: 12px; line-height: 1.6; color: var(--text); background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.rd-intel-log-item { display: flex; gap: 8px; padding: 7px 10px; background: var(--white); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 4px; }
+.rd-intel-log-date { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); flex-shrink: 0; }
+.rd-intel-log-txt { font-size: 11px; color: var(--mid); }
 .rd-btn-primary, .rd-btn-secondary { width: 100%; border-radius: 10px; padding: 12px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
-.rd-btn-primary { background:var(--navy); color:var(--text); border:none; }
-.rd-btn-secondary { background:var(--white); color:var(--text); border:1px solid var(--border2); }
+.rd-btn-primary { background: var(--navy); color: var(--white); border: none; }
+.rd-btn-secondary { background: var(--white); color: var(--navy); border: 1px solid var(--border2); }
 
-.rd-trade-intro { font-size: 12px; line-height: 1.6; color:var(--text); }
+.rd-trade-intro { font-size: 12px; line-height: 1.6; color: var(--text); }
 .rd-trade-assets { display: flex; flex-direction: column; gap: 6px; }
-.rd-trade-asset-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color:var(--dim); margin-bottom: 2px; }
-.rd-asset-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background:var(--white); border:1px solid var(--border); border-radius: 8px; }
-.rd-asset-pos { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; font-weight: 600; color:var(--accent); background:rgba(26,86,255,.1); padding: 2px 6px; border-radius: 5px; flex-shrink: 0; }
-.rd-asset-name { flex: 1; font-size: 12px; font-weight: 500; color:var(--text); }
-.rd-asset-ktc { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; color:var(--dim); }
+.rd-trade-asset-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); margin-bottom: 2px; }
+.rd-asset-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--white); border: 1px solid var(--border); border-radius: 8px; }
+.rd-asset-pos { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; font-weight: 600; color: var(--accent); background: rgba(26,86,255,.1); padding: 2px 6px; border-radius: 5px; flex-shrink: 0; }
+.rd-asset-name { flex: 1; font-size: 12px; font-weight: 500; color: var(--navy); }
+.rd-asset-ktc { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; color: var(--dim); }
 
 .rbadge { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: .5px; text-transform: uppercase; padding: 2px 7px; border-radius: 6px; flex-shrink: 0; }
-.rbadge-intel { background:rgba(26,86,255,.12); color:var(--accent); }
-.rbadge-news { background:rgba(212,144,10,.12); color:var(--gold); }
+.rbadge-intel { background: rgba(26,86,255,.12); color: var(--accent); }
+.rbadge-news { background: rgba(212,144,10,.12); color: var(--gold); }
 
-.blk { background:var(--white); border-radius: 14px; border:1px solid var(--border); overflow: hidden; box-shadow:0 1px 8px rgba(15,31,61,.05); }
-.blk-hd { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom:1px solid var(--border); background:var(--off); }
-.blk-title { font-size: 12px; font-weight: 700; color:var(--text); display: flex; align-items: center; gap: 7px; }
-.blk-action { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color:var(--accent); text-transform: uppercase; background:none; border:none; cursor: pointer; }
+.blk { background: var(--white); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 1px 8px rgba(15,31,61,.05); }
+.blk-hd { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid var(--border); background: var(--off); }
+.blk-title { font-size: 12px; font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: 7px; }
+.blk-action { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; background: none; border: none; cursor: pointer; }
 .blk-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.analysis-txt { font-size: 12px; line-height: 1.7; color:var(--mid); }
-.analysis-txt strong { color:var(--text); font-weight: 700; }
-.blk-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top:1px solid var(--border); }
-.blk-src { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:var(--dim); }
-.regen-btn { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color:var(--accent); text-transform: uppercase; background:none; border:none; cursor: pointer; }
+.analysis-txt { font-size: 12px; line-height: 1.7; color: var(--mid); }
+.analysis-txt strong { color: var(--navy); font-weight: 700; }
+.blk-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--border); }
+.blk-src { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); }
+.regen-btn { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; background: none; border: none; cursor: pointer; }
 
 /* news log */
-.nli { padding: 11px 14px; border-bottom:1px solid var(--border); display: flex; flex-direction: column; gap: 4px; cursor: pointer; transition: background .1s; }
-.nli:last-child { border-bottom:none; }
-.nli:active { background:var(--off); }
+.nli { padding: 11px 14px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; cursor: pointer; transition: background .1s; }
+.nli:last-child { border-bottom: none; }
+.nli:active { background: var(--off); }
 .nli-m { display: flex; align-items: center; gap: 7px; }
-.nli-d { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:var(--dim); }
+.nli-d { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); }
 .nli-t { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; padding: 1px 6px; border-radius: 6px; }
 .nlt-i{background:rgba(224,48,64,.08);color:var(--red)} .nlt-d{background:rgba(14,168,107,.08);color:var(--green)} .nlt-n{background:rgba(212,144,10,.08);color:var(--gold)}
-.nli-src { margin-left: auto; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color:var(--dim); }
-.nli-txt { font-size: 12px; line-height: 1.55; color:var(--mid); }
+.nli-src { margin-left: auto; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color: var(--dim); }
+.nli-txt { font-size: 12px; line-height: 1.55; color: var(--mid); }
 
 /* threads */
-.thread { padding: 12px 14px; border-bottom:1px solid var(--border); cursor: pointer; transition: background .1s; display: flex; flex-direction: column; gap: 8px; }
-.thread:last-child { border-bottom:none; }
-.thread:active { background:var(--off); }
+.thread { padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; display: flex; flex-direction: column; gap: 8px; }
+.thread:last-child { border-bottom: none; }
+.thread:active { background: var(--off); }
 .th-meta { display: flex; align-items: center; gap: 8px; }
-.th-date { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:var(--dim); }
+.th-date { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); }
 .th-status { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; padding: 2px 7px; border-radius: 8px; }
 .ts-fz{background:rgba(122,143,181,.12);color:var(--dim)}
 .ts-ac{background:rgba(14,168,107,.1);color:var(--green)}
 .ts-cl{background:rgba(224,48,64,.1);color:var(--red)}
-.th-partner { margin-left: auto; display: flex; align-items: center; gap: 5px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:var(--dim); }
-.th-dot { width: 16px; height: 16px; border-radius: 50%; background:var(--navy); display: flex; align-items: center; justify-content: center; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:white; }
-.th-prev { background:var(--off); border-radius: 8px; border:1px solid var(--border); padding: 10px 12px; display: flex; flex-direction: column; gap: 7px; }
+.th-partner { margin-left: auto; display: flex; align-items: center; gap: 5px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); }
+.th-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: white; }
+.th-prev { background: var(--off); border-radius: 8px; border: 1px solid var(--border); padding: 10px 12px; display: flex; flex-direction: column; gap: 7px; }
 .thm { display: flex; flex-direction: column; gap: 2px; }
-.thm-who { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 1.5px; text-transform: uppercase; color:var(--dim); }
-.thm.you .thm-who { color:var(--accent); text-align: right; }
-.thm-b { font-size: 11px; line-height: 1.55; color:var(--mid); padding: 7px 10px; border-radius: 8px; background:var(--white); border:1px solid var(--border); max-width: 90%; }
+.thm-who { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
+.thm.you .thm-who { color: var(--accent); text-align: right; }
+.thm-b { font-size: 11px; line-height: 1.55; color: var(--mid); padding: 7px 10px; border-radius: 8px; background: var(--white); border: 1px solid var(--border); max-width: 90%; }
 .thm.you { align-items: flex-end; }
-.thm.you .thm-b { background:var(--navy); color:rgba(255,255,255,.85); border-color:var(--navy); }
+.thm.you .thm-b { background: var(--navy); color: rgba(255,255,255,.85); border-color: var(--navy); }
 .th-footer { display: flex; align-items: center; justify-content: space-between; }
-.th-count { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:var(--dim); }
-.th-open { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color:var(--accent); background:none; border:none; cursor: pointer; }
+.th-count { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); }
+.th-open { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); background: none; border: none; cursor: pointer; }
 
 /* value bars */
 .vt { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
 .vt-row { display: flex; align-items: center; gap: 10px; }
-.vt-mo { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:var(--dim); width: 28px; text-align: right; flex-shrink: 0; }
-.vt-track { flex: 1; height: 6px; background:var(--border); border-radius: 3px; overflow: hidden; }
-.vt-fill { height: 100%; border-radius: 3px; background:var(--navy); }
-.vt-fill.up { background:var(--green); } .vt-fill.dn { background:var(--red); } .vt-fill.nt { background:var(--navy-lt); }
-.vt-val { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color:var(--mid); width: 34px; text-align: right; flex-shrink: 0; }
+.vt-mo { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); width: 28px; text-align: right; flex-shrink: 0; }
+.vt-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.vt-fill { height: 100%; border-radius: 3px; background: var(--navy); }
+.vt-fill.up { background: var(--green); } .vt-fill.dn { background: var(--red); } .vt-fill.nt { background: var(--navy-lt); }
+.vt-val { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color: var(--mid); width: 34px; text-align: right; flex-shrink: 0; }
 
 /* ask btn */
-.ask-btn { width: 100%; padding: 13px; background:var(--navy); border:none; border-radius: 10px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 16px; letter-spacing: 2.5px; color:var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
+.ask-btn { width: 100%; padding: 13px; background: var(--navy); border: none; border-radius: 10px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 16px; letter-spacing: 2.5px; color: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
 .ask-btn:active { opacity: .8; }
 
 /* ════════════════════════════
    TRADE FINDER SCREEN
 ════════════════════════════ */
-.cook-btn { width: 100%; padding: 13px; background:var(--navy); border:none; border-radius: 10px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 16px; letter-spacing: 2.5px; color:var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
+.cook-btn { width: 100%; padding: 13px; background: var(--navy); border: none; border-radius: 10px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 16px; letter-spacing: 2.5px; color: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
 .cook-btn:active { opacity: .8; }
-.tf-divider { height: 1px; background:var(--border); margin: 0 -18px; }
+.tf-divider { height: 1px; background: var(--border); margin: 0 -18px; }
 
 .lm-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
 .lm-row::-webkit-scrollbar { display: none; }
-.lm-chip { display: flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 22px; border:1px solid var(--border2); background:var(--off); cursor: pointer; transition: all .15s; flex-shrink: 0; }
-.lm-chip.sel { background:var(--navy); border-color:var(--navy); }
-.lm-init { width: 20px; height: 20px; border-radius: 50%; background:var(--navy-lt); display: flex; align-items: center; justify-content: center; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color:white; flex-shrink: 0; }
-.lm-chip.sel .lm-init { background:rgba(255,255,255,.15); }
-.lm-nm { font-size: 11px; font-weight: 600; color:var(--mid); white-space: nowrap; }
-.lm-chip.sel .lm-nm { color:var(--text); }
+.lm-chip { display: flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 22px; border: 1px solid var(--border2); background: var(--off); cursor: pointer; transition: all .15s; flex-shrink: 0; }
+.lm-chip.sel { background: var(--navy); border-color: var(--navy); }
+.lm-init { width: 20px; height: 20px; border-radius: 50%; background: var(--navy-lt); display: flex; align-items: center; justify-content: center; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color: white; flex-shrink: 0; }
+.lm-chip.sel .lm-init { background: rgba(255,255,255,.15); }
+.lm-nm { font-size: 11px; font-weight: 600; color: var(--mid); white-space: nowrap; }
+.lm-chip.sel .lm-nm { color: var(--white); }
 
 .intent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.intent-btn { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 10px; border:1px solid var(--border2); background:var(--off); cursor: pointer; transition: all .15s; }
-.intent-btn.sel { border-color:var(--accent); background:rgba(26,86,255,.06); }
+.intent-btn { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border2); background: var(--off); cursor: pointer; transition: all .15s; }
+.intent-btn.sel { border-color: var(--accent); background: rgba(26,86,255,.06); }
 .ib-icon { font-size: 16px; }
-.ib-lbl { font-size: 11px; font-weight: 700; color:var(--text); }
-.ib-sub { font-size: 10px; color:var(--dim); line-height: 1.3; }
+.ib-lbl { font-size: 11px; font-weight: 700; color: var(--navy); }
+.ib-sub { font-size: 10px; color: var(--dim); line-height: 1.3; }
 
 .pos-row { display: flex; gap: 6px; flex-wrap: wrap; }
-.pos-btn { padding: 5px 12px; border-radius: 8px; border:1px solid var(--border2); background:var(--off); font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; font-weight: 500; color:var(--mid); cursor: pointer; transition: all .15s; }
+.pos-btn { padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border2); background: var(--off); font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; font-weight: 500; color: var(--mid); cursor: pointer; transition: all .15s; }
 .pos-btn.sel-wr{background:rgba(138,79,207,.1);border-color:rgba(138,79,207,.3);color:#8a4fcf}
 .pos-btn.sel-rb{background:rgba(14,168,107,.1);border-color:rgba(14,168,107,.3);color:var(--green)}
 .pos-btn.sel-qb{background:rgba(26,86,255,.1);border-color:rgba(26,86,255,.3);color:var(--accent)}
@@ -434,141 +434,141 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 /* ════════════════════════════
    TRADE FINDER SCREEN
 ════════════════════════════ */
-.tf-bg { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background:#0a0e16; padding: 14px 14px 90px; display: flex; flex-direction: column; gap: 0; }
+.tf-bg { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #f4f6fb; padding: 14px 14px 90px; display: flex; flex-direction: column; gap: 0; }
 .tf-bg::-webkit-scrollbar { display: none; }
 
 /* the one widget card */
 
 /* ── COMPACT TRADE WIDGET ── */
-.tf-widget { background:#0f1f3d; border-radius: 16px; overflow: visible; box-shadow:0 0 0 3px #0f1f3d, 0 8px 40px rgba(10,20,80,.28); }
+.tf-widget { background: #0f1f3d; border-radius: 16px; overflow: visible; box-shadow: 0 0 0 3px #0f1f3d, 0 8px 40px rgba(10,20,80,.28); }
 
 /* Row wrapper */
-.tf-row { padding: 10px 14px; border-bottom:1px solid rgba(255,255,255,.1); display: flex; align-items: center; gap: 10px; }
-.tf-row:last-child { border-bottom:none; }
-.tf-row-label { font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 7px; letter-spacing: 2px; text-transform: uppercase; color:rgba(255,255,255,.4); flex-shrink: 0; min-width: 52px; }
+.tf-row { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.1); display: flex; align-items: center; gap: 10px; }
+.tf-row:last-child { border-bottom: none; }
+.tf-row-label { font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 7px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.4); flex-shrink: 0; min-width: 52px; }
 
 /* 2-way/multi toggle */
-.tf-toggle { display: flex; border:1px solid rgba(255,255,255,.18); border-radius: 7px; overflow: hidden; background:rgba(255,255,255,.07); flex-shrink: 0; }
-.tf-tog-btn { padding: 5px 11px; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; border:none; cursor: pointer; background:transparent; color:rgba(255,255,255,.38); transition: all .15s; }
-.tf-tog-btn.on { background:#141b2c; color:#eef1f8; border-radius: 6px; }
+.tf-toggle { display: flex; border: 1px solid rgba(255,255,255,.18); border-radius: 7px; overflow: hidden; background: rgba(255,255,255,.07); flex-shrink: 0; }
+.tf-tog-btn { padding: 5px 11px; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; border: none; cursor: pointer; background: transparent; color: rgba(255,255,255,.38); transition: all .15s; }
+.tf-tog-btn.on { background: #ffffff; color: #0f1f3d; border-radius: 6px; }
 
 /* team count badge shown inline when multi */
-.tf-team-badge { display: none; align-items: center; gap: 6px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius: 7px; padding: 4px 10px; }
-.tf-step-btn { background:none; border:none; cursor: pointer; font-size: 15px; color:#ffffff; font-weight: 700; padding: 0 2px; line-height: 1; }
-.tf-team-num { font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 17px; color:#ffffff; line-height: 1; }
-.tf-team-lbl { font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 6px; color:rgba(255,255,255,.4); letter-spacing: 1px; text-transform: uppercase; }
+.tf-team-badge { display: none; align-items: center; gap: 6px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); border-radius: 7px; padding: 4px 10px; }
+.tf-step-btn { background: none; border: none; cursor: pointer; font-size: 15px; color: #ffffff; font-weight: 700; padding: 0 2px; line-height: 1; }
+.tf-team-num { font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 17px; color: #ffffff; line-height: 1; }
+.tf-team-lbl { font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 6px; color: rgba(255,255,255,.4); letter-spacing: 1px; text-transform: uppercase; }
 
 /* partners row — hidden until multi */
 .tf-partners-row { display: none; padding: 0 14px 10px; gap: 6px; overflow-x: auto; }
 .tf-partners-row::-webkit-scrollbar { display: none; }
 .tf-partners-row.show { display: flex; }
-.tf-partner-chip { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 20px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.07); cursor: pointer; transition: all .15s; flex-shrink: 0; }
-.tf-partner-chip.sel { background:#141b2c; border-color:#ffffff; }
-.tf-p-init { width: 16px; height: 16px; border-radius: 50%; background:rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 8px; color:white; flex-shrink: 0; }
-.tf-partner-chip.sel .tf-p-init { background:#0f1f3d; color:white; }
-.tf-p-name { font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 8px; color:rgba(255,255,255,.65); white-space: nowrap; }
-.tf-partner-chip.sel .tf-p-name { color:#eef1f8; }
+.tf-partner-chip { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.07); cursor: pointer; transition: all .15s; flex-shrink: 0; }
+.tf-partner-chip.sel { background: #ffffff; border-color: #ffffff; }
+.tf-p-init { width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 8px; color: white; flex-shrink: 0; }
+.tf-partner-chip.sel .tf-p-init { background: #0f1f3d; color: white; }
+.tf-p-name { font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 8px; color: rgba(255,255,255,.65); white-space: nowrap; }
+.tf-partner-chip.sel .tf-p-name { color: #0f1f3d; }
 
 /* mode chips — horizontal scroll */
 .tf-mode-scroll { display: flex; gap: 6px; overflow-x: auto; flex: 1; }
 .tf-mode-scroll::-webkit-scrollbar { display: none; }
-.tf-mchip { display: flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 20px; border:1.5px solid rgba(255,255,255,.15); background:#141b2c; cursor: pointer; transition: all .15s; flex-shrink: 0; white-space: nowrap; }
+.tf-mchip { display: flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.15); background: #ffffff; cursor: pointer; transition: all .15s; flex-shrink: 0; white-space: nowrap; }
 .tf-mchip-icon { font-size: 13px; }
-.tf-mchip-lbl { font-size: 11px; font-weight: 700; color:#eef1f8; }
+.tf-mchip-lbl { font-size: 11px; font-weight: 700; color: #0f1f3d; }
 .tf-mchip.sel { border-width: 2px; }
-.tf-mchip.sel .tf-mchip-lbl { color:#ffffff; }
-.tf-mchip-cook.sel { border-color:#e03040; background:#e03040; }
-.tf-mchip-want.sel { border-color:#0ea86b; background:#0ea86b; }
-.tf-mchip-give.sel { border-color:#1a56ff; background:#1a56ff; }
-.tf-mchip-mkt.sel  { border-color:#d4900a; background:#d4900a; }
+.tf-mchip.sel .tf-mchip-lbl { color: #ffffff; }
+.tf-mchip-cook.sel { border-color: #e03040; background: #e03040; }
+.tf-mchip-want.sel { border-color: #0ea86b; background: #0ea86b; }
+.tf-mchip-give.sel { border-color: #1a56ff; background: #1a56ff; }
+.tf-mchip-mkt.sel  { border-color: #d4900a; background: #d4900a; }
 
 /* intent chips — horizontal scroll */
 .tf-intent-scroll { display: flex; gap: 6px; overflow-x: auto; flex: 1; }
 .tf-intent-scroll::-webkit-scrollbar { display: none; }
-.tf-ichip { display: flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 20px; border:1.5px solid rgba(255,255,255,.15); background:#141b2c; cursor: pointer; transition: all .15s; flex-shrink: 0; }
+.tf-ichip { display: flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.15); background: #ffffff; cursor: pointer; transition: all .15s; flex-shrink: 0; }
 .tf-ichip-icon { font-size: 12px; }
-.tf-ichip-lbl { font-size: 11px; font-weight: 600; color:#eef1f8; white-space: nowrap; }
-.tf-ichip.sel { border-color:#1a56ff; box-shadow:0 0 0 1px #1a56ff; }
+.tf-ichip-lbl { font-size: 11px; font-weight: 600; color: #0f1f3d; white-space: nowrap; }
+.tf-ichip.sel { border-color: #1a56ff; box-shadow: 0 0 0 1px #1a56ff; }
 
 /* position pills */
 .tf-pos-scroll { display: flex; gap: 6px; overflow-x: auto; flex: 1; }
 .tf-pos-scroll::-webkit-scrollbar { display: none; }
-.tf-pbtn { padding: 5px 12px; border-radius: 20px; border:1.5px solid rgba(255,255,255,.18); background:#141b2c; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 10px; font-weight: 500; color:#eef1f8; cursor: pointer; transition: all .15s; flex-shrink: 0; }
-.tf-pbtn.sel-qb { background:rgba(26,86,255,.1); border-color:rgba(26,86,255,.5); color:#1a56ff; }
-.tf-pbtn.sel-rb { background:rgba(14,168,107,.1); border-color:rgba(14,168,107,.5); color:#0ea86b; }
-.tf-pbtn.sel-wr { background:rgba(138,79,207,.1); border-color:rgba(138,79,207,.5); color:#8a4fcf; }
-.tf-pbtn.sel-te { background:rgba(212,144,10,.1); border-color:rgba(212,144,10,.5); color:#d4900a; }
-.tf-pbtn.sel-pk { background:rgba(255,255,255,.15); border-color:rgba(255,255,255,.5); color:#eef1f8; }
+.tf-pbtn { padding: 5px 12px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.18); background: #ffffff; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 10px; font-weight: 500; color: #0f1f3d; cursor: pointer; transition: all .15s; flex-shrink: 0; }
+.tf-pbtn.sel-qb { background: rgba(26,86,255,.1); border-color: rgba(26,86,255,.5); color: #1a56ff; }
+.tf-pbtn.sel-rb { background: rgba(14,168,107,.1); border-color: rgba(14,168,107,.5); color: #0ea86b; }
+.tf-pbtn.sel-wr { background: rgba(138,79,207,.1); border-color: rgba(138,79,207,.5); color: #8a4fcf; }
+.tf-pbtn.sel-te { background: rgba(212,144,10,.1); border-color: rgba(212,144,10,.5); color: #d4900a; }
+.tf-pbtn.sel-pk { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.5); color: #0f1f3d; }
 
 /* submit */
 .tf-submit-wrap { padding: 10px 14px 12px; }
-.tf-submit { width: 100%; padding: 13px; background:#141b2c; border:none; border-radius: 12px; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 17px; letter-spacing: 3px; color:#eef1f8; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
+.tf-submit { width: 100%; padding: 13px; background: #ffffff; border: none; border-radius: 12px; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 17px; letter-spacing: 3px; color: #0f1f3d; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
 .tf-submit:active { opacity: .8; transform: scale(.98); }
 
 .tf-packages-sec { padding: 14px 0 16px; }
 .tf-packages-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.tf-packages-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 2px; text-transform: uppercase; color:rgba(255,255,255,.45); }
-.tf-packages-ctx { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:rgba(255,255,255,.3); }
-.tf-pkg { background:#141b2c; border-radius: 10px; padding: 11px 13px; margin-bottom: 8px; cursor: pointer; transition: opacity .15s; border:1px solid #232d42; box-shadow:0 1px 6px rgba(15,31,61,.06); }
+.tf-packages-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.tf-packages-ctx { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.3); }
+.tf-pkg { background: #ffffff; border-radius: 10px; padding: 11px 13px; margin-bottom: 8px; cursor: pointer; transition: opacity .15s; border: 1px solid #dce2f0; box-shadow: 0 1px 6px rgba(15,31,61,.06); }
 .tf-pkg:last-child { margin-bottom: 0; }
 .tf-pkg:active { opacity: .85; }
 .tf-pkg-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.tf-pkg-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color:#7a8fb5; }
+.tf-pkg-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #7a8fb5; }
 .tf-pkg-score { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; font-weight: 500; padding: 2px 8px; border-radius: 8px; }
-.tf-pkg-hot  { background:rgba(14,168,107,.12); color:#0ea86b; }
-.tf-pkg-warm { background:rgba(212,144,10,.12); color:#d4900a; }
+.tf-pkg-hot  { background: rgba(14,168,107,.12); color: #0ea86b; }
+.tf-pkg-warm { background: rgba(212,144,10,.12); color: #d4900a; }
 .tf-trade-row { display: flex; align-items: center; gap: 8px; }
 .tf-trade-side { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-.tf-trade-side-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; color:#7a8fb5; margin-bottom: 2px; }
-.tf-ptag { display: inline-block; font-size: 11px; font-weight: 600; color:#eef1f8; padding: 3px 8px; border-radius: 6px; background:#0a0e16; border:1px solid #232d42; margin-bottom: 2px; }
-.tf-trade-arrow { font-size: 18px; color:#c8d2e8; flex-shrink: 0; }
-.tf-pkg-footer { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding-top: 8px; border-top:1px solid #232d42; }
-.tf-pkg-intel { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:#7a8fb5; flex: 1; }
-.tf-pkg-intel strong { color:#eef1f8; }
-.tf-pkg-eval { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color:#1a56ff; text-transform: uppercase; background:none; border:none; cursor: pointer; }
+.tf-trade-side-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; color: #7a8fb5; margin-bottom: 2px; }
+.tf-ptag { display: inline-block; font-size: 11px; font-weight: 600; color: #0f1f3d; padding: 3px 8px; border-radius: 6px; background: #f4f6fb; border: 1px solid #dce2f0; margin-bottom: 2px; }
+.tf-trade-arrow { font-size: 18px; color: #c8d2e8; flex-shrink: 0; }
+.tf-pkg-footer { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #dce2f0; }
+.tf-pkg-intel { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: #7a8fb5; flex: 1; }
+.tf-pkg-intel strong { color: #0f1f3d; }
+.tf-pkg-eval { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: #1a56ff; text-transform: uppercase; background: none; border: none; cursor: pointer; }
 
 
 /* SCOUTING CENTER */
 .sc-scroll { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:14px 18px 90px; display:flex; flex-direction:column; gap:14px; }
 .sc-scroll::-webkit-scrollbar { display:none; }
 .sc-search-row { display:flex; gap:8px; align-items:center; }
-.sc-input { flex:1; background:#141b2c; border:1.5px solid #232d42; border-radius:10px; padding:10px 14px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:13px; color:#eef1f8; outline:none; transition:border-color .15s; }
+.sc-input { flex:1; background:#ffffff; border:1.5px solid #dce2f0; border-radius:10px; padding:10px 14px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:13px; color:#0f1f3d; outline:none; transition:border-color .15s; }
 .sc-input:focus { border-color:#1a56ff; }
 .sc-input::placeholder { color:#7a8fb5; }
 .sc-add-btn { background:#0f1f3d; border:none; border-radius:10px; padding:10px 16px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:14px; letter-spacing:2px; color:#ffffff; cursor:pointer; white-space:nowrap; flex-shrink:0; }
 .sc-add-btn:active { opacity:.8; }
 .sc-sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-.sc-sec-title { font-size:14px; font-weight:700; color:#eef1f8; }
+.sc-sec-title { font-size:14px; font-weight:700; color:#0f1f3d; }
 .sc-sec-count { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#7a8fb5; letter-spacing:1px; }
-.sc-prospect-card { background:#141b2c; border:1px solid #232d42; border-radius:12px; padding:12px 14px; cursor:pointer; transition:background .1s; display:flex; align-items:center; gap:12px; box-shadow:0 1px 6px rgba(15,31,61,.05); margin-bottom:8px; }
-.sc-prospect-card:active { background:#0a0e16; }
+.sc-prospect-card { background:#ffffff; border:1px solid #dce2f0; border-radius:12px; padding:12px 14px; cursor:pointer; transition:background .1s; display:flex; align-items:center; gap:12px; box-shadow:0 1px 6px rgba(15,31,61,.05); margin-bottom:8px; }
+.sc-prospect-card:active { background:#f4f6fb; }
 .sc-pav { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:15px; color:rgba(255,255,255,.85); flex-shrink:0; }
 .sc-pinfo { flex:1; min-width:0; }
-.sc-pname { font-size:13px; font-weight:700; color:#eef1f8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sc-pname { font-size:13px; font-weight:700; color:#0f1f3d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .sc-pmeta { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#7a8fb5; margin-top:2px; }
 .sc-pright { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
 .sc-pos-badge { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; font-weight:500; padding:2px 8px; border-radius:6px; }
 .sc-news-count { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#7a8fb5; }
 .sc-arrow { font-size:16px; color:#c8d2e8; }
 .sc-year-folder { margin-bottom: 12px; border-radius: 10px; overflow: visible; }
-.sc-year-hd { display: flex; align-items: center; border-radius: 10px; padding: 11px 14px; cursor: pointer; user-select: none; -webkit-user-select: none; border:2px solid rgba(0,0,0,.35); box-shadow:0 4px 0 rgba(0,0,0,.35), 0 2px 12px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.18); transition: all .12s; }
-.sc-year-hd:active { transform: translateY(2px); box-shadow:0 2px 0 rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.15); }
-.sc-year-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 17px; letter-spacing: 2.5px; color:#ffffff; flex: 1; text-shadow: 0 1px 3px rgba(0,0,0,.3); }
-.sc-year-count { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color:rgba(255,255,255,.75); background:rgba(0,0,0,.25); border-radius: 20px; padding: 2px 9px; margin-right: 8px; border:1px solid rgba(0,0,0,.2); }
-.sc-year-chevron { font-size: 12px; color:rgba(255,255,255,.8); }
-.sc-year-body { background:#0a0e16; border:2px solid rgba(0,0,0,.12); border-top:none; border-radius: 0 0 10px 10px; padding: 8px 8px 4px; display: block; }
-.sc-pos-folder { margin-bottom: 6px; background:#141b2c; border:1.5px solid #2e3a52; border-radius: 8px; overflow: hidden; box-shadow:0 2px 0 #03060c; }
-.sc-pos-hd { display: flex; align-items: center; gap: 8px; padding: 9px 12px; cursor: pointer; user-select: none; -webkit-user-select: none; background:#141b2c; }
+.sc-year-hd { display: flex; align-items: center; border-radius: 10px; padding: 11px 14px; cursor: pointer; user-select: none; -webkit-user-select: none; border: 2px solid rgba(0,0,0,.35); box-shadow: 0 4px 0 rgba(0,0,0,.35), 0 2px 12px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.18); transition: all .12s; }
+.sc-year-hd:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.15); }
+.sc-year-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 17px; letter-spacing: 2.5px; color: #ffffff; flex: 1; text-shadow: 0 1px 3px rgba(0,0,0,.3); }
+.sc-year-count { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color: rgba(255,255,255,.75); background: rgba(0,0,0,.25); border-radius: 20px; padding: 2px 9px; margin-right: 8px; border: 1px solid rgba(0,0,0,.2); }
+.sc-year-chevron { font-size: 12px; color: rgba(255,255,255,.8); }
+.sc-year-body { background: #f4f6fb; border: 2px solid rgba(0,0,0,.12); border-top: none; border-radius: 0 0 10px 10px; padding: 8px 8px 4px; display: block; }
+.sc-pos-folder { margin-bottom: 6px; background: #ffffff; border: 1.5px solid #c8d2e8; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 0 #b0bcd4; }
+.sc-pos-hd { display: flex; align-items: center; gap: 8px; padding: 9px 12px; cursor: pointer; user-select: none; -webkit-user-select: none; background: #ffffff; }
 .sc-pos-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .sc-pos-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 14px; letter-spacing: 2px; flex: 1; }
-.sc-pos-count { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color:#7a8fb5; background:#0a0e16; border-radius: 20px; padding: 2px 7px; }
-.sc-pos-chevron { font-size: 10px; color:#7a8fb5; }
-.sc-pos-body { display: block; border-top:1px solid #232d42; }
-.sc-pos-body .sc-prospect-card { border-radius: 0; border:none; border-bottom:1px solid #1c2436; margin-bottom: 0; box-shadow:none; }
-.sc-pos-body .sc-prospect-card:last-child { border-bottom:none; }
+.sc-pos-count { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: #7a8fb5; background: #f4f6fb; border-radius: 20px; padding: 2px 7px; }
+.sc-pos-chevron { font-size: 10px; color: #7a8fb5; }
+.sc-pos-body { display: block; border-top: 1px solid #dce2f0; }
+.sc-pos-body .sc-prospect-card { border-radius: 0; border: none; border-bottom: 1px solid #f0f3fa; margin-bottom: 0; box-shadow: none; }
+.sc-pos-body .sc-prospect-card:last-child { border-bottom: none; }
 .sc-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; gap:10px; text-align:center; }
 .sc-empty-icon { font-size:40px; }
-.sc-empty-title { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:20px; letter-spacing:2px; color:#eef1f8; }
+.sc-empty-title { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:20px; letter-spacing:2px; color:#0f1f3d; }
 .sc-empty-sub { font-size:12px; color:#7a8fb5; line-height:1.6; max-width:240px; }
 /* PROSPECT DETAIL */
 .pd-header { background:#0f1f3d; padding:14px 18px 0; flex-shrink:0; }
@@ -583,15 +583,15 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .pd-val { text-align:right; }
 .pd-grade { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:32px; color:#6daaff; line-height:1; }
 .pd-grade-lbl { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:rgba(255,255,255,.3); letter-spacing:1px; text-transform:uppercase; }
-.pd-tabs { display:flex; background:#141b2c; border-bottom:1px solid #232d42; flex-shrink:0; }
+.pd-tabs { display:flex; background:#ffffff; border-bottom:1px solid #dce2f0; flex-shrink:0; }
 .pd-tab { flex:1; padding:11px 4px; text-align:center; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; letter-spacing:1.2px; text-transform:uppercase; color:#7a8fb5; cursor:pointer; border-bottom:2px solid transparent; transition:all .15s; position:relative; }
-.pd-tab.active { color:#eef1f8; border-bottom-color:#eef1f8; }
+.pd-tab.active { color:#0f1f3d; border-bottom-color:#0f1f3d; }
 .pd-scroll { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:16px 18px 30px; display:flex; flex-direction:column; gap:14px; }
 .pd-scroll::-webkit-scrollbar { display:none; }
-.pd-notes-blurb { font-size:12px; line-height:1.75; color:#aab8d1; background:#0a0e16; border:1px solid #232d42; border-radius:8px; padding:12px 14px; min-height:70px; }
+.pd-notes-blurb { font-size:12px; line-height:1.75; color:#3a4e72; background:#f4f6fb; border:1px solid #dce2f0; border-radius:8px; padding:12px 14px; min-height:70px; }
 .pd-notes-blurb.empty { color:#7a8fb5; font-style:italic; }
 .pd-note-row { display:flex; gap:8px; align-items:flex-end; }
-.pd-note-input { flex:1; background:#141b2c; border:1.5px solid #232d42; border-radius:8px; padding:10px 13px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:12px; color:#eef1f8; resize:none; outline:none; min-height:64px; line-height:1.55; transition:border-color .15s; }
+.pd-note-input { flex:1; background:#ffffff; border:1.5px solid #dce2f0; border-radius:8px; padding:10px 13px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:12px; color:#0f1f3d; resize:none; outline:none; min-height:64px; line-height:1.55; transition:border-color .15s; }
 .pd-note-input:focus { border-color:#1a56ff; }
 .pd-note-input::placeholder { color:#7a8fb5; }
 .pd-note-btn { background:#0f1f3d; color:#ffffff; border:none; border-radius:8px; padding:10px 14px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; height:64px; display:flex; align-items:center; gap:5px; white-space:nowrap; flex-shrink:0; transition:opacity .15s; }
@@ -599,14 +599,14 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .pd-synth-row { display:none; align-items:center; gap:6px; margin-top:6px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#1a56ff; letter-spacing:1px; }
 .pd-succ-row { display:none; align-items:center; gap:6px; margin-top:6px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#0ea86b; }
 .film-add-row { display:flex; gap:8px; align-items:center; }
-.film-input { flex:1; background:#0a0e16; border:1.5px solid #2e3a52; border-radius:10px; padding:10px 12px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:12px; color:#eef1f8; outline:none; transition:border-color .15s; }
+.film-input { flex:1; background:#f4f6fb; border:1.5px solid #c8d2e8; border-radius:10px; padding:10px 12px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:12px; color:#0f1f3d; outline:none; transition:border-color .15s; }
 .film-input:focus { border-color:#1a56ff; }
 .film-input::placeholder { color:#7a8fb5; }
 .film-add-btn { background:linear-gradient(180deg,#1e3566 0%,#0f1f3d 100%); border:none; border-radius:10px; padding:10px 16px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:#ffffff; cursor:pointer; white-space:nowrap; flex-shrink:0; box-shadow:0 3px 0 #060f1e; transition:all .12s; }
 .film-add-btn:active { transform:translateY(2px); box-shadow:0 1px 0 #060f1e; }
 .film-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-.film-card { background:#141b2c; border:2px solid #2e3a52; border-radius:12px; overflow:hidden; cursor:pointer; box-shadow:0 3px 0 #03060c, 0 2px 8px rgba(15,31,61,.1); transition:all .12s; aspect-ratio:1/1; position:relative; }
-.film-card:active { transform:translateY(2px); box-shadow:0 1px 0 #03060c; opacity:.9; }
+.film-card { background:#ffffff; border:2px solid #c8d2e8; border-radius:12px; overflow:hidden; cursor:pointer; box-shadow:0 3px 0 #b0bcd4, 0 2px 8px rgba(15,31,61,.1); transition:all .12s; aspect-ratio:1/1; position:relative; }
+.film-card:active { transform:translateY(2px); box-shadow:0 1px 0 #b0bcd4; opacity:.9; }
 .film-thumb { width:100%; height:100%; object-fit:cover; display:block; }
 .film-thumb-placeholder { width:100%; height:100%; background:linear-gradient(135deg,#162850,#0f1f3d); display:flex; align-items:center; justify-content:center; font-size:28px; }
 .film-card-label { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(0deg,rgba(10,20,50,.88) 0%,transparent 100%); padding:16px 5px 5px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:7px; color:rgba(255,255,255,.85); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -614,13 +614,13 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .film-info { display:none; }
 .film-title { display:none; }
 .film-remove { display:none; }
-.film-search-btn { width:100%; padding:11px; background:linear-gradient(180deg,#141b2c 0%,#111a2b 100%); border:1.5px dashed #3a4666; border-radius:10px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:#7a8fb5; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 2px 0 #03060c; transition:all .12s; }
-.film-search-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #03060c; }
-.pd-news-item { padding:11px 0; border-bottom:1px solid #232d42; }
+.film-search-btn { width:100%; padding:11px; background:linear-gradient(180deg,#f8faff 0%,#eef1f8 100%); border:1.5px dashed #b0bcd4; border-radius:10px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:#7a8fb5; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 2px 0 #c4ceea; transition:all .12s; }
+.film-search-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #c4ceea; }
+.pd-news-item { padding:11px 0; border-bottom:1px solid #dce2f0; }
 .pd-news-item:last-child { border-bottom:none; }
 .pd-news-meta { display:flex; align-items:center; gap:7px; margin-bottom:4px; }
 .pd-news-date { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#7a8fb5; }
-.pd-news-txt { font-size:12px; line-height:1.55; color:#aab8d1; }
+.pd-news-txt { font-size:12px; line-height:1.55; color:#3a4e72; }
 .pd-no-news { padding:20px 0; text-align:center; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:10px; color:#7a8fb5; letter-spacing:1px; }
 
 
@@ -628,9 +628,9 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .tf-table-row { display:flex; align-items:flex-start; gap:10px; padding:10px 14px; border-bottom:1px solid rgba(255,255,255,.1); }
 .tf-table-chips { display:flex; gap:6px; overflow-x:auto; flex:1; flex-wrap:nowrap; align-items:center; min-height:32px; }
 .tf-table-chips::-webkit-scrollbar { display:none; }
-.tf-table-chip { display:flex; align-items:center; gap:5px; padding:4px 8px 4px 4px; border-radius:20px; background:#141b2c; border:1.5px solid rgba(255,255,255,.3); flex-shrink:0; cursor:pointer; }
+.tf-table-chip { display:flex; align-items:center; gap:5px; padding:4px 8px 4px 4px; border-radius:20px; background:#ffffff; border:1.5px solid rgba(255,255,255,.3); flex-shrink:0; cursor:pointer; }
 .tf-table-chip-jersey { width:28px; height:28px; flex-shrink:0; }
-.tf-table-chip-name { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#eef1f8; font-weight:500; white-space:nowrap; }
+.tf-table-chip-name { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#0f1f3d; font-weight:500; white-space:nowrap; }
 .tf-table-chip-x { font-size:11px; color:#7a8fb5; margin-left:2px; line-height:1; }
 .tf-table-chip-x:hover { color:#e03040; }
 .tf-table-empty { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:rgba(255,255,255,.3); letter-spacing:.5px; padding:4px 0; }
@@ -640,28 +640,28 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 /* Player picker sheet */
 .tf-picker-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; }
 .tf-picker-overlay.show { display:block; }
-.tf-picker-sheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:#141b2c; border-radius:20px 20px 0 0; z-index:201; padding-bottom:env(safe-area-inset-bottom,0); max-height:70vh; display:flex; flex-direction:column; }
-.tf-picker-header { padding:16px 18px 12px; border-bottom:1px solid #232d42; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
-.tf-picker-title { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:18px; letter-spacing:2px; color:#eef1f8; }
+.tf-picker-sheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:#ffffff; border-radius:20px 20px 0 0; z-index:201; padding-bottom:env(safe-area-inset-bottom,0); max-height:70vh; display:flex; flex-direction:column; }
+.tf-picker-header { padding:16px 18px 12px; border-bottom:1px solid #dce2f0; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.tf-picker-title { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:18px; letter-spacing:2px; color:#0f1f3d; }
 .tf-picker-close { background:none; border:none; font-size:20px; cursor:pointer; color:#7a8fb5; padding:0; }
 .tf-picker-sub { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#7a8fb5; letter-spacing:1px; }
 .tf-picker-list { overflow-y:auto; flex:1; }
 .tf-picker-list::-webkit-scrollbar { display:none; }
-.tf-picker-item { display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #232d42; cursor:pointer; transition:background .1s; }
-.tf-picker-item:active { background:#0a0e16; }
-.tf-picker-item.selected { background:#131c30; }
+.tf-picker-item { display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #dce2f0; cursor:pointer; transition:background .1s; }
+.tf-picker-item:active { background:#f4f6fb; }
+.tf-picker-item.selected { background:#f0f4ff; }
 .tf-picker-item.selected .tf-picker-check { display:block; }
 .tf-picker-check { display:none; color:#1a56ff; font-size:16px; flex-shrink:0; }
 .tf-picker-pinfo { flex:1; }
-.tf-picker-pname { font-size:13px; font-weight:600; color:#eef1f8; }
+.tf-picker-pname { font-size:13px; font-weight:600; color:#0f1f3d; }
 .tf-picker-pmeta { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#7a8fb5; margin-top:1px; }
-.tf-picker-done { padding:14px 18px; border-top:1px solid #232d42; flex-shrink:0; }
+.tf-picker-done { padding:14px 18px; border-top:1px solid #dce2f0; flex-shrink:0; }
 .tf-picker-done-btn { width:100%; padding:12px; background:#0f1f3d; border:none; border-radius:10px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:16px; letter-spacing:2px; color:#ffffff; cursor:pointer; }
 
 /* Chat history sheet — reuses .tf-picker-* chrome, adds per-row actions */
-.ch-hist-item.selected { background:#131c30; }
+.ch-hist-item.selected { background:#f0f4ff; }
 .ch-hist-rename, .ch-hist-delete { font-size:14px; color:#7a8fb5; flex-shrink:0; padding:6px; line-height:1; cursor:pointer; }
-.ch-hist-rename:hover, .ch-hist-delete:hover { color:#eef1f8; }
+.ch-hist-rename:hover, .ch-hist-delete:hover { color:#0f1f3d; }
 .ch-hist-delete:hover { color:#e03040; }
 
 
@@ -1598,7 +1598,7 @@ function renderNewsScreen() {
     loadRotowireFeed(false).finally(function(){
       newsScreenLoading = false;
       if (!rotowireItems || !rotowireItems.length) {
-        list.innerHTML = '<div style="background:#2a1216;border:1.5px solid rgba(224,48,64,.3);border-radius:10px;padding:20px;text-align:center;color:#ff8a94;font-size:12px;line-height:1.6">' +
+        list.innerHTML = '<div style="background:#fff5f5;border:1.5px solid rgba(224,48,64,.3);border-radius:10px;padding:20px;text-align:center;color:#9b1f30;font-size:12px;line-height:1.6">' +
           '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:8px">Feed Unavailable</div>' +
           '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5;letter-spacing:.5px;line-height:1.7">The Rotowire RSS proxy isn\'t responding right now. This usually clears up in a few minutes.</div>' +
           '<button onclick="refreshAllNews()" style="margin-top:14px;padding:8px 18px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;background:#1a56ff;color:white;border:none;border-radius:8px;cursor:pointer">↻ Try Again</button>' +
@@ -1682,7 +1682,7 @@ function renderNewsScreen() {
     var cleanDesc = (item.desc||'').replace(/<[^>]+>/g,'').slice(0,180);
     var dateStr = item.timeAgo || item.date || '';
     var displayTeam = item._resolvedTeam || item.team || '';
-    return '<div style="background:#111a2b;border:1.5px solid #232d42;border-left:4px solid '+accentColor+';border-radius:10px;padding:11px 13px;margin-bottom:8px;box-shadow:0 2px 0 #03060c">' +
+    return '<div style="background:#ffffff;border:1.5px solid #dce2f0;border-left:4px solid '+accentColor+';border-radius:10px;padding:11px 13px;margin-bottom:8px;box-shadow:0 2px 0 #c4ceea">' +
       '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">' +
         '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;font-weight:600;color:'+accentColor+';letter-spacing:1px;text-transform:uppercase">'+accentLabel+'</span>' +
         (item._pos ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#1a56ff;letter-spacing:1px;font-weight:600">· '+item._pos+'</span>' : '') +
@@ -1690,8 +1690,8 @@ function renderNewsScreen() {
         (dateStr ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;color:#b0bcd4">· '+dateStr+'</span>' : '') +
         badgeHtml +
       '</div>' +
-      '<div style="font-size:13px;font-weight:700;color:#eef1f8;line-height:1.3;margin-bottom:4px">'+(item.title||'')+'</div>' +
-      '<div style="font-size:11px;color:#aab8d1;line-height:1.5">'+cleanDesc+(cleanDesc.length>=180?'…':'')+'</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#0f1f3d;line-height:1.3;margin-bottom:4px">'+(item.title||'')+'</div>' +
+      '<div style="font-size:11px;color:#5a6a85;line-height:1.5">'+cleanDesc+(cleanDesc.length>=180?'…':'')+'</div>' +
     '</div>';
   }).join('');
 }
@@ -2176,7 +2176,7 @@ function renderTFPackages(text, accent) {
   var packages = text.split(/PACKAGE\s+\d+:/i).filter(function(s){ return s.trim(); });
   if (!packages.length) {
     // Fallback: show raw text nicely
-    return '<div style="padding:16px;font-size:13px;line-height:1.7;color:#eef1f8">' + text.split('\n').join('<br>') + '</div>';
+    return '<div style="padding:16px;font-size:13px;line-height:1.7;color:#0f1f3d">' + text.split('\n').join('<br>') + '</div>';
   }
 
   return packages.map(function(pkg, i) {
@@ -2190,9 +2190,9 @@ function renderTFPackages(text, accent) {
       if (/VERDICT:/i.test(l)) verdictLine = l.replace(/VERDICT:/i,'').trim();
     });
 
-    return '<div style="background:#111a2b;border:1px solid #232d42;border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 6px rgba(15,31,61,.06)">' +
-      '<div style="padding:10px 14px;border-bottom:1px solid #232d42;background:#0a0e16;display:flex;align-items:center;justify-content:space-between">' +
-        '<span style="font-size:12px;font-weight:700;color:#eef1f8">Package ' + (i+1) + (label ? ' · ' + label.trim() : '') + '</span>' +
+    return '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 6px rgba(15,31,61,.06)">' +
+      '<div style="padding:10px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb;display:flex;align-items:center;justify-content:space-between">' +
+        '<span style="font-size:12px;font-weight:700;color:#0f1f3d">Package ' + (i+1) + (label ? ' · ' + label.trim() : '') + '</span>' +
         (targetLine ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#7a8fb5;letter-spacing:1px">vs ' + targetLine + '</span>' : '') +
       '</div>' +
       '<div style="padding:12px 14px">' +
@@ -2207,9 +2207,9 @@ function renderTFPackages(text, accent) {
             '<div style="font-size:12px;font-weight:600;color:#0ea86b">' + (getLine||'—') + '</div>' +
           '</div>' +
         '</div>' +
-        (verdictLine ? '<div style="font-size:11px;color:#aab8d1;line-height:1.55;padding:8px 10px;background:#0a0e16;border-radius:8px;border-left:3px solid ' + (accent||'#1a56ff') + '">' + verdictLine + '</div>' : '') +
+        (verdictLine ? '<div style="font-size:11px;color:#3a4e72;line-height:1.55;padding:8px 10px;background:#f4f6fb;border-radius:8px;border-left:3px solid ' + (accent||'#1a56ff') + '">' + verdictLine + '</div>' : '') +
       '</div>' +
-      '<div style="padding:8px 14px;border-top:1px solid #232d42;display:flex;justify-content:flex-end">' +
+      '<div style="padding:8px 14px;border-top:1px solid #dce2f0;display:flex;justify-content:flex-end">' +
         '<button onclick="digDeeperInChat()" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#1a56ff;background:none;border:none;cursor:pointer">Dig Deeper in Chat &#x203A;</button>' +
       '</div>' +
     '</div>';
@@ -2281,7 +2281,7 @@ async function runTradeFinder(modeIdx) {
     if (listEl) listEl.innerHTML = renderTFPackages(reply, accent);
   } catch (e) {
     if (listEl) {
-      listEl.innerHTML = '<div style="background:#2a1216;border:1.5px solid rgba(224,48,64,.3);border-radius:10px;padding:20px;text-align:center;color:#ff8a94">' +
+      listEl.innerHTML = '<div style="background:#fff5f5;border:1.5px solid rgba(224,48,64,.3);border-radius:10px;padding:20px;text-align:center;color:#9b1f30">' +
         '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:14px;letter-spacing:1px;margin-bottom:6px">Couldn’t generate packages</div>' +
         '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5">' + (e.message || 'Try again') + '</div>' +
         '</div>';
@@ -3234,11 +3234,11 @@ function renderRivalsList() {
     var rankColor = i===0 ? "#0ea86b" : i<=2 ? "#6daaff" : "#7a8fb5";
     var intelBadge = hasIntel ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;padding:1px 5px;border-radius:4px;background:rgba(26,86,255,.08);color:#1a56ff;border:1px solid rgba(26,86,255,.2)">Intel</span>' : "";
     var newsBadge = t.newsCount > 0 ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;padding:1px 5px;border-radius:4px;background:rgba(212,144,10,.1);color:#d4900a;border:1px solid rgba(212,144,10,.25)">'+t.newsCount+" news</span>" : "";
-    html += '<div onclick="openRival(\''+t.id+'\')" style="display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid #232d42;background:#111a2b;cursor:pointer;-webkit-tap-highlight-color:transparent">';
+    html += '<div onclick="openRival(\''+t.id+'\')" style="display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid #dce2f0;background:#ffffff;cursor:pointer;-webkit-tap-highlight-color:transparent">';
     html += '<div style="width:22px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;font-weight:600;text-align:center;flex-shrink:0;color:'+rankColor+'">'+(i+1)+"</div>";
     html += '<div style="width:38px;height:38px;border-radius:10px;background:#0f1f3d;display:flex;align-items:center;justify-content:center;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:14px;color:rgba(255,255,255,.85);flex-shrink:0">'+t.initials+"</div>";
     html += '<div style="flex:1;min-width:0">';
-    html += '<div style="font-size:13px;font-weight:700;color:#eef1f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+t.name+"</div>";
+    html += '<div style="font-size:13px;font-weight:700;color:#0f1f3d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+t.name+"</div>";
     html += '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5;margin-top:2px">'+t.manager+" &middot; "+t.standing+"</div>";
     html += "</div>";
     html += '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">';
@@ -3601,9 +3601,9 @@ function renderPdTab(idx) {
     // Build selected options
     var nflTeamOptsSelected = nflTeamOpts.replace('value="'+p.proTeam+'"', 'value="'+p.proTeam+'" selected');
 
-    var detailCard = '<div style="background:#111a2b;border:1px solid #232d42;border-radius:12px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
-      '<div style="padding:11px 14px;border-bottom:1px solid #232d42;background:#0a0e16;display:flex;align-items:center;justify-content:space-between">' +
-        '<span style="font-size:12px;font-weight:700;color:#eef1f8">Details</span>' +
+    var detailCard = '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:12px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+      '<div style="padding:11px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb;display:flex;align-items:center;justify-content:space-between">' +
+        '<span style="font-size:12px;font-weight:700;color:#0f1f3d">Details</span>' +
         // Drafted to NFL checkbox
         '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:'+(isDrafted?'#0ea86b':'#7a8fb5')+'">' +
           '<input type="checkbox" id="sc-drafted-chk" '+isDraftedChk+' onclick="scToggleDraftedCurrent()" style="width:14px;height:14px;accent-color:#0ea86b;cursor:pointer">' +
@@ -3616,36 +3616,36 @@ function renderPdTab(idx) {
           '<div>' +
             '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">' + (isDrafted ? 'NFL Team' : 'School') + '</div>' +
             (isDrafted
-              ? '<select style="width:100%;background:#0a0e16;border:1.5px solid '+teamCol+';border-radius:8px;padding:8px 10px;font-size:12px;color:#eef1f8;outline:none" id="sc-field-school" onchange="scField(currentProspect.id,\'proTeam\',this.value)">'+nflTeamOptsSelected+'</select>'
-              : '<input style="width:100%;background:#0a0e16;border:1.5px solid #232d42;border-radius:8px;padding:8px 10px;font-size:12px;color:#eef1f8;outline:none;box-sizing:border-box" id="sc-field-school" placeholder="College" oninput="scField(currentProspect.id,\'school\',this.value)">'
+              ? '<select style="width:100%;background:#f4f6fb;border:1.5px solid '+teamCol+';border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" id="sc-field-school" onchange="scField(currentProspect.id,\'proTeam\',this.value)">'+nflTeamOptsSelected+'</select>'
+              : '<input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" id="sc-field-school" placeholder="College" oninput="scField(currentProspect.id,\'school\',this.value)">'
             ) +
           '</div>' +
           '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Position</div>' +
-          '<select style="width:100%;background:#0a0e16;border:1.5px solid #232d42;border-radius:8px;padding:8px 10px;font-size:12px;color:#eef1f8;outline:none" onchange="scField(currentProspect.id,\'pos\',this.value);scUpdateProspectHeader(currentProspect)">' +
+          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" onchange="scField(currentProspect.id,\'pos\',this.value);scUpdateProspectHeader(currentProspect)">' +
           ['QB','RB','WR','TE'].map(function(pos){ return '<option value="'+pos+'"'+(p.pos===pos?' selected':'')+'>'+pos+'</option>'; }).join('') +
           '</select></div>' +
         '</div>' +
         // Row 2: Draft Year + Grade
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
           '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Draft Year</div>' +
-          '<select style="width:100%;background:#0a0e16;border:1.5px solid #232d42;border-radius:8px;padding:8px 10px;font-size:12px;color:#eef1f8;outline:none" id="sc-field-draft" onchange="scDraftYearChange(currentProspect.id,this.value)">' +
+          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" id="sc-field-draft" onchange="scDraftYearChange(currentProspect.id,this.value)">' +
           ['NOW','2027','2028','2029'].map(function(yr){ return '<option value="'+yr+'"'+(p.draftYear===yr?' selected':'')+'>'+(yr==='NOW'?'NOW (2026)':yr)+'</option>'; }).join('') +
           '</select></div>' +
           '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">My Grade</div>' +
-          '<input style="width:100%;background:#0a0e16;border:1.5px solid #232d42;border-radius:8px;padding:8px 10px;font-size:12px;color:#eef1f8;outline:none;box-sizing:border-box" id="sc-field-grade" placeholder="Top 10 pick" oninput="scGrade(currentProspect.id,this.value)"></div>' +
+          '<input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" id="sc-field-grade" placeholder="Top 10 pick" oninput="scGrade(currentProspect.id,this.value)"></div>' +
         '</div>' +
       '</div>' +
     '</div>';
 
     // ── SCOUT NOTES ──
-    var notesCard = '<div style="background:#111a2b;border:1px solid #232d42;border-radius:12px;overflow:hidden;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #232d42;background:#0a0e16">' +
-        '<span style="font-size:12px;font-weight:700;color:#eef1f8">Scout Notes</span>' +
+    var notesCard = '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb">' +
+        '<span style="font-size:12px;font-weight:700;color:#0f1f3d">Scout Notes</span>' +
         '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(14,168,107,.1);color:#0ea86b;border:1px solid rgba(14,168,107,.25)">AI Synthesized</span>' +
       '</div>' +
       '<div style="padding:14px;display:flex;flex-direction:column;gap:10px">' +
         '<div class="pd-notes-blurb'+(p.notes?'':' empty')+'" id="pd-notes-display">'+(p.notes||'No notes yet. Add your first observation below.')+'</div>' +
-        (p.notesLog&&p.notesLog.length ? p.notesLog.map(function(e){ return '<div style="display:flex;gap:8px;padding:6px 9px;background:#0a0e16;border-radius:6px;border:1px solid #232d42;margin-bottom:4px"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#7a8fb5;flex-shrink:0">'+e.date+'</span><span style="font-size:11px;color:#aab8d1">'+e.text+'</span></div>'; }).join('') : '') +
+        (p.notesLog&&p.notesLog.length ? p.notesLog.map(function(e){ return '<div style="display:flex;gap:8px;padding:6px 9px;background:#f4f6fb;border-radius:6px;border:1px solid #dce2f0;margin-bottom:4px"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#7a8fb5;flex-shrink:0">'+e.date+'</span><span style="font-size:11px;color:#3a4e72">'+e.text+'</span></div>'; }).join('') : '') +
         '<div class="pd-note-row"><textarea class="pd-note-input" id="pd-note-input" placeholder="Route running, snap count, landing spot..."></textarea>' +
         '<button class="pd-note-btn" id="pd-note-btn" onclick="scAddNote(currentProspect.id)">Add Note</button></div>' +
         '<div class="pd-synth-row" id="pd-synth-row"><span>Synthesizing...</span></div>' +
@@ -3656,8 +3656,8 @@ function renderPdTab(idx) {
     var saveBtn = '<button onclick="scSaveAndSearch()" style="width:100%;padding:13px;background:#0ea86b;border:none;border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:16px;letter-spacing:2.5px;color:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">💾 Save</button>';
 
     var removeBtn = (p.seasonFlagged ?
-      '<div style="background:#2a2008;border:1px solid rgba(212,144,10,.3);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px"><span style="font-size:18px">&#x1F3C8;</span><div style="flex:1"><div style="font-size:12px;font-weight:700;color:#eef1f8">Season started!</div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5;margin-top:2px">This prospect may be on an NFL roster now</div></div><button onclick="scRemove(currentProspect.id)" style="background:#d4900a;border:none;border-radius:8px;padding:6px 10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1px;color:#ffffff;cursor:pointer">Remove</button></div>' : '') +
-      '<button onclick="scRemove(currentProspect.id)" style="width:100%;padding:11px;background:#2a1216;border:1px solid rgba(224,48,64,.2);border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#e03040;cursor:pointer">Remove from Board</button>';
+      '<div style="background:#fff8e8;border:1px solid rgba(212,144,10,.3);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px"><span style="font-size:18px">&#x1F3C8;</span><div style="flex:1"><div style="font-size:12px;font-weight:700;color:#0f1f3d">Season started!</div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5;margin-top:2px">This prospect may be on an NFL roster now</div></div><button onclick="scRemove(currentProspect.id)" style="background:#d4900a;border:none;border-radius:8px;padding:6px 10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1px;color:#ffffff;cursor:pointer">Remove</button></div>' : '') +
+      '<button onclick="scRemove(currentProspect.id)" style="width:100%;padding:11px;background:#fff0f0;border:1px solid rgba(224,48,64,.2);border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#e03040;cursor:pointer">Remove from Board</button>';
 
     s.innerHTML = phaseBanner + detailCard + notesCard + saveBtn + removeBtn;
 
@@ -3674,23 +3674,23 @@ function renderPdTab(idx) {
   } else if (idx===2) {
     var news = p.newsCache || [];
 
-    var refreshHtml = '<button onclick="scRefreshNews()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#0a0e16;border:1.5px solid #232d42;border-radius:8px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#eef1f8;cursor:pointer;margin-bottom:10px">&#x21BB; Refresh Feed</button>';
+    var refreshHtml = '<button onclick="scRefreshNews()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#0f1f3d;cursor:pointer;margin-bottom:10px">&#x21BB; Refresh Feed</button>';
 
     var newsListHtml = news.length
-      ? '<div style="background:#111a2b;border:1px solid #232d42;border-radius:14px;padding:0 14px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+      ? '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;padding:0 14px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
           news.map(function(item) {
             return '<div class="pd-news-item"><div class="pd-news-meta"><span class="pd-news-date">'+(item.timeAgo||item.date||'')+'</span></div><div class="pd-news-txt">'+item.desc.replace(/<[^>]+>/g,'').slice(0,300)+'</div></div>';
           }).join('') +
         '</div>'
       : '<div class="pd-no-news">No items found for '+p.name+'<br><span style="font-size:10px;color:#c8d2e8">Save the card to trigger a fresh search, or tap Refresh Feed.</span></div>' +
-        (p._newsDebug && p._newsDebug.length ? '<div style="margin-top:12px;background:#0a0e16;border:1px solid #232d42;border-radius:8px;padding:10px 12px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#7a8fb5;line-height:1.8">' + p._newsDebug.map(function(l){ return '› ' + l; }).join('<br>') + '</div>' : '');
+        (p._newsDebug && p._newsDebug.length ? '<div style="margin-top:12px;background:#f4f6fb;border:1px solid #dce2f0;border-radius:8px;padding:10px 12px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#7a8fb5;line-height:1.8">' + p._newsDebug.map(function(l){ return '› ' + l; }).join('<br>') + '</div>' : '');
 
     s.innerHTML = refreshHtml + newsListHtml;
 
   } else {
     s.innerHTML =
-      '<div style="background:#111a2b;border:1px solid #232d42;border-radius:14px;padding:16px;box-shadow:0 1px 8px rgba(15,31,61,.05);display:flex;flex-direction:column;gap:12px">' +
-        '<div style="font-size:13px;color:#aab8d1;line-height:1.65">Ask the GM Assistant anything about <strong style="color:#eef1f8">'+p.name+'</strong> — dynasty value, landing spot, scheme fit, whether to target him in the draft.</div>' +
+      '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;padding:16px;box-shadow:0 1px 8px rgba(15,31,61,.05);display:flex;flex-direction:column;gap:12px">' +
+        '<div style="font-size:13px;color:#3a4e72;line-height:1.65">Ask the GM Assistant anything about <strong style="color:#0f1f3d">'+p.name+'</strong> — dynasty value, landing spot, scheme fit, whether to target him in the draft.</div>' +
         '<button onclick="scAskGM(currentProspect.id)" style="width:100%;padding:13px;background:#0f1f3d;border:none;border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:16px;letter-spacing:2.5px;color:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">&#x1F9E0; &nbsp;Ask GM About '+p.name+'</button>' +
       '</div>';
   }
@@ -4185,11 +4185,11 @@ function removeTFTablePlayer(id) {
     <div class="chip" id="news-filter-injury" onclick="setNewsFilter(this,'injury')"><span>🩹</span><span>Injury</span></div>
     <div class="chip" id="news-filter-trans" onclick="setNewsFilter(this,'trans')"><span>🔁</span><span>Trans</span></div>
   </div>
-  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 90px;background:#0a0e16">
+  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 90px;background:#f4f6fb">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px">
       <div style="display:flex;align-items:center;gap:7px;min-width:0"><div style="width:6px;height:6px;border-radius:50%;background:#0ea86b;animation:blink 2s ease infinite;flex-shrink:0"></div><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;color:#7a8fb5;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="news-screen-status">Live · Synced</span></div>
       <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
-        <select id="news-sort-select" onchange="setNewsSort(this.value)" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#1a56ff;background:#0a0e16;border:1px solid #232d42;border-radius:6px;padding:4px 6px;cursor:pointer">
+        <select id="news-sort-select" onchange="setNewsSort(this.value)" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#1a56ff;background:#f4f6fb;border:1px solid #dce2f0;border-radius:6px;padding:4px 6px;cursor:pointer">
           <option value="recent">Sort: Newest</option>
           <option value="team">Sort: Team</option>
           <option value="position">Sort: Position</option>
@@ -4222,10 +4222,10 @@ function removeTFTablePlayer(id) {
     </div>
     <div class="search-bar"><span class="search-icon">&#x1F50D;</span><span class="search-txt">Search teams or players...</span></div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);background:#111a2b;border-bottom:1px solid #232d42;flex-shrink:0">
-    <div style="padding:10px 0;text-align:center;border-right:1px solid #232d42"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#eef1f8">12</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#7a8fb5">Teams</span></div>
-    <div style="padding:10px 0;text-align:center;border-right:1px solid #232d42"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#0ea86b" id="rivals-my-record">—</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#7a8fb5">Your Record</span></div>
-    <div style="padding:10px 0;text-align:center;border-right:1px solid #232d42"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#6daaff">SF</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#7a8fb5">Format</span></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);background:#ffffff;border-bottom:1px solid #dce2f0;flex-shrink:0">
+    <div style="padding:10px 0;text-align:center;border-right:1px solid #dce2f0"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#0f1f3d">12</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#7a8fb5">Teams</span></div>
+    <div style="padding:10px 0;text-align:center;border-right:1px solid #dce2f0"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#0ea86b" id="rivals-my-record">—</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#7a8fb5">Your Record</span></div>
+    <div style="padding:10px 0;text-align:center;border-right:1px solid #dce2f0"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#6daaff">SF</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#7a8fb5">Format</span></div>
     <div style="padding:10px 0;text-align:center"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#d4900a">12</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#7a8fb5">Teams</span></div>
   </div>
   <div class="rd-scroll" id="rivals-list"></div>
