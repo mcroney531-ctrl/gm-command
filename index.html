@@ -7,7 +7,7 @@
 <title>GM Command · v0.0.2</title>
 
   <!-- PWA Meta Tags -->
-  <meta name="theme-color" content="#0f1f3d">
+  <meta name="theme-color" content="#08131D">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -21,21 +21,25 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  --navy:      #0f1f3d;
-  --navy-mid:  #162850;
-  --navy-lt:   #1e3566;
-  --white:     #ffffff;
-  --off:       #f4f6fb;
-  --surface:   #eef1f8;
-  --border:    #dce2f0;
-  --border2:   #c8d2e8;
-  --text:      #0f1f3d;
-  --mid:       #3a4e72;
-  --dim:       #7a8fb5;
-  --accent:    #1a56ff;
-  --green:     #0ea86b;
-  --red:       #e03040;
-  --gold:      #d4900a;
+  --navy:      #08131D;
+  --navy-mid:  #0E1C29;
+  --navy-lt:   #16283A;
+  --navy-line: #263746;
+  --white:     #F5F7F8;
+  --off:       #EEF2F5;
+  --surface:   #E8EDF1;
+  --border:    rgba(100,125,145,.22);
+  --border2:   rgba(100,125,145,.38);
+  --text:      #142332;
+  --mid:       #44576C;
+  --dim:       #71808D;
+  --accent:    #2F8FE5;
+  --ice:       #63B7F2;
+  --green:     #46A874;
+  --red:       #C75B56;
+  --gold:      #C89947;
+  --violet:    #7457CE;
+  --teal:      #319A99;
 }
 
 html, body { height: 100%; overflow: hidden; background: var(--navy); }
@@ -50,33 +54,37 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .logo { display: flex; align-items: baseline; gap: 5px; }
 .logo-gm  { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 24px; letter-spacing: 3px; color: var(--white); }
-.logo-cmd { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 24px; letter-spacing: 3px; color: #6daaff; }
+.logo-cmd { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 24px; letter-spacing: 3px; color: #63B7F2; }
 .logo-accent { display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; align-self: center; }
-.logo-accent i { display: block; width: 3px; height: 16px; background: #6daaff; transform: skewX(-18deg); border-radius: 1px; font-style: normal; }
+.logo-accent i { display: block; width: 3px; height: 16px; background: #63B7F2; transform: skewX(-18deg); border-radius: 1px; font-style: normal; }
 .logo-accent i:nth-child(2) { opacity: .65; }
 .logo-accent i:nth-child(3) { opacity: .35; }
 .hdr-right { display: flex; align-items: center; gap: 8px; }
-.live-chip { display: flex; align-items: center; gap: 5px; background: rgba(14,168,107,0.18); border: 1px solid rgba(14,168,107,0.35); border-radius: 20px; padding: 4px 10px; }
-.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 2s ease infinite; }
-@keyframes blink { 0%,100%{opacity:1}50%{opacity:.25} }
+.live-chip { display: flex; align-items: center; gap: 5px; background: rgba(70,168,116,.14); border: 1px solid rgba(70,168,116,.32); border-radius: 6px; padding: 4px 10px; }
+.live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: blink 2s ease infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
 .live-text { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; color: var(--green); text-transform: uppercase; }
-.hdr-btn { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; position: relative; transition: background .15s; }
-.hdr-btn:active { background: rgba(255,255,255,0.18); }
-.notif-dot { position: absolute; top: -2px; right: -2px; width: 13px; height: 13px; border-radius: 50%; background: var(--red); font-size: 7px; font-weight: 700; color: white; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--navy); }
-.search-bar { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 9px 14px; cursor: text; }
-.search-icon { font-size: 13px; opacity: .5; }
-.search-txt { font-size: 13px; color: rgba(255,255,255,.4); }
+.hdr-btn { width: 30px; height: 30px; border-radius: 8px; background: var(--navy-mid); border: 1px solid var(--navy-line); display: flex; align-items: center; justify-content: center; font-size: 14px; color: rgba(244,247,250,.55); cursor: pointer; position: relative; transition: border-color .15s, color .15s; }
+.hdr-btn:active { border-color: var(--ice); color: var(--ice); }
+.notif-dot { position: absolute; top: -3px; right: -3px; width: 13px; height: 13px; border-radius: 50%; background: var(--red); font-size: 7px; font-weight: 700; color: white; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--navy); }
+.search-bar { display: flex; align-items: center; gap: 10px; background: var(--navy-mid); border: 1px solid var(--navy-line); border-radius: 9px; padding: 9px 14px; cursor: text; transition: border-color .15s, box-shadow .15s; }
+.search-bar:focus-within { border-color: var(--ice); box-shadow: 0 0 0 3px rgba(99,183,242,.14); }
+.search-icon { font-size: 14px; color: rgba(244,247,250,.45); display: flex; align-items: center; }
+.search-txt { font-size: 13px; color: rgba(167,180,192,.65); }
+.filter-icon { font-size: 14px; color: rgba(244,247,250,.4); display: flex; align-items: center; margin-left: auto; }
 
 /* ── CHIPS ── */
-.chips { flex-shrink: 0; padding: 11px 18px; display: flex; gap: 8px; overflow-x: auto; background: var(--white); border-bottom: 2px solid var(--border2); }
+.chips { flex-shrink: 0; padding: 0 18px; display: flex; gap: 22px; overflow-x: auto; background: var(--white); border-bottom: 1px solid var(--border); }
 .chips::-webkit-scrollbar { display: none; }
-.chip { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 22px; border: 1.5px solid var(--border2); background: linear-gradient(180deg,#ffffff 0%,#f0f3fb 100%); white-space: nowrap; cursor: pointer; transition: all .12s; flex-shrink: 0; box-shadow: 0 2px 0 #c4ceea, 0 1px 4px rgba(15,31,61,.08); }
-.chip:active { transform: translateY(1px); box-shadow: 0 1px 0 #c4ceea, 0 0px 2px rgba(15,31,61,.08); }
-.chip.active { background: linear-gradient(180deg,#1e3566 0%,#0f1f3d 100%); border-color: #0a1628; box-shadow: 0 2px 0 #060f1e, inset 0 1px 0 rgba(255,255,255,.1); }
-.chip span { font-size: 12px; font-weight: 600; color: var(--mid); }
-.chip.active span { color: var(--white); }
-.chip em { background: var(--border); border-radius: 10px; padding: 1px 6px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color: var(--dim); font-style: normal; }
-.chip.active em { background: rgba(255,255,255,.15); color: rgba(255,255,255,.7); }
+.chip { display: flex; align-items: center; gap: 6px; padding: 12px 0 10px; border: none; border-bottom: 2px solid transparent; background: none; white-space: nowrap; cursor: pointer; transition: border-color .15s, opacity .15s; flex-shrink: 0; border-radius: 0; box-shadow: none; }
+.chip:active { opacity: .6; }
+.chip.active { border-bottom-color: var(--accent); background: none; }
+.chip span { font-size: 12.5px; font-weight: 600; color: var(--dim); letter-spacing: .1px; }
+.chip.active span { color: var(--text); }
+.chip em { background: var(--surface); border-radius: 8px; padding: 1px 6px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color: var(--dim); font-style: normal; }
+.chip.active em { background: rgba(47,143,229,.12); color: var(--accent); }
+.chip-ic { font-size: 14px; display: flex; align-items: center; color: var(--dim); }
+.chip.active .chip-ic { color: var(--accent); }
 
 /* ── MAIN SCROLL ── */
 .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 14px 18px 90px; display: flex; flex-direction: column; gap: 14px; }
@@ -87,89 +95,96 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .sec-link { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; cursor: pointer; background: none; border: none; }
 
 /* ── SNAPSHOT ── */
-.snap { background: linear-gradient(160deg,#162850 0%,#0f1f3d 100%); border-radius: 14px; padding: 16px; position: relative; overflow: hidden; border: 1.5px solid #1e3566; box-shadow: 0 4px 0 #060f1e, 0 6px 20px rgba(15,31,61,.3), inset 0 1px 0 rgba(255,255,255,.07); flex-shrink: 0; }
-.snap::before { content: ''; position: absolute; top: -40px; right: -30px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,.04); }
+.snap { background: linear-gradient(165deg,var(--navy-mid) 0%,var(--navy) 100%); border-radius: 14px; padding: 16px; position: relative; overflow: hidden; border: 1px solid var(--navy-line); box-shadow: 0 10px 26px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05); flex-shrink: 0; }
+.snap::before { content: ''; position: absolute; top: -40px; right: -30px; width: 130px; height: 130px; border-radius: 50%; background: rgba(99,183,242,.05); }
 .snap-status { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
-.snap-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #6daaff; animation: blink 2s ease infinite; }
-.snap-status-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 2px; color: #6daaff; text-transform: uppercase; }
+.snap-status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--ice); animation: blink 2s ease infinite; }
+.snap-status-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 2px; color: var(--ice); text-transform: uppercase; }
 .snap-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
 .snap-name { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--white); }
-.snap-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1.5px; color: rgba(255,255,255,.4); text-transform: uppercase; margin-top: 3px; }
+.snap-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1.5px; color: rgba(244,247,250,.4); text-transform: uppercase; margin-top: 3px; }
 .snap-rec { text-align: right; }
-.snap-rec-num { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 30px; color: #6daaff; line-height: 1; }
-.snap-rec-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.35); letter-spacing: 1px; text-transform: uppercase; }
+.snap-rec-num { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 30px; color: var(--ice); line-height: 1; }
+.snap-rec-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(244,247,250,.35); letter-spacing: 1px; text-transform: uppercase; }
 .snap-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
-.snap-stat { background: rgba(255,255,255,.06); border-radius: 8px; padding: 8px 6px; text-align: center; border: 1px solid rgba(255,255,255,.1); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.2); }
-.snap-sync { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.1); }
-.snap-sync-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: rgba(255,255,255,.4); text-transform: uppercase; }
-.snap-sync-btn { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #6daaff; background: rgba(109,170,255,.12); border: 1px solid rgba(109,170,255,.3); border-radius: 6px; padding: 5px 10px; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
-.snap-sync-btn:active { opacity: .6; }
+.snap-stat { background: rgba(255,255,255,.03); border-radius: 8px; padding: 8px 6px; text-align: center; border: 1px solid var(--navy-line); }
+.snap-sync { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--navy-line); }
+.snap-sync-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: rgba(244,247,250,.4); text-transform: uppercase; }
+.snap-sync-btn { display: flex; align-items: center; gap: 5px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ice); background: none; border: none; padding: 3px 0; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+.snap-sync-btn svg { width: 10px; height: 10px; flex-shrink: 0; }
+.snap-sync-btn:active { opacity: .5; }
 .snap-sync-btn.syncing { opacity: .5; pointer-events: none; }
 .sv { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 14px; font-weight: 500; color: var(--white); display: block; margin-bottom: 2px; }
-.sv.blue { color: #6daaff; } .sv.gold { color: #f5c84a; }
-.sl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color: rgba(255,255,255,.3); letter-spacing: 1px; text-transform: uppercase; }
+.sv.blue { color: var(--ice); } .sv.gold { color: var(--gold); }
+.sl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color: rgba(244,247,250,.32); letter-spacing: 1px; text-transform: uppercase; }
 
 /* ── CHAT CARD ── */
-.chat-card { background: var(--white); border-radius: 14px; border: 1.5px solid var(--border2); overflow: hidden; box-shadow: 0 3px 0 #c4ceea, 0 2px 16px rgba(15,31,61,.08); }
-.cc-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: var(--navy); }
-.cc-title { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 16px; letter-spacing: 2px; color: var(--white); }
-.cc-meta { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.35); }
-.cc-ctx { display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-bottom: 1px solid var(--border); background: var(--off); }
-.ctx-pill { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: .8px; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); color: var(--dim); background: var(--white); }
-.ctx-pill.on { background: rgba(14,168,107,.08); border-color: rgba(14,168,107,.3); color: var(--green); }
-.cc-msgs { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--border); }
+.chat-card { background: var(--white); border-radius: 16px; border: 1px solid var(--border2); overflow: hidden; box-shadow: 0 12px 30px rgba(8,19,29,.16), 0 1px 3px rgba(8,19,29,.08); }
+.cc-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--navy); border-bottom: 1px solid var(--navy-line); }
+.cc-title { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 15px; letter-spacing: 1.5px; color: var(--white); }
+.cc-meta { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(244,247,250,.35); }
+.cc-ctx { display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-bottom: 1px solid var(--border); background: var(--white); }
+.ctx-pill { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: .8px; text-transform: uppercase; padding: 2px 8px; border-radius: 5px; border: 1px solid var(--border); color: var(--dim); background: var(--off); }
+.ctx-pill.on { background: rgba(70,168,116,.09); border-color: rgba(70,168,116,.32); color: var(--green); }
+.cc-msgs { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--border); background: var(--surface); }
 .msg { display: flex; flex-direction: column; gap: 3px; }
 .msg-who { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
 .msg.you .msg-who { color: var(--accent); text-align: right; }
-.bubble { padding: 10px 13px; border-radius: 10px; font-size: 12px; line-height: 1.6; max-width: 92%; }
-.msg-ai .bubble { background: var(--off); border: 1px solid var(--border); color: var(--text); border-radius: 3px 10px 10px 10px; }
+.bubble { padding: 10px 13px; border-radius: 8px; font-size: 12px; line-height: 1.6; max-width: 92%; }
+.msg-ai .bubble { background: var(--white); border: 1px solid var(--border); color: var(--text); }
 .msg.you { align-items: flex-end; }
-.msg.you .bubble { background: var(--navy); color: rgba(255,255,255,.88); border-radius: 10px 3px 10px 10px; }
+.msg.you .bubble { background: var(--navy); color: rgba(244,247,250,.9); }
 .bubble strong { color: var(--accent); font-weight: 700; }
-.verdict { display: flex; align-items: center; gap: 8px; margin-top: 7px; padding: 8px 11px; background: var(--navy); border-radius: 7px; }
+.verdict { display: flex; align-items: center; gap: 8px; margin-top: 7px; padding: 8px 11px; background: var(--navy); border-radius: 6px; border-left: 2px solid var(--ice); }
 .verdict-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 13px; letter-spacing: 2px; color: var(--white); }
-.verdict-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.4); margin-left: auto; }
+.verdict-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(244,247,250,.4); margin-left: auto; }
 .src-note { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); margin-top: 5px; }
 .typing { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
 .tdot { width: 5px; height: 5px; border-radius: 50%; background: var(--border2); animation: tdot 1.2s ease infinite; }
 .tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
 @keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
-.cc-input { display: flex; gap: 8px; align-items: center; padding: 10px 12px; }
-.cc-input input { flex: 1; background: var(--off); border: 1px solid var(--border2); border-radius: 22px; padding: 9px 14px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 12px; color: var(--text); outline: none; transition: border-color .15s; }
+.cc-input { display: flex; gap: 8px; align-items: center; padding: 10px 12px; background: var(--white); }
+.cc-input input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 12px; color: var(--text); outline: none; transition: border-color .15s, box-shadow .15s; }
 .cc-input input::placeholder { color: var(--dim); }
-.cc-input input:focus { border-color: var(--accent); }
-.send { width: 36px; height: 36px; flex-shrink: 0; background: var(--navy); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.cc-input input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47,143,229,.12); }
+.send { width: 34px; height: 34px; flex-shrink: 0; background: var(--accent); border: none; border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: opacity .15s, transform .12s; }
+.send:active { transform: translateY(1px); opacity: .85; }
 .send svg { width: 13px; height: 13px; fill: white; }
 
 /* ── QUICK GRID ── */
 .qgrid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
-.qcard { background: linear-gradient(180deg,#ffffff 0%,#f4f6fb 100%); border-radius: 13px; padding: 10px 8px; border: 1.5px solid var(--border2); cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; box-shadow: 0 3px 0 #c4ceea, 0 2px 8px rgba(15,31,61,.07); transition: all .12s; }
-.qcard:active { transform: translateY(2px); box-shadow: 0 1px 0 #c4ceea, 0 1px 3px rgba(15,31,61,.06); }
-.qicon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-.qi1{background:rgba(26,86,255,.1)} .qi2{background:rgba(14,168,107,.1)} .qi3{background:rgba(212,144,10,.1)} .qi4{background:rgba(224,48,64,.1)}
-.ql { font-size: 10px; font-weight: 700; color: var(--navy); line-height: 1.25; }
+.qcard { position: relative; background: var(--white); border-radius: 13px; padding: 14px 6px 12px; border: 1px solid var(--border); cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 7px; box-shadow: 0 1px 3px rgba(8,19,29,.05); transition: transform .12s, box-shadow .12s, border-color .12s; overflow: hidden; }
+.qcard::after { content:''; position:absolute; left:0; right:0; bottom:0; height:2px; opacity:0; transition: opacity .12s; }
+.qcard:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(8,19,29,.06); border-color: var(--border2); }
+.qcard:active::after { opacity: .6; }
+.qcard.qi1::after { background: var(--accent); } .qcard.qi2::after { background: var(--teal); }
+.qcard.qi3::after { background: var(--violet); } .qcard.qi4::after { background: var(--green); }
+.qicon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 21px; flex-shrink: 0; }
+.qcard.qi1 .qicon { color: var(--accent); } .qcard.qi2 .qicon { color: var(--teal); }
+.qcard.qi3 .qicon { color: var(--violet); } .qcard.qi4 .qicon { color: var(--green); }
+.ql { font-size: 10.5px; font-weight: 700; color: var(--text); line-height: 1.25; letter-spacing: -.1px; }
 .qs { font-size: 8px; color: var(--dim); line-height: 1.3; }
 
 /* ── LEAGUE TICKER ── */
-.ticker-list { background: var(--navy); border-radius: 12px; overflow: hidden; box-shadow: 0 3px 0 #060f1e, 0 2px 12px rgba(15,31,61,.15); }
-.ticker-item { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.ticker-list { background: var(--navy-mid); border: 1px solid var(--navy-line); border-radius: 10px; overflow: hidden; }
+.ticker-item { display: flex; align-items: center; gap: 8px; padding: 7px 14px; border-bottom: 1px solid var(--navy-line); }
 .ticker-item:last-child { border-bottom: none; }
-.ticker-icon { font-size: 11px; flex-shrink: 0; }
-.ticker-txt { flex: 1; min-width: 0; font-size: 11px; color: rgba(255,255,255,.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ticker-time { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.35); flex-shrink: 0; }
+.ticker-icon { font-size: 11px; flex-shrink: 0; color: var(--ice); display: flex; align-items: center; }
+.ticker-txt { flex: 1; min-width: 0; font-size: 11px; color: rgba(244,247,250,.82); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ticker-time { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(244,247,250,.32); flex-shrink: 0; }
 
 /* ── ROSTER STRIP ── */
 .rstrip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
 .rstrip::-webkit-scrollbar { display: none; }
-.pchip { background: linear-gradient(180deg,#ffffff 0%,#f0f3fb 100%); border: 1.5px solid var(--border2); border-radius: 12px; padding: 10px 12px; flex-shrink: 0; cursor: pointer; min-width: 84px; display: flex; flex-direction: column; align-items: center; gap: 5px; box-shadow: 0 3px 0 #c4ceea, 0 1px 5px rgba(15,31,61,.06); transition: all .12s; }
-.pchip:active { transform: translateY(2px); box-shadow: 0 1px 0 #c4ceea; }
-.pchip.fl { border-color: rgba(224,48,64,.45); background: linear-gradient(180deg,#fff5f5 0%,#ffe8e8 100%); box-shadow: 0 3px 0 rgba(224,48,64,.25); }
-.pchip.nw { border-color: rgba(212,144,10,.45); background: linear-gradient(180deg,#fffbf0 0%,#fff3d0 100%); box-shadow: 0 3px 0 rgba(212,144,10,.2); }
+.pchip { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; flex-shrink: 0; cursor: pointer; min-width: 84px; display: flex; flex-direction: column; align-items: center; gap: 5px; box-shadow: 0 1px 3px rgba(8,19,29,.05); transition: transform .12s, box-shadow .12s; }
+.pchip:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(8,19,29,.05); }
+.pchip.fl { border-color: rgba(199,91,86,.4); background: rgba(199,91,86,.05); }
+.pchip.nw { border-color: rgba(200,153,71,.4); background: rgba(200,153,71,.06); }
 .pavatar { width: 44px; height: 44px; border-radius: 6px; background: transparent; display: flex; align-items: center; justify-content: center; position: relative; border: none; }
 .pflag { position: absolute; bottom: -2px; right: -2px; width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid var(--white); font-size: 7px; display: flex; align-items: center; justify-content: center; }
 .pf-i { background: var(--red); } .pf-n { background: var(--gold); }
 .ppos { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; }
-.pos-qb{color:var(--accent)} .pos-rb{color:var(--green)} .pos-wr{color:#8a4fcf} .pos-te{color:var(--gold)}
+.pos-qb{color:var(--accent)} .pos-rb{color:var(--green)} .pos-wr{color:#7457CE} .pos-te{color:var(--gold)}
 .pname { font-size: 10px; font-weight: 700; color: var(--navy); text-align: center; line-height: 1.2; }
 
 /* ── NEWS TRAY ── */
@@ -194,21 +209,22 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .pbl { font-size: 10px; line-height: 1.45; color: var(--mid); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* ── BOTTOM NAV ── */
-.bnav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: linear-gradient(180deg,#132a52 0%,#0f1f3d 100%); border-top: 2px solid #1e3566; display: grid; grid-template-columns: repeat(6,1fr); padding-bottom: env(safe-area-inset-bottom,0); z-index: 100; box-shadow: 0 -4px 20px rgba(0,0,0,.25); }
-.ni { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0 8px; cursor: pointer; gap: 4px; position: relative; transition: opacity .12s; }
-.ni:active { opacity: .55; transform: scale(.93); }
-.ni-icon { font-size: 20px; line-height: 1; }
-.ni-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: .8px; text-transform: uppercase; color: rgba(255,255,255,.45); white-space: nowrap; }
-.ni.active .ni-lbl { color: #6daaff; font-weight: 700; }
-.ni.active::after { content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 2.5px; border-radius: 0 0 3px 3px; background: #6daaff; }
-.ni.ask-ni { padding-top: 6px; }
-.ask-circle { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(180deg,#1e3566 0%,#0f1f3d 100%); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-top: -18px; border: 2.5px solid var(--white); box-shadow: 0 0 0 1.5px var(--border2), 0 4px 0 #060f1e, 0 6px 16px rgba(15,31,61,.25); flex-shrink: 0; transition: all .12s; }
-.ni.ask-ni:active .ask-circle { transform: translateY(2px); box-shadow: 0 0 0 1.5px var(--border2), 0 2px 0 #060f1e, 0 3px 8px rgba(15,31,61,.2); }
-.ni.ask-ni .ni-lbl { color: #6daaff; font-weight: 600; }
+.bnav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--navy); border-top: 1px solid var(--navy-line); display: grid; grid-template-columns: repeat(6,1fr); padding-bottom: env(safe-area-inset-bottom,0); z-index: 100; box-shadow: 0 -8px 20px rgba(0,0,0,.22); }
+.ni { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0 8px; cursor: pointer; gap: 4px; position: relative; color: rgba(244,247,250,.4); transition: color .12s, opacity .12s; }
+.ni:active { opacity: .6; }
+.ni-icon { font-size: 19px; line-height: 1; display: flex; }
+.ni-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: .8px; text-transform: uppercase; color: inherit; white-space: nowrap; }
+.ni.active { color: var(--ice); }
+.ni.active .ni-lbl { font-weight: 700; }
+.ni.active::after { content: ''; position: absolute; top: 0; left: 30%; right: 30%; height: 2px; border-radius: 0 0 2px 2px; background: var(--ice); }
+.ni.ask-ni { padding-top: 4px; color: var(--ice); }
+.ask-circle { width: 40px; height: 40px; border-radius: 50%; background: var(--navy-mid); display: flex; align-items: center; justify-content: center; font-size: 17px; margin-top: -14px; border: 1.5px solid var(--ice); box-shadow: 0 4px 14px rgba(0,0,0,.3); flex-shrink: 0; transition: transform .12s; color: var(--ice); }
+.ni.ask-ni:active .ask-circle { transform: translateY(1px); }
+.ni.ask-ni .ni-lbl { color: var(--ice); font-weight: 600; }
 .ni.ask-ni::after { display: none; }
-.ni.trade-ni .ni-lbl { color: #6daaff; }
+.ni.trade-ni { color: rgba(99,183,242,.5); }
+.ni.trade-ni.active { color: var(--ice); }
 .ni.trade-ni.active .ni-lbl { font-weight: 700; }
-.ni.trade-ni.active::after { background: #6daaff; }
 
 /* ════════════════════════════
    FULL CHAT SCREEN
@@ -273,13 +289,13 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .pc-team { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; color: rgba(255,255,255,.45); text-transform: uppercase; margin-top: 4px; }
 .pc-tags { display: flex; gap: 5px; margin-top: 5px; }
 .st { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; padding: 2px 8px; border-radius: 8px; text-transform: uppercase; }
-.st-inj{background:rgba(224,48,64,.2);color:#ff8a8a;border:1px solid rgba(224,48,64,.3)}
-.st-ok{background:rgba(14,168,107,.2);color:#4dd89a;border:1px solid rgba(14,168,107,.3)}
+.st-inj{background:rgba(224,48,64,.2);color:#E2918D;border:1px solid rgba(224,48,64,.3)}
+.st-ok{background:rgba(14,168,107,.2);color:#5FC08E;border:1px solid rgba(14,168,107,.3)}
 .pc-val { text-align: right; }
-.pc-ktc { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 28px; letter-spacing: 1px; color: #6daaff; line-height: 1; }
+.pc-ktc { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 28px; letter-spacing: 1px; color: #63B7F2; line-height: 1; }
 .pc-ktc-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.3); letter-spacing: 1px; text-transform: uppercase; }
 .pc-trend { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; }
-.tr-dn{color:#ff8a8a} .tr-up{color:#4dd89a}
+.tr-dn{color:#E2918D} .tr-up{color:#5FC08E}
 
 .pc-tabs { display: flex; background: var(--white); border-bottom: 2px solid var(--border2); flex-shrink: 0; }
 .pc-tab { flex: 1; padding: 11px 4px; text-align: center; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--dim); cursor: pointer; border-bottom: 2.5px solid transparent; transition: all .15s; position: relative; margin-bottom: -2px; }
@@ -328,8 +344,9 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .rd-intel-log-item { display: flex; gap: 8px; padding: 7px 10px; background: var(--white); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 4px; }
 .rd-intel-log-date { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); flex-shrink: 0; }
 .rd-intel-log-txt { font-size: 11px; color: var(--mid); }
-.rd-btn-primary, .rd-btn-secondary { width: 100%; border-radius: 10px; padding: 12px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
-.rd-btn-primary { background: var(--accent); color: #ffffff; border: none; box-shadow: 0 3px 0 #0d3ab8; }
+.rd-btn-primary, .rd-btn-secondary { width: 100%; border-radius: 10px; padding: 12px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: transform .12s, opacity .12s; }
+.rd-btn-primary:active, .rd-btn-secondary:active { transform: translateY(1px); opacity: .9; }
+.rd-btn-primary { background: var(--accent); color: #ffffff; border: none; box-shadow: 0 4px 12px rgba(47,143,229,.28); }
 .rd-btn-secondary { background: var(--white); color: var(--navy); border: 1px solid var(--border2); }
 
 .rd-trade-intro { font-size: 12px; line-height: 1.6; color: var(--text); }
@@ -399,8 +416,8 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .vt-val { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color: var(--mid); width: 34px; text-align: right; flex-shrink: 0; }
 
 /* ask btn */
-.ask-btn { width: 100%; padding: 13px; background: var(--accent); box-shadow: 0 3px 0 #0d3ab8, 0 4px 14px rgba(26,86,255,.3); border: none; border-radius: 10px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 16px; letter-spacing: 2.5px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
-.ask-btn:active { opacity: .8; }
+.ask-btn { width: 100%; padding: 13px; background: var(--accent); box-shadow: 0 6px 16px rgba(47,143,229,.28); border: none; border-radius: 10px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 16px; letter-spacing: 2.5px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s, transform .12s; }
+.ask-btn:active { opacity: .85; transform: translateY(1px); }
 
 /* ════════════════════════════
    TRADE FINDER SCREEN
@@ -427,20 +444,20 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 
 .pos-row { display: flex; gap: 6px; flex-wrap: wrap; }
 .pos-btn { padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border2); background: var(--off); font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; font-weight: 500; color: var(--mid); cursor: pointer; transition: all .15s; }
-.pos-btn.sel-wr{background:rgba(138,79,207,.1);border-color:rgba(138,79,207,.3);color:#8a4fcf}
+.pos-btn.sel-wr{background:rgba(138,79,207,.1);border-color:rgba(138,79,207,.3);color:#7457CE}
 .pos-btn.sel-rb{background:rgba(14,168,107,.1);border-color:rgba(14,168,107,.3);color:var(--green)}
 .pos-btn.sel-qb{background:rgba(26,86,255,.1);border-color:rgba(26,86,255,.3);color:var(--accent)}
 
 /* ════════════════════════════
    TRADE FINDER SCREEN
 ════════════════════════════ */
-.tf-bg { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #f4f6fb; padding: 14px 14px 90px; display: flex; flex-direction: column; gap: 0; }
+.tf-bg { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #EEF2F5; padding: 14px 14px 90px; display: flex; flex-direction: column; gap: 0; }
 .tf-bg::-webkit-scrollbar { display: none; }
 
 /* the one widget card */
 
 /* ── COMPACT TRADE WIDGET ── */
-.tf-widget { background: #0f1f3d; border-radius: 16px; overflow: visible; box-shadow: 0 0 0 3px #0f1f3d, 0 8px 40px rgba(10,20,80,.28); }
+.tf-widget { background: #08131D; border-radius: 16px; overflow: visible; box-shadow: 0 0 0 3px #08131D, 0 8px 40px rgba(10,20,80,.28); }
 
 /* Row wrapper */
 .tf-row { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.1); display: flex; align-items: center; gap: 10px; }
@@ -450,7 +467,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 /* 2-way/multi toggle */
 .tf-toggle { display: flex; border: 1px solid rgba(255,255,255,.18); border-radius: 7px; overflow: hidden; background: rgba(255,255,255,.07); flex-shrink: 0; }
 .tf-tog-btn { padding: 5px 11px; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; border: none; cursor: pointer; background: transparent; color: rgba(255,255,255,.38); transition: all .15s; }
-.tf-tog-btn.on { background: #ffffff; color: #0f1f3d; border-radius: 6px; }
+.tf-tog-btn.on { background: #F5F7F8; color: #08131D; border-radius: 6px; }
 
 /* team count badge shown inline when multi */
 .tf-team-badge { display: none; align-items: center; gap: 6px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); border-radius: 7px; padding: 4px 10px; }
@@ -463,176 +480,176 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .tf-partners-row::-webkit-scrollbar { display: none; }
 .tf-partners-row.show { display: flex; }
 .tf-partner-chip { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.07); cursor: pointer; transition: all .15s; flex-shrink: 0; }
-.tf-partner-chip.sel { background: #ffffff; border-color: #ffffff; }
+.tf-partner-chip.sel { background: #F5F7F8; border-color: #ffffff; }
 .tf-p-init { width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 8px; color: white; flex-shrink: 0; }
-.tf-partner-chip.sel .tf-p-init { background: #0f1f3d; color: white; }
+.tf-partner-chip.sel .tf-p-init { background: #08131D; color: white; }
 .tf-p-name { font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 8px; color: rgba(255,255,255,.65); white-space: nowrap; }
-.tf-partner-chip.sel .tf-p-name { color: #0f1f3d; }
+.tf-partner-chip.sel .tf-p-name { color: #08131D; }
 
 /* mode chips — horizontal scroll */
 .tf-mode-scroll { display: flex; gap: 6px; overflow-x: auto; flex: 1; }
 .tf-mode-scroll::-webkit-scrollbar { display: none; }
-.tf-mchip { display: flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.15); background: #ffffff; cursor: pointer; transition: all .15s; flex-shrink: 0; white-space: nowrap; }
+.tf-mchip { display: flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.15); background: #F5F7F8; cursor: pointer; transition: all .15s; flex-shrink: 0; white-space: nowrap; }
 .tf-mchip-icon { font-size: 13px; }
-.tf-mchip-lbl { font-size: 11px; font-weight: 700; color: #0f1f3d; }
+.tf-mchip-lbl { font-size: 11px; font-weight: 700; color: #08131D; }
 .tf-mchip.sel { border-width: 2px; }
 .tf-mchip.sel .tf-mchip-lbl { color: #ffffff; }
-.tf-mchip-cook.sel { border-color: #e03040; background: #e03040; }
-.tf-mchip-want.sel { border-color: #0ea86b; background: #0ea86b; }
-.tf-mchip-give.sel { border-color: #1a56ff; background: #1a56ff; }
-.tf-mchip-mkt.sel  { border-color: #d4900a; background: #d4900a; }
+.tf-mchip-cook.sel { border-color: #C75B56; background: #C75B56; }
+.tf-mchip-want.sel { border-color: #46A874; background: #46A874; }
+.tf-mchip-give.sel { border-color: #2F8FE5; background: #2F8FE5; }
+.tf-mchip-mkt.sel  { border-color: #C89947; background: #C89947; }
 
 /* intent chips — horizontal scroll */
 .tf-intent-scroll { display: flex; gap: 6px; overflow-x: auto; flex: 1; }
 .tf-intent-scroll::-webkit-scrollbar { display: none; }
-.tf-ichip { display: flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.15); background: #ffffff; cursor: pointer; transition: all .15s; flex-shrink: 0; }
+.tf-ichip { display: flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.15); background: #F5F7F8; cursor: pointer; transition: all .15s; flex-shrink: 0; }
 .tf-ichip-icon { font-size: 12px; }
-.tf-ichip-lbl { font-size: 11px; font-weight: 600; color: #0f1f3d; white-space: nowrap; }
-.tf-ichip.sel { border-color: #1a56ff; box-shadow: 0 0 0 1px #1a56ff; }
+.tf-ichip-lbl { font-size: 11px; font-weight: 600; color: #08131D; white-space: nowrap; }
+.tf-ichip.sel { border-color: #2F8FE5; box-shadow: 0 0 0 1px #2F8FE5; }
 
 /* position pills */
 .tf-pos-scroll { display: flex; gap: 6px; overflow-x: auto; flex: 1; }
 .tf-pos-scroll::-webkit-scrollbar { display: none; }
-.tf-pbtn { padding: 5px 12px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.18); background: #ffffff; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 10px; font-weight: 500; color: #0f1f3d; cursor: pointer; transition: all .15s; flex-shrink: 0; }
-.tf-pbtn.sel-qb { background: rgba(26,86,255,.1); border-color: rgba(26,86,255,.5); color: #1a56ff; }
-.tf-pbtn.sel-rb { background: rgba(14,168,107,.1); border-color: rgba(14,168,107,.5); color: #0ea86b; }
-.tf-pbtn.sel-wr { background: rgba(138,79,207,.1); border-color: rgba(138,79,207,.5); color: #8a4fcf; }
-.tf-pbtn.sel-te { background: rgba(212,144,10,.1); border-color: rgba(212,144,10,.5); color: #d4900a; }
-.tf-pbtn.sel-pk { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.5); color: #0f1f3d; }
+.tf-pbtn { padding: 5px 12px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.18); background: #F5F7F8; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 10px; font-weight: 500; color: #08131D; cursor: pointer; transition: all .15s; flex-shrink: 0; }
+.tf-pbtn.sel-qb { background: rgba(26,86,255,.1); border-color: rgba(26,86,255,.5); color: #2F8FE5; }
+.tf-pbtn.sel-rb { background: rgba(14,168,107,.1); border-color: rgba(14,168,107,.5); color: #46A874; }
+.tf-pbtn.sel-wr { background: rgba(138,79,207,.1); border-color: rgba(138,79,207,.5); color: #7457CE; }
+.tf-pbtn.sel-te { background: rgba(212,144,10,.1); border-color: rgba(212,144,10,.5); color: #C89947; }
+.tf-pbtn.sel-pk { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.5); color: #08131D; }
 
 /* submit */
 .tf-submit-wrap { padding: 10px 14px 12px; }
-.tf-submit { width: 100%; padding: 13px; background: #ffffff; border: none; border-radius: 12px; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 17px; letter-spacing: 3px; color: #0f1f3d; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
+.tf-submit { width: 100%; padding: 13px; background: #F5F7F8; border: none; border-radius: 12px; font-family: Zalando Sans SemiExpanded,sans-serif; font-size: 17px; letter-spacing: 3px; color: #08131D; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
 .tf-submit:active { opacity: .8; transform: scale(.98); }
 
 .tf-packages-sec { padding: 14px 0 16px; }
 .tf-packages-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .tf-packages-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.45); }
 .tf-packages-ctx { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.3); }
-.tf-pkg { background: #ffffff; border-radius: 10px; padding: 11px 13px; margin-bottom: 8px; cursor: pointer; transition: opacity .15s; border: 1px solid #dce2f0; box-shadow: 0 1px 6px rgba(15,31,61,.06); }
+.tf-pkg { background: #F5F7F8; border-radius: 10px; padding: 11px 13px; margin-bottom: 8px; cursor: pointer; transition: opacity .15s; border: 1px solid #D9E0E5; box-shadow: 0 1px 6px rgba(15,31,61,.06); }
 .tf-pkg:last-child { margin-bottom: 0; }
 .tf-pkg:active { opacity: .85; }
 .tf-pkg-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.tf-pkg-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #7a8fb5; }
+.tf-pkg-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #71808D; }
 .tf-pkg-score { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; font-weight: 500; padding: 2px 8px; border-radius: 8px; }
-.tf-pkg-hot  { background: rgba(14,168,107,.12); color: #0ea86b; }
-.tf-pkg-warm { background: rgba(212,144,10,.12); color: #d4900a; }
+.tf-pkg-hot  { background: rgba(14,168,107,.12); color: #46A874; }
+.tf-pkg-warm { background: rgba(212,144,10,.12); color: #C89947; }
 .tf-trade-row { display: flex; align-items: center; gap: 8px; }
 .tf-trade-side { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-.tf-trade-side-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; color: #7a8fb5; margin-bottom: 2px; }
-.tf-ptag { display: inline-block; font-size: 11px; font-weight: 600; color: #0f1f3d; padding: 3px 8px; border-radius: 6px; background: #f4f6fb; border: 1px solid #dce2f0; margin-bottom: 2px; }
-.tf-trade-arrow { font-size: 18px; color: #c8d2e8; flex-shrink: 0; }
-.tf-pkg-footer { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #dce2f0; }
-.tf-pkg-intel { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: #7a8fb5; flex: 1; }
-.tf-pkg-intel strong { color: #0f1f3d; }
-.tf-pkg-eval { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: #1a56ff; text-transform: uppercase; background: none; border: none; cursor: pointer; }
+.tf-trade-side-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; color: #71808D; margin-bottom: 2px; }
+.tf-ptag { display: inline-block; font-size: 11px; font-weight: 600; color: #08131D; padding: 3px 8px; border-radius: 6px; background: #EEF2F5; border: 1px solid #D9E0E5; margin-bottom: 2px; }
+.tf-trade-arrow { font-size: 18px; color: #C7D0D6; flex-shrink: 0; }
+.tf-pkg-footer { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #D9E0E5; }
+.tf-pkg-intel { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: #71808D; flex: 1; }
+.tf-pkg-intel strong { color: #08131D; }
+.tf-pkg-eval { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: #2F8FE5; text-transform: uppercase; background: none; border: none; cursor: pointer; }
 
 
 /* SCOUTING CENTER */
 .sc-scroll { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:14px 18px 90px; display:flex; flex-direction:column; gap:14px; }
 .sc-scroll::-webkit-scrollbar { display:none; }
 .sc-search-row { display:flex; gap:8px; align-items:center; }
-.sc-input { flex:1; background:#ffffff; border:1.5px solid #dce2f0; border-radius:10px; padding:10px 14px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:13px; color:#0f1f3d; outline:none; transition:border-color .15s; }
-.sc-input:focus { border-color:#1a56ff; }
-.sc-input::placeholder { color:#7a8fb5; }
-.sc-add-btn { background:#0f1f3d; border:none; border-radius:10px; padding:10px 16px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:14px; letter-spacing:2px; color:#ffffff; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+.sc-input { flex:1; background:#F5F7F8; border:1.5px solid #D9E0E5; border-radius:10px; padding:10px 14px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:13px; color:#08131D; outline:none; transition:border-color .15s; }
+.sc-input:focus { border-color:#2F8FE5; }
+.sc-input::placeholder { color:#71808D; }
+.sc-add-btn { background:#08131D; border:none; border-radius:10px; padding:10px 16px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:14px; letter-spacing:2px; color:#ffffff; cursor:pointer; white-space:nowrap; flex-shrink:0; }
 .sc-add-btn:active { opacity:.8; }
 .sc-sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-.sc-sec-title { font-size:14px; font-weight:700; color:#0f1f3d; }
-.sc-sec-count { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#7a8fb5; letter-spacing:1px; }
-.sc-prospect-card { background:#ffffff; border:1px solid #dce2f0; border-radius:12px; padding:12px 14px; cursor:pointer; transition:background .1s; display:flex; align-items:center; gap:12px; box-shadow:0 1px 6px rgba(15,31,61,.05); margin-bottom:8px; }
-.sc-prospect-card:active { background:#f4f6fb; }
+.sc-sec-title { font-size:14px; font-weight:700; color:#08131D; }
+.sc-sec-count { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#71808D; letter-spacing:1px; }
+.sc-prospect-card { background:#F5F7F8; border:1px solid #D9E0E5; border-radius:12px; padding:12px 14px; cursor:pointer; transition:background .1s; display:flex; align-items:center; gap:12px; box-shadow:0 1px 6px rgba(15,31,61,.05); margin-bottom:8px; }
+.sc-prospect-card:active { background:#EEF2F5; }
 .sc-pav { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:15px; color:rgba(255,255,255,.85); flex-shrink:0; }
 .sc-pinfo { flex:1; min-width:0; }
-.sc-pname { font-size:13px; font-weight:700; color:#0f1f3d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.sc-pmeta { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#7a8fb5; margin-top:2px; }
+.sc-pname { font-size:13px; font-weight:700; color:#08131D; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sc-pmeta { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#71808D; margin-top:2px; }
 .sc-pright { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
 .sc-pos-badge { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; font-weight:500; padding:2px 8px; border-radius:6px; }
-.sc-news-count { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#7a8fb5; }
-.sc-arrow { font-size:16px; color:#c8d2e8; }
+.sc-news-count { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#71808D; }
+.sc-arrow { font-size:16px; color:#C7D0D6; }
 .sc-year-folder { margin-bottom: 12px; border-radius: 10px; overflow: visible; }
 .sc-year-hd { display: flex; align-items: center; border-radius: 10px; padding: 11px 14px; cursor: pointer; user-select: none; -webkit-user-select: none; border: 2px solid rgba(0,0,0,.35); box-shadow: 0 4px 0 rgba(0,0,0,.35), 0 2px 12px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.18); transition: all .12s; }
 .sc-year-hd:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.15); }
 .sc-year-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 17px; letter-spacing: 2.5px; color: #ffffff; flex: 1; text-shadow: 0 1px 3px rgba(0,0,0,.3); }
 .sc-year-count { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; color: rgba(255,255,255,.75); background: rgba(0,0,0,.25); border-radius: 20px; padding: 2px 9px; margin-right: 8px; border: 1px solid rgba(0,0,0,.2); }
 .sc-year-chevron { font-size: 12px; color: rgba(255,255,255,.8); }
-.sc-year-body { background: #f4f6fb; border: 2px solid rgba(0,0,0,.12); border-top: none; border-radius: 0 0 10px 10px; padding: 8px 8px 4px; display: block; }
-.sc-pos-folder { margin-bottom: 6px; background: #ffffff; border: 1.5px solid #c8d2e8; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 0 #b0bcd4; }
-.sc-pos-hd { display: flex; align-items: center; gap: 8px; padding: 9px 12px; cursor: pointer; user-select: none; -webkit-user-select: none; background: #ffffff; }
+.sc-year-body { background: #EEF2F5; border: 2px solid rgba(0,0,0,.12); border-top: none; border-radius: 0 0 10px 10px; padding: 8px 8px 4px; display: block; }
+.sc-pos-folder { margin-bottom: 6px; background: #F5F7F8; border: 1.5px solid #C7D0D6; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(8,19,29,.06); }
+.sc-pos-hd { display: flex; align-items: center; gap: 8px; padding: 9px 12px; cursor: pointer; user-select: none; -webkit-user-select: none; background: #F5F7F8; }
 .sc-pos-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .sc-pos-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 14px; letter-spacing: 2px; flex: 1; }
-.sc-pos-count { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: #7a8fb5; background: #f4f6fb; border-radius: 20px; padding: 2px 7px; }
-.sc-pos-chevron { font-size: 10px; color: #7a8fb5; }
-.sc-pos-body { display: block; border-top: 1px solid #dce2f0; }
+.sc-pos-count { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: #71808D; background: #EEF2F5; border-radius: 20px; padding: 2px 7px; }
+.sc-pos-chevron { font-size: 10px; color: #71808D; }
+.sc-pos-body { display: block; border-top: 1px solid #D9E0E5; }
 .sc-pos-body .sc-prospect-card { border-radius: 0; border: none; border-bottom: 1px solid #f0f3fa; margin-bottom: 0; box-shadow: none; }
 .sc-pos-body .sc-prospect-card:last-child { border-bottom: none; }
 .sc-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; gap:10px; text-align:center; }
 .sc-empty-icon { font-size:40px; }
-.sc-empty-title { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:20px; letter-spacing:2px; color:#0f1f3d; }
-.sc-empty-sub { font-size:12px; color:#7a8fb5; line-height:1.6; max-width:240px; }
+.sc-empty-title { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:20px; letter-spacing:2px; color:#08131D; }
+.sc-empty-sub { font-size:12px; color:#71808D; line-height:1.6; max-width:240px; }
 /* PROSPECT DETAIL */
-.pd-header { background:#0f1f3d; padding:14px 18px 0; flex-shrink:0; }
+.pd-header { background:#08131D; padding:14px 18px 0; flex-shrink:0; }
 .pd-back { display:flex; align-items:center; gap:5px; background:none; border:none; cursor:pointer; color:rgba(255,255,255,.5); font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; letter-spacing:1px; text-transform:uppercase; margin-bottom:14px; padding:0; }
 .pd-hero { display:flex; align-items:flex-end; justify-content:space-between; padding-bottom:16px; }
 .pd-hero-l { display:flex; align-items:center; gap:14px; }
-.pd-avatar { width:56px; height:56px; border-radius:14px; background:#1e3566; display:flex; align-items:center; justify-content:center; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:20px; letter-spacing:2px; color:rgba(255,255,255,.85); border:2px solid rgba(255,255,255,.12); flex-shrink:0; position:relative; }
-.pd-pos-badge { position:absolute; bottom:-6px; left:50%; transform:translateX(-50%); font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; font-weight:500; padding:2px 7px; border-radius:6px; white-space:nowrap; border:1.5px solid #0f1f3d; }
+.pd-avatar { width:56px; height:56px; border-radius:14px; background:#16283A; display:flex; align-items:center; justify-content:center; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:20px; letter-spacing:2px; color:rgba(255,255,255,.85); border:2px solid rgba(255,255,255,.12); flex-shrink:0; position:relative; }
+.pd-pos-badge { position:absolute; bottom:-6px; left:50%; transform:translateX(-50%); font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; font-weight:500; padding:2px 7px; border-radius:6px; white-space:nowrap; border:1.5px solid #08131D; }
 .pd-name { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:24px; letter-spacing:2px; color:#ffffff; line-height:1; }
 .pd-school { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:rgba(255,255,255,.45); text-transform:uppercase; margin-top:4px; }
-.pd-draft-badge { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; padding:3px 10px; border-radius:20px; background:rgba(26,86,255,.25); color:#90b8ff; border:1px solid rgba(26,86,255,.4); margin-top:5px; display:inline-block; }
+.pd-draft-badge { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; padding:3px 10px; border-radius:20px; background:rgba(26,86,255,.25); color:#8FBFEF; border:1px solid rgba(26,86,255,.4); margin-top:5px; display:inline-block; }
 .pd-val { text-align:right; }
-.pd-grade { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:32px; color:#6daaff; line-height:1; }
+.pd-grade { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:32px; color:#63B7F2; line-height:1; }
 .pd-grade-lbl { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:rgba(255,255,255,.3); letter-spacing:1px; text-transform:uppercase; }
-.pd-tabs { display:flex; background:#ffffff; border-bottom:1px solid #dce2f0; flex-shrink:0; }
-.pd-tab { flex:1; padding:11px 4px; text-align:center; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; letter-spacing:1.2px; text-transform:uppercase; color:#7a8fb5; cursor:pointer; border-bottom:2px solid transparent; transition:all .15s; position:relative; }
-.pd-tab.active { color:#0f1f3d; border-bottom-color:#0f1f3d; }
+.pd-tabs { display:flex; background:#F5F7F8; border-bottom:1px solid #D9E0E5; flex-shrink:0; }
+.pd-tab { flex:1; padding:11px 4px; text-align:center; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; letter-spacing:1.2px; text-transform:uppercase; color:#71808D; cursor:pointer; border-bottom:2px solid transparent; transition:all .15s; position:relative; }
+.pd-tab.active { color:#08131D; border-bottom-color:#08131D; }
 .pd-scroll { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:16px 18px 30px; display:flex; flex-direction:column; gap:14px; }
 .pd-scroll::-webkit-scrollbar { display:none; }
-.pd-notes-blurb { font-size:12px; line-height:1.75; color:#3a4e72; background:#f4f6fb; border:1px solid #dce2f0; border-radius:8px; padding:12px 14px; min-height:70px; }
-.pd-notes-blurb.empty { color:#7a8fb5; font-style:italic; }
+.pd-notes-blurb { font-size:12px; line-height:1.75; color:#44576C; background:#EEF2F5; border:1px solid #D9E0E5; border-radius:8px; padding:12px 14px; min-height:70px; }
+.pd-notes-blurb.empty { color:#71808D; font-style:italic; }
 .pd-note-row { display:flex; gap:8px; align-items:flex-end; }
-.pd-note-input { flex:1; background:#ffffff; border:1.5px solid #dce2f0; border-radius:8px; padding:10px 13px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:12px; color:#0f1f3d; resize:none; outline:none; min-height:64px; line-height:1.55; transition:border-color .15s; }
-.pd-note-input:focus { border-color:#1a56ff; }
-.pd-note-input::placeholder { color:#7a8fb5; }
-.pd-note-btn { background:#0f1f3d; color:#ffffff; border:none; border-radius:8px; padding:10px 14px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; height:64px; display:flex; align-items:center; gap:5px; white-space:nowrap; flex-shrink:0; transition:opacity .15s; }
+.pd-note-input { flex:1; background:#F5F7F8; border:1.5px solid #D9E0E5; border-radius:8px; padding:10px 13px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:12px; color:#08131D; resize:none; outline:none; min-height:64px; line-height:1.55; transition:border-color .15s; }
+.pd-note-input:focus { border-color:#2F8FE5; }
+.pd-note-input::placeholder { color:#71808D; }
+.pd-note-btn { background:#08131D; color:#ffffff; border:none; border-radius:8px; padding:10px 14px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; height:64px; display:flex; align-items:center; gap:5px; white-space:nowrap; flex-shrink:0; transition:opacity .15s; }
 .pd-note-btn:disabled { opacity:.5; cursor:not-allowed; }
-.pd-synth-row { display:none; align-items:center; gap:6px; margin-top:6px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#1a56ff; letter-spacing:1px; }
-.pd-succ-row { display:none; align-items:center; gap:6px; margin-top:6px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#0ea86b; }
+.pd-synth-row { display:none; align-items:center; gap:6px; margin-top:6px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#2F8FE5; letter-spacing:1px; }
+.pd-succ-row { display:none; align-items:center; gap:6px; margin-top:6px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#46A874; }
 .film-add-row { display:flex; gap:8px; align-items:center; }
-.film-input { flex:1; background:#f4f6fb; border:1.5px solid #c8d2e8; border-radius:10px; padding:10px 12px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:12px; color:#0f1f3d; outline:none; transition:border-color .15s; }
-.film-input:focus { border-color:#1a56ff; }
-.film-input::placeholder { color:#7a8fb5; }
-.film-add-btn { background:linear-gradient(180deg,#1e3566 0%,#0f1f3d 100%); border:none; border-radius:10px; padding:10px 16px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:#ffffff; cursor:pointer; white-space:nowrap; flex-shrink:0; box-shadow:0 3px 0 #060f1e; transition:all .12s; }
-.film-add-btn:active { transform:translateY(2px); box-shadow:0 1px 0 #060f1e; }
+.film-input { flex:1; background:#EEF2F5; border:1.5px solid #C7D0D6; border-radius:10px; padding:10px 12px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:12px; color:#08131D; outline:none; transition:border-color .15s; }
+.film-input:focus { border-color:#2F8FE5; }
+.film-input::placeholder { color:#71808D; }
+.film-add-btn { background:linear-gradient(180deg,#16283A 0%,#08131D 100%); border:none; border-radius:10px; padding:10px 16px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:#ffffff; cursor:pointer; white-space:nowrap; flex-shrink:0; box-shadow:0 4px 10px rgba(0,0,0,.25); transition:transform .12s, opacity .12s; }
+.film-add-btn:active { transform:translateY(1px); opacity:.85; }
 .film-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-.film-card { background:#ffffff; border:2px solid #c8d2e8; border-radius:12px; overflow:hidden; cursor:pointer; box-shadow:0 3px 0 #b0bcd4, 0 2px 8px rgba(15,31,61,.1); transition:all .12s; aspect-ratio:1/1; position:relative; }
-.film-card:active { transform:translateY(2px); box-shadow:0 1px 0 #b0bcd4; opacity:.9; }
+.film-card { background:#F5F7F8; border:1px solid #C7D0D6; border-radius:12px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(8,19,29,.1); transition:transform .12s, box-shadow .12s; aspect-ratio:1/1; position:relative; }
+.film-card:active { transform:translateY(1px); box-shadow:0 1px 4px rgba(8,19,29,.08); opacity:.9; }
 .film-thumb { width:100%; height:100%; object-fit:cover; display:block; }
-.film-thumb-placeholder { width:100%; height:100%; background:linear-gradient(135deg,#162850,#0f1f3d); display:flex; align-items:center; justify-content:center; font-size:28px; }
+.film-thumb-placeholder { width:100%; height:100%; background:linear-gradient(135deg,#0E1C29,#08131D); display:flex; align-items:center; justify-content:center; font-size:28px; }
 .film-card-label { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(0deg,rgba(10,20,50,.88) 0%,transparent 100%); padding:16px 5px 5px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:7px; color:rgba(255,255,255,.85); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .film-card-x { position:absolute; top:4px; right:4px; width:18px; height:18px; background:rgba(15,31,61,.65); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; color:white; cursor:pointer; backdrop-filter:blur(2px); }
 .film-info { display:none; }
 .film-title { display:none; }
 .film-remove { display:none; }
-.film-search-btn { width:100%; padding:11px; background:linear-gradient(180deg,#f8faff 0%,#eef1f8 100%); border:1.5px dashed #b0bcd4; border-radius:10px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:#7a8fb5; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 2px 0 #c4ceea; transition:all .12s; }
-.film-search-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #c4ceea; }
-.pd-news-item { padding:11px 0; border-bottom:1px solid #dce2f0; }
+.film-search-btn { width:100%; padding:11px; background:var(--off); border:1.5px dashed #C7D0D6; border-radius:10px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:#71808D; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:transform .12s, opacity .12s; }
+.film-search-btn:active { transform:translateY(1px); opacity:.75; }
+.pd-news-item { padding:11px 0; border-bottom:1px solid #D9E0E5; }
 .pd-news-item:last-child { border-bottom:none; }
 .pd-news-meta { display:flex; align-items:center; gap:7px; margin-bottom:4px; }
-.pd-news-date { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#7a8fb5; }
-.pd-news-txt { font-size:12px; line-height:1.55; color:#3a4e72; }
-.pd-no-news { padding:20px 0; text-align:center; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:10px; color:#7a8fb5; letter-spacing:1px; }
+.pd-news-date { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:8px; color:#71808D; }
+.pd-news-txt { font-size:12px; line-height:1.55; color:#44576C; }
+.pd-no-news { padding:20px 0; text-align:center; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:10px; color:#71808D; letter-spacing:1px; }
 
 
 /* ON THE TABLE row */
 .tf-table-row { display:flex; align-items:flex-start; gap:10px; padding:10px 14px; border-bottom:1px solid rgba(255,255,255,.1); }
 .tf-table-chips { display:flex; gap:6px; overflow-x:auto; flex:1; flex-wrap:nowrap; align-items:center; min-height:32px; }
 .tf-table-chips::-webkit-scrollbar { display:none; }
-.tf-table-chip { display:flex; align-items:center; gap:5px; padding:4px 8px 4px 4px; border-radius:20px; background:#ffffff; border:1.5px solid rgba(255,255,255,.3); flex-shrink:0; cursor:pointer; }
+.tf-table-chip { display:flex; align-items:center; gap:5px; padding:4px 8px 4px 4px; border-radius:20px; background:#F5F7F8; border:1.5px solid rgba(255,255,255,.3); flex-shrink:0; cursor:pointer; }
 .tf-table-chip-jersey { width:28px; height:28px; flex-shrink:0; }
-.tf-table-chip-name { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#0f1f3d; font-weight:500; white-space:nowrap; }
-.tf-table-chip-x { font-size:11px; color:#7a8fb5; margin-left:2px; line-height:1; }
-.tf-table-chip-x:hover { color:#e03040; }
+.tf-table-chip-name { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#08131D; font-weight:500; white-space:nowrap; }
+.tf-table-chip-x { font-size:11px; color:#71808D; margin-left:2px; line-height:1; }
+.tf-table-chip-x:hover { color:#C75B56; }
 .tf-table-empty { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:rgba(255,255,255,.3); letter-spacing:.5px; padding:4px 0; }
 .tf-add-player-btn { background:rgba(255,255,255,.12); border:1.5px dashed rgba(255,255,255,.3); border-radius:8px; padding:5px 10px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:rgba(255,255,255,.6); cursor:pointer; white-space:nowrap; flex-shrink:0; transition:all .15s; }
 .tf-add-player-btn:active { background:rgba(255,255,255,.2); }
@@ -640,29 +657,29 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 /* Player picker sheet */
 .tf-picker-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; }
 .tf-picker-overlay.show { display:block; }
-.tf-picker-sheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:#ffffff; border-radius:20px 20px 0 0; z-index:201; padding-bottom:env(safe-area-inset-bottom,0); max-height:70vh; display:flex; flex-direction:column; }
-.tf-picker-header { padding:16px 18px 12px; border-bottom:1px solid #dce2f0; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
-.tf-picker-title { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:18px; letter-spacing:2px; color:#0f1f3d; }
-.tf-picker-close { background:none; border:none; font-size:20px; cursor:pointer; color:#7a8fb5; padding:0; }
-.tf-picker-sub { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#7a8fb5; letter-spacing:1px; }
+.tf-picker-sheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:#F5F7F8; border-radius:20px 20px 0 0; z-index:201; padding-bottom:env(safe-area-inset-bottom,0); max-height:70vh; display:flex; flex-direction:column; }
+.tf-picker-header { padding:16px 18px 12px; border-bottom:1px solid #D9E0E5; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.tf-picker-title { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:18px; letter-spacing:2px; color:#08131D; }
+.tf-picker-close { background:none; border:none; font-size:20px; cursor:pointer; color:#71808D; padding:0; }
+.tf-picker-sub { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#71808D; letter-spacing:1px; }
 .tf-picker-list { overflow-y:auto; flex:1; }
 .tf-picker-list::-webkit-scrollbar { display:none; }
-.tf-picker-item { display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #dce2f0; cursor:pointer; transition:background .1s; }
-.tf-picker-item:active { background:#f4f6fb; }
-.tf-picker-item.selected { background:#f0f4ff; }
+.tf-picker-item { display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #D9E0E5; cursor:pointer; transition:background .1s; }
+.tf-picker-item:active { background:#EEF2F5; }
+.tf-picker-item.selected { background:#EAF2FB; }
 .tf-picker-item.selected .tf-picker-check { display:block; }
-.tf-picker-check { display:none; color:#1a56ff; font-size:16px; flex-shrink:0; }
+.tf-picker-check { display:none; color:#2F8FE5; font-size:16px; flex-shrink:0; }
 .tf-picker-pinfo { flex:1; }
-.tf-picker-pname { font-size:13px; font-weight:600; color:#0f1f3d; }
-.tf-picker-pmeta { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#7a8fb5; margin-top:1px; }
-.tf-picker-done { padding:14px 18px; border-top:1px solid #dce2f0; flex-shrink:0; }
-.tf-picker-done-btn { width:100%; padding:12px; background:#0f1f3d; border:none; border-radius:10px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:16px; letter-spacing:2px; color:#ffffff; cursor:pointer; }
+.tf-picker-pname { font-size:13px; font-weight:600; color:#08131D; }
+.tf-picker-pmeta { font-family:Zalando Sans SemiExpanded,sans-serif; font-size:9px; color:#71808D; margin-top:1px; }
+.tf-picker-done { padding:14px 18px; border-top:1px solid #D9E0E5; flex-shrink:0; }
+.tf-picker-done-btn { width:100%; padding:12px; background:#08131D; border:none; border-radius:10px; font-family:Zalando Sans SemiExpanded,sans-serif; font-size:16px; letter-spacing:2px; color:#ffffff; cursor:pointer; }
 
 /* Chat history sheet — reuses .tf-picker-* chrome, adds per-row actions */
-.ch-hist-item.selected { background:#f0f4ff; }
-.ch-hist-rename, .ch-hist-delete { font-size:14px; color:#7a8fb5; flex-shrink:0; padding:6px; line-height:1; cursor:pointer; }
-.ch-hist-rename:hover, .ch-hist-delete:hover { color:#0f1f3d; }
-.ch-hist-delete:hover { color:#e03040; }
+.ch-hist-item.selected { background:#EAF2FB; }
+.ch-hist-rename, .ch-hist-delete { font-size:14px; color:#71808D; flex-shrink:0; padding:6px; line-height:1; cursor:pointer; }
+.ch-hist-rename:hover, .ch-hist-delete:hover { color:#08131D; }
+.ch-hist-delete:hover { color:#C75B56; }
 
 
 
@@ -679,18 +696,18 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
       <div class="logo"><span class="logo-gm">GM</span><span class="logo-cmd">Command</span><span class="logo-accent"><i></i><i></i><i></i></span></div>
       <div class="hdr-right">
         <div class="live-chip"><div class="live-dot"></div><span class="live-text">Live</span></div>
-        <div class="hdr-btn"><span>🔔</span><span class="notif-dot">3</span></div>
-        <div class="hdr-btn" onclick="nav('settings')">⚙️</div>
+        <div class="hdr-btn"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></span><span class="notif-dot">3</span></div>
+        <div class="hdr-btn" onclick="nav('settings')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
       </div>
     </div>
-    <div class="search-bar"><span class="search-icon">🔍</span><span class="search-txt">Search players, trades, news...</span></div>
+    <div class="search-bar"><span class="search-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></span><span class="search-txt">Search players, trades, news...</span></div>
   </div>
   <div class="chips">
     <div class="chip active" onclick="setHomeChip(this);document.querySelector('#screen-home .scroll').scrollTo({top:0,behavior:'smooth'})"><span>Dashboard</span></div>
-    <div class="chip" onclick="setHomeChip(this);nav('roster')"><span>📋</span><span>My Roster</span></div>
-    <div class="chip" onclick="setHomeChip(this);nav('news')"><span>📡</span><span>News</span><em id="home-news-count">7</em></div>
-    <div class="chip" onclick="setHomeChip(this);nav('rivals')"><span>👥</span><span>Rivals</span></div>
-    <div class="chip" onclick="setHomeChip(this);alert('Watchlist coming soon!')"><span>👁️</span><span>Watchlist</span><em>4</em></div>
+    <div class="chip" onclick="setHomeChip(this);nav('roster')"><span class="chip-ic"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 2h6a1 1 0 011 1v2H8V3a1 1 0 011-1z"/><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/></svg></span><span>My Roster</span></div>
+    <div class="chip" onclick="setHomeChip(this);nav('news')"><span class="chip-ic"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a12 12 0 0116 0"/><path d="M7.5 14.5a7 7 0 019 0"/><circle cx="12" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg></span><span>News</span><em id="home-news-count">7</em></div>
+    <div class="chip" onclick="setHomeChip(this);nav('rivals')"><span class="chip-ic"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/></svg></span><span>Rivals</span></div>
+    <div class="chip" onclick="setHomeChip(this);alert('Watchlist coming soon!')"><span class="chip-ic"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg></span><span>Watchlist</span><em>4</em></div>
   </div>
   <div class="scroll">
     <!-- snapshot -->
@@ -734,10 +751,10 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     <div>
       <div class="sec-head"><span class="sec-title">Quick Actions</span></div>
       <div class="qgrid">
-        <div class="qcard" onclick="nav('chat')"><div class="qicon qi1">🔁</div><div class="ql">Evaluate Trade</div><div class="qs">Get AI verdict fast</div></div>
-        <div class="qcard" onclick="nav('chat')"><div class="qicon qi2">📋</div><div class="ql">Waiver Wire</div><div class="qs">Top available targets</div></div>
-        <div class="qcard" onclick="nav('chat')"><div class="qicon qi3">📊</div><div class="ql">Roster Audit</div><div class="qs">Strengths & holes</div></div>
-        <div class="qcard" onclick="nav('chat')"><div class="qicon qi4">📈</div><div class="ql">Buy Low / Sell High</div><div class="qs">Market movers now</div></div>
+        <div class="qcard qi1" onclick="nav('chat')"><div class="qicon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4-4 4"/><path d="M3 7h18"/><path d="M7 21l-4-4 4-4"/><path d="M21 17H3"/></svg></div><div class="ql">Evaluate Trade</div><div class="qs">Get AI verdict fast</div></div>
+        <div class="qcard qi2" onclick="nav('chat')"><div class="qicon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/></svg></div><div class="ql">Waiver Wire</div><div class="qs">Top available targets</div></div>
+        <div class="qcard qi3" onclick="nav('chat')"><div class="qicon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V10M10 19V5M16 19v-7M20 19H4"/></svg></div><div class="ql">Roster Audit</div><div class="qs">Strengths & holes</div></div>
+        <div class="qcard qi4" onclick="nav('chat')"><div class="qicon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg></div><div class="ql">Buy Low / Sell High</div><div class="qs">Market movers now</div></div>
       </div>
     </div>
     <!-- league ticker -->
@@ -754,18 +771,18 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     <div class="ntray">
       <div class="nth"><div class="nth-l"><div class="ndot"></div><span class="nlbl" id="news-tray-label">Rotowire · Loading...</span></div><button class="nexp" onclick="nav('news')">See All ›</button></div>
       <div class="nscroll" id="news-tray-scroll">
-        <div style="padding:14px 16px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5;letter-spacing:1px">Syncing feed...</div>
+        <div style="padding:14px 16px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#71808D;letter-spacing:1px">Syncing feed...</div>
       </div>
     </div>
   </div>
   <!-- bottom nav -->
   <div class="bnav">
-    <div class="ni active" onclick="nav('home')"><span class="ni-icon">🏠</span><span class="ni-lbl">Home</span></div>
-    <div class="ni" onclick="nav('roster')"><span class="ni-icon">📋</span><span class="ni-lbl">Roster</span></div>
-    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
-    <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
-    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
-    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+    <div class="ni active" onclick="nav('home')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span><span class="ni-lbl">Home</span></div>
+    <div class="ni" onclick="nav('roster')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 2h6a1 1 0 011 1v2H8V3a1 1 0 011-1z"/><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/></svg></span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg></div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni" onclick="nav('rivals')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/></svg></span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M4 7l3 3"/><path d="M20 17H9l3 3M20 17l-3-3"/></svg></span><span class="ni-lbl">Trades</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 4L7.5 9M15 4l1.5 5"/><rect x="4" y="9" width="6" height="8" rx="2"/><rect x="14" y="9" width="6" height="8" rx="2"/><path d="M10 12h4"/></svg></span><span class="ni-lbl">Scouting</span></div>
   
   </div>
 </div>
@@ -811,7 +828,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
       <div class="logo"><span class="logo-gm">My</span><span class="logo-cmd">Roster</span></div>
       <div style="width:60px"></div>
     </div>
-    <div class="search-bar"><span class="search-icon">🔍</span><span class="search-txt">Search roster...</span></div>
+    <div class="search-bar"><span class="search-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></span><span class="search-txt">Search roster...</span></div>
   </div>
   <div class="roster-scroll" id="roster-list">
     <div class="rpos-group">Quarterback</div>
@@ -830,14 +847,14 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     <div class="rrow" onclick="openPlayer('tm')"><div class="rrow-avatar" style="background:#97233F">TM</div><div class="rrow-info"><div class="rrow-name">Trey McBride</div><div class="rrow-sub">ARI · TE1 · Age 25</div></div><div class="rrow-right"><span class="rrow-pos pos-te">TE</span><span class="rrow-val">7100 KTC</span></div></div>
   </div>
   <div class="bnav">
-    <div class="ni" onclick="nav('home')"><span class="ni-icon">🏠</span><span class="ni-lbl">Home</span></div>
-    <div class="ni active" onclick="nav('roster')"><span class="ni-icon">📋</span><span class="ni-lbl">Roster</span></div>
-    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
-    <div class="ni" onclick="nav('rivals')"><span class="ni-icon">&#x1F465;</span><span class="ni-lbl">Rivals</span></div>
-    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trade Finder</span></div>
+    <div class="ni" onclick="nav('home')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span><span class="ni-lbl">Home</span></div>
+    <div class="ni active" onclick="nav('roster')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 2h6a1 1 0 011 1v2H8V3a1 1 0 011-1z"/><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/></svg></span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg></div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni" onclick="nav('rivals')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/></svg></span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M4 7l3 3"/><path d="M20 17H9l3 3M20 17l-3-3"/></svg></span><span class="ni-lbl">Trade Finder</span></div>
   
   
-    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 4L7.5 9M15 4l1.5 5"/><rect x="4" y="9" width="6" height="8" rx="2"/><rect x="14" y="9" width="6" height="8" rx="2"/><path d="M10 12h4"/></svg></span><span class="ni-lbl">Scouting</span></div>
   </div>
 </div>
 
@@ -873,15 +890,15 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     <!-- Content injected by JS -->
   </div>
   <div class="bnav">
-    <div class="ni" onclick="nav('home')"><span class="ni-icon">🏠</span><span class="ni-lbl">Home</span></div>
-    <div class="ni" onclick="nav('roster')"><span class="ni-icon">📋</span><span class="ni-lbl">Roster</span></div>
-    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
-    <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
-    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
-    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+    <div class="ni" onclick="nav('home')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span><span class="ni-lbl">Home</span></div>
+    <div class="ni" onclick="nav('roster')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 2h6a1 1 0 011 1v2H8V3a1 1 0 011-1z"/><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/></svg></span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg></div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni" onclick="nav('rivals')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/></svg></span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M4 7l3 3"/><path d="M20 17H9l3 3M20 17l-3-3"/></svg></span><span class="ni-lbl">Trades</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 4L7.5 9M15 4l1.5 5"/><rect x="4" y="9" width="6" height="8" rx="2"/><rect x="14" y="9" width="6" height="8" rx="2"/><path d="M10 12h4"/></svg></span><span class="ni-lbl">Scouting</span></div>
   
   
-    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 4L7.5 9M15 4l1.5 5"/><rect x="4" y="9" width="6" height="8" rx="2"/><rect x="14" y="9" width="6" height="8" rx="2"/><path d="M10 12h4"/></svg></span><span class="ni-lbl">Scouting</span></div>
   </div>
 </div>
 
@@ -894,7 +911,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
       <div class="logo"><span class="logo-gm">Trade</span><span class="logo-cmd">Finder</span></div>
       <div class="hdr-right">
         <div class="live-chip"><div class="live-dot"></div><span class="live-text">Live</span></div>
-        <div class="hdr-btn" onclick="nav('settings')">⚙️</div>
+        <div class="hdr-btn" onclick="nav('settings')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
       </div>
     </div>
   </div>
@@ -923,7 +940,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
       <!-- PARTNER CHIPS — shown when multi -->
       <div class="tf-partners-row" id="tf-multi-partners">
         <!-- partner chips injected by JS --></div>
-      <div id="tf-partner-warning" style="display:none;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#d4900a;padding:0 14px 8px;"></div>
+      <div id="tf-partner-warning" style="display:none;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#C89947;padding:0 14px 8px;"></div>
 
       <!-- ROW 2: Mode -->
       <div class="tf-row">
@@ -978,23 +995,23 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     <!-- SUGGESTED PACKAGES — outside widget, on page bg -->
     <div class="tf-packages-sec" id="tf-packages-sec">
       <div class="tf-packages-head">
-        <span class="tf-packages-lbl" style="color:#7a8fb5">Suggested Packages</span>
-        <span class="tf-packages-ctx" id="tf-pkg-ctx" style="color:#7a8fb5">Configure above, then Cook It Up</span>
+        <span class="tf-packages-lbl" style="color:#71808D">Suggested Packages</span>
+        <span class="tf-packages-ctx" id="tf-pkg-ctx" style="color:#71808D">Configure above, then Cook It Up</span>
       </div>
       <div id="tf-packages-list">
-        <div style="text-align:center;padding:30px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#7a8fb5;letter-spacing:1px">Set your structure, intent, and position above, then tap Cook It Up for real suggestions.</div>
+        <div style="text-align:center;padding:30px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#71808D;letter-spacing:1px">Set your structure, intent, and position above, then tap Cook It Up for real suggestions.</div>
       </div>
     </div>
 
   </div><!-- end tf-bg -->
 
   <div class="bnav">
-    <div class="ni" onclick="nav('home')"><span class="ni-icon">🏠</span><span class="ni-lbl">Home</span></div>
-    <div class="ni" onclick="nav('roster')"><span class="ni-icon">📋</span><span class="ni-lbl">Roster</span></div>
-    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
-    <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
-    <div class="ni trade-ni active" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
-    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+    <div class="ni" onclick="nav('home')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span><span class="ni-lbl">Home</span></div>
+    <div class="ni" onclick="nav('roster')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 2h6a1 1 0 011 1v2H8V3a1 1 0 011-1z"/><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/></svg></span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg></div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni" onclick="nav('rivals')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/></svg></span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni active" onclick="nav('trade')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M4 7l3 3"/><path d="M20 17H9l3 3M20 17l-3-3"/></svg></span><span class="ni-lbl">Trades</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 4L7.5 9M15 4l1.5 5"/><rect x="4" y="9" width="6" height="8" rx="2"/><rect x="14" y="9" width="6" height="8" rx="2"/><path d="M10 12h4"/></svg></span><span class="ni-lbl">Scouting</span></div>
   
   </div>
 </div>
@@ -1057,15 +1074,15 @@ function isColorDark(hex) {
 // Generate jersey SVG
 function makeJerseySVG(playerName, number, teamAbbr, size) {
   size = size || 56;
-  var primary = getTeamColor(teamAbbr) || '#0f1f3d';
+  var primary = getTeamColor(teamAbbr) || '#08131D';
   var secondary = getTeamColor2(teamAbbr) || '#ffffff';
   var darkPrimary = isColorDark(primary);
 
   // Text colors
-  var nameColor = darkPrimary ? '#ffffff' : '#0f1f3d';
+  var nameColor = darkPrimary ? '#ffffff' : '#08131D';
   var numColor = secondary;
   // If secondary is too light on a light primary, darken
-  if (!darkPrimary && !isColorDark(secondary)) numColor = '#0f1f3d';
+  if (!darkPrimary && !isColorDark(secondary)) numColor = '#08131D';
   // If secondary is white on dark, that's fine
   var numStroke = darkPrimary ? primary : '#ffffff';
 
@@ -1115,7 +1132,7 @@ function playerAvatarHtml(sleeperId, playerName, number, teamAbbr, size) {
   size = size || 56;
   if (!sleeperId) return makeJerseySVG(playerName, number, teamAbbr, size);
   var url = 'https://sleepercdn.com/content/nfl/players/thumb/' + encodeURIComponent(sleeperId) + '.jpg';
-  var bg = getTeamColor(teamAbbr) || '#0f1f3d';
+  var bg = getTeamColor(teamAbbr) || '#08131D';
   return '<img src="' + url + '" alt="" width="' + size + '" height="' + size + '" ' +
     'style="width:' + size + 'px;height:' + size + 'px;object-fit:cover;border-radius:6px;display:block;flex-shrink:0;background:' + bg + '" ' +
     "onerror='avFallback(this, " + JSON.stringify(playerName || '') + ", " + JSON.stringify(number || '') + ", " + JSON.stringify(teamAbbr || '') + ", " + size + ")'>";
@@ -1131,7 +1148,7 @@ var NFL_COLORS = {
   'MIA': '#008E97', 'MIN': '#4F2683', 'NE':  '#002244', 'NO':  '#101820',
   'NYG': '#0B2265', 'NYJ': '#125740', 'PHI': '#004C54', 'PIT': '#101820',
   'SEA': '#002244', 'SF':  '#AA0000', 'TB':  '#D50A0A', 'TEN': '#0C2340',
-  'WAS': '#5A1414', 'FA':  '#0f1f3d'
+  'WAS': '#5A1414', 'FA':  '#08131D'
 };
 
 var NFL_COLORS2 = {
@@ -1143,16 +1160,16 @@ var NFL_COLORS2 = {
   'MIA': '#FC4C02', 'MIN': '#FFC62F', 'NE':  '#C60C30', 'NO':  '#D3BC8D',
   'NYG': '#A71930', 'NYJ': '#FFFFFF', 'PHI': '#A5ACAF', 'PIT': '#FFB612',
   'SEA': '#69BE28', 'SF':  '#B3995D', 'TB':  '#34302B', 'TEN': '#4B92DB',
-  'WAS': '#FFB612', 'FA':  '#1e3566'
+  'WAS': '#FFB612', 'FA':  '#16283A'
 };
 
 function getTeamColor(teamAbbr) {
-  if (!teamAbbr) return '#0f1f3d';
+  if (!teamAbbr) return '#08131D';
   var t = (teamAbbr || '').toUpperCase().trim();
   if (NFL_COLORS[t]) return NFL_COLORS[t];
   // Fall back to college lookup by school name
   var col = getNcaaColor(teamAbbr);
-  return col ? col[0] : '#0f1f3d';
+  return col ? col[0] : '#08131D';
 }
 
 function getTeamColor2(teamAbbr) {
@@ -1360,7 +1377,7 @@ var sleeperLoaded = false;
 // ── Status indicator ──
 function setLiveStatus(text, color) {
   var dots = document.querySelectorAll('.live-text');
-  dots.forEach(function(d) { d.textContent = text; d.style.color = color || '#0ea86b'; });
+  dots.forEach(function(d) { d.textContent = text; d.style.color = color || '#46A874'; });
 }
 
 // ── Main load sequence ──
@@ -1587,21 +1604,21 @@ function renderNewsScreen() {
 
   if (!rotowireItems || !rotowireItems.length) {
     if (newsScreenLoading) {
-      list.innerHTML = '<div style="text-align:center;padding:40px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#7a8fb5;letter-spacing:1px">Loading feed...</div>';
+      list.innerHTML = '<div style="text-align:center;padding:40px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#71808D;letter-spacing:1px">Loading feed...</div>';
       if (status) status.textContent = 'Syncing...';
       return;
     }
     // Trigger a one-time fetch
     newsScreenLoading = true;
-    list.innerHTML = '<div style="text-align:center;padding:40px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#7a8fb5;letter-spacing:1px">Loading feed...</div>';
+    list.innerHTML = '<div style="text-align:center;padding:40px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#71808D;letter-spacing:1px">Loading feed...</div>';
     if (status) status.textContent = 'Syncing...';
     loadRotowireFeed(false).finally(function(){
       newsScreenLoading = false;
       if (!rotowireItems || !rotowireItems.length) {
         list.innerHTML = '<div style="background:#fff5f5;border:1.5px solid rgba(224,48,64,.3);border-radius:10px;padding:20px;text-align:center;color:#9b1f30;font-size:12px;line-height:1.6">' +
           '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:8px">Feed Unavailable</div>' +
-          '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5;letter-spacing:.5px;line-height:1.7">The Rotowire RSS proxy isn\'t responding right now. This usually clears up in a few minutes.</div>' +
-          '<button onclick="refreshAllNews()" style="margin-top:14px;padding:8px 18px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;background:#1a56ff;color:white;border:none;border-radius:8px;cursor:pointer">↻ Try Again</button>' +
+          '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#71808D;letter-spacing:.5px;line-height:1.7">The Rotowire RSS proxy isn\'t responding right now. This usually clears up in a few minutes.</div>' +
+          '<button onclick="refreshAllNews()" style="margin-top:14px;padding:8px 18px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;background:#2F8FE5;color:white;border:none;border-radius:8px;cursor:pointer">↻ Try Again</button>' +
           '</div>';
         if (status) status.textContent = 'Offline';
       } else {
@@ -1658,39 +1675,39 @@ function renderNewsScreen() {
   }
 
   if (!filtered.length) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#7a8fb5;letter-spacing:1px">No items match this filter</div>';
+    list.innerHTML = '<div style="text-align:center;padding:40px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#71808D;letter-spacing:1px">No items match this filter</div>';
     return;
   }
 
   list.innerHTML = filtered.map(function(item) {
     var badge = getOwnershipBadge(item.playerName);
-    var badgeBg = badge ? (badge.cls === 'bm' ? '#0ea86b' : '#1a56ff') : '';
+    var badgeBg = badge ? (badge.cls === 'bm' ? '#46A874' : '#2F8FE5') : '';
     var badgeHtml = badge ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;font-weight:600;padding:2px 7px;border-radius:8px;margin-left:auto;background:'+badgeBg+';color:#ffffff;letter-spacing:.5px">'+badge.label+'</span>' : '';
     var descLower = (item.desc||'').toLowerCase();
-    var accentColor = '#7a8fb5';
+    var accentColor = '#71808D';
     var accentLabel = '';
     if (descLower.includes('injur') || descLower.includes('out ') || descLower.includes('questionable') || descLower.includes('doubtful')) {
-      accentColor = '#e03040';
+      accentColor = '#C75B56';
       accentLabel = 'Injury';
     } else if (descLower.includes('trade') || descLower.includes('sign') || descLower.includes('waiv')) {
-      accentColor = '#1a56ff';
+      accentColor = '#2F8FE5';
       accentLabel = 'Move';
     } else {
-      accentColor = '#d4900a';
+      accentColor = '#C89947';
       accentLabel = 'News';
     }
     var cleanDesc = (item.desc||'').replace(/<[^>]+>/g,'').slice(0,180);
     var dateStr = item.timeAgo || item.date || '';
     var displayTeam = item._resolvedTeam || item.team || '';
-    return '<div style="background:#ffffff;border:1.5px solid #dce2f0;border-left:4px solid '+accentColor+';border-radius:10px;padding:11px 13px;margin-bottom:8px;box-shadow:0 2px 0 #c4ceea">' +
+    return '<div style="background:#F5F7F8;border:1px solid #D9E0E5;border-left:4px solid '+accentColor+';border-radius:10px;padding:11px 13px;margin-bottom:8px;box-shadow:0 1px 3px rgba(8,19,29,.06)">' +
       '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">' +
         '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;font-weight:600;color:'+accentColor+';letter-spacing:1px;text-transform:uppercase">'+accentLabel+'</span>' +
-        (item._pos ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#1a56ff;letter-spacing:1px;font-weight:600">· '+item._pos+'</span>' : '') +
-        (displayTeam ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#7a8fb5;letter-spacing:1px">· '+displayTeam+'</span>' : '') +
-        (dateStr ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;color:#b0bcd4">· '+dateStr+'</span>' : '') +
+        (item._pos ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#2F8FE5;letter-spacing:1px;font-weight:600">· '+item._pos+'</span>' : '') +
+        (displayTeam ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#71808D;letter-spacing:1px">· '+displayTeam+'</span>' : '') +
+        (dateStr ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;color:#8A97A3">· '+dateStr+'</span>' : '') +
         badgeHtml +
       '</div>' +
-      '<div style="font-size:13px;font-weight:700;color:#0f1f3d;line-height:1.3;margin-bottom:4px">'+(item.title||'')+'</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#08131D;line-height:1.3;margin-bottom:4px">'+(item.title||'')+'</div>' +
       '<div style="font-size:11px;color:#5a6a85;line-height:1.5">'+cleanDesc+(cleanDesc.length>=180?'…':'')+'</div>' +
     '</div>';
   }).join('');
@@ -1713,7 +1730,7 @@ function renderNewsTray() {
   var label = document.getElementById('news-tray-label');
   if (!scroll) return;
   if (!rotowireItems.length) {
-    scroll.innerHTML = '<div style="padding:14px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5">No items found</div>';
+    scroll.innerHTML = '<div style="padding:14px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#71808D">No items found</div>';
     return;
   }
   label.textContent = 'Rotowire · ' + rotowireItems.length + ' items';
@@ -1753,7 +1770,7 @@ function renderNewsTray() {
 
 
 async function loadSleeperData() {
-  setLiveStatus('Syncing…', '#d4900a');
+  setLiveStatus('Syncing…', '#C89947');
   try {
     // None of these four requests depend on each other's results — only the
     // "find my roster" step below needs both userData and sleeperRosters —
@@ -1787,7 +1804,7 @@ async function loadSleeperData() {
     }
 
     sleeperLoaded = true;
-    setLiveStatus('Live', '#0ea86b');
+    setLiveStatus('Live', '#46A874');
     lastSyncTime = Date.now();
     updateSyncTime();
 
@@ -1807,7 +1824,7 @@ async function loadSleeperData() {
 
   } catch(err) {
     console.error('Sleeper load error:', err);
-    setLiveStatus('Offline', '#e03040');
+    setLiveStatus('Offline', '#C75B56');
   }
 }
 
@@ -1981,7 +1998,7 @@ function renderRosterScreen() {
 
   var grouped = {QB:[],RB:[],WR:[],TE:[]};
   liveMyRoster.forEach(function(p) { if (grouped[p.pos]) grouped[p.pos].push(p); });
-  var posColors = {QB:'#1a56ff', RB:'#0ea86b', WR:'#8a4fcf', TE:'#d4900a'};
+  var posColors = {QB:'#2F8FE5', RB:'#46A874', WR:'#7457CE', TE:'#C89947'};
   var html = '';
 
   Object.keys(grouped).forEach(function(pos) {
@@ -1989,14 +2006,14 @@ function renderRosterScreen() {
     html += '<div class="rpos-group">' + pos + '</div>';
     grouped[pos].forEach(function(p) {
       var injFlag = (p.status && p.status !== 'Active' && p.status !== 'active')
-        ? '<span class="rrow-flag pf-i" style="background:#e03040">!</span>' : '';
+        ? '<span class="rrow-flag pf-i" style="background:#C75B56">!</span>' : '';
       html += '<div class="rrow" onclick="openLivePlayer(' + JSON.stringify(p.id) + ')">'  +
         playerAvatarHtml(p.id, p.name, p.number, p.team, 48) +
         '<div class="rrow-info">' +
           '<div class="rrow-name">' + p.name + '</div>' +
           '<div class="rrow-sub">' + p.team + ' · ' + p.pos + (p.age ? ' · Age ' + p.age : '') + (p.status && p.status !== 'Active' ? ' · ' + p.status : '') + '</div>' +
         '</div>' +
-        '<div class="rrow-right"><span class="rrow-pos" style="color:' + (posColors[p.pos]||'#7a8fb5') + '">' + p.pos + '</span></div>' +
+        '<div class="rrow-right"><span class="rrow-pos" style="color:' + (posColors[p.pos]||'#71808D') + '">' + p.pos + '</span></div>' +
       '</div>';
     });
   });
@@ -2176,7 +2193,7 @@ function renderTFPackages(text, accent) {
   var packages = text.split(/PACKAGE\s+\d+:/i).filter(function(s){ return s.trim(); });
   if (!packages.length) {
     // Fallback: show raw text nicely
-    return '<div style="padding:16px;font-size:13px;line-height:1.7;color:#0f1f3d">' + text.split('\n').join('<br>') + '</div>';
+    return '<div style="padding:16px;font-size:13px;line-height:1.7;color:#08131D">' + text.split('\n').join('<br>') + '</div>';
   }
 
   return packages.map(function(pkg, i) {
@@ -2190,27 +2207,27 @@ function renderTFPackages(text, accent) {
       if (/VERDICT:/i.test(l)) verdictLine = l.replace(/VERDICT:/i,'').trim();
     });
 
-    return '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 6px rgba(15,31,61,.06)">' +
-      '<div style="padding:10px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb;display:flex;align-items:center;justify-content:space-between">' +
-        '<span style="font-size:12px;font-weight:700;color:#0f1f3d">Package ' + (i+1) + (label ? ' · ' + label.trim() : '') + '</span>' +
-        (targetLine ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#7a8fb5;letter-spacing:1px">vs ' + targetLine + '</span>' : '') +
+    return '<div style="background:#F5F7F8;border:1px solid #D9E0E5;border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 6px rgba(15,31,61,.06)">' +
+      '<div style="padding:10px 14px;border-bottom:1px solid #D9E0E5;background:#EEF2F5;display:flex;align-items:center;justify-content:space-between">' +
+        '<span style="font-size:12px;font-weight:700;color:#08131D">Package ' + (i+1) + (label ? ' · ' + label.trim() : '') + '</span>' +
+        (targetLine ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#71808D;letter-spacing:1px">vs ' + targetLine + '</span>' : '') +
       '</div>' +
       '<div style="padding:12px 14px">' +
         '<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:10px">' +
           '<div>' +
-            '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">You Send</div>' +
-            '<div style="font-size:12px;font-weight:600;color:#e03040">' + (sendLine||'—') + '</div>' +
+            '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:#71808D;margin-bottom:4px">You Send</div>' +
+            '<div style="font-size:12px;font-weight:600;color:#C75B56">' + (sendLine||'—') + '</div>' +
           '</div>' +
-          '<div style="font-size:18px;color:#c8d2e8">⇄</div>' +
+          '<div style="font-size:18px;color:#C7D0D6">⇄</div>' +
           '<div>' +
-            '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">You Get</div>' +
-            '<div style="font-size:12px;font-weight:600;color:#0ea86b">' + (getLine||'—') + '</div>' +
+            '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:#71808D;margin-bottom:4px">You Get</div>' +
+            '<div style="font-size:12px;font-weight:600;color:#46A874">' + (getLine||'—') + '</div>' +
           '</div>' +
         '</div>' +
-        (verdictLine ? '<div style="font-size:11px;color:#3a4e72;line-height:1.55;padding:8px 10px;background:#f4f6fb;border-radius:8px;border-left:3px solid ' + (accent||'#1a56ff') + '">' + verdictLine + '</div>' : '') +
+        (verdictLine ? '<div style="font-size:11px;color:#44576C;line-height:1.55;padding:8px 10px;background:#EEF2F5;border-radius:8px;border-left:3px solid ' + (accent||'#2F8FE5') + '">' + verdictLine + '</div>' : '') +
       '</div>' +
-      '<div style="padding:8px 14px;border-top:1px solid #dce2f0;display:flex;justify-content:flex-end">' +
-        '<button onclick="digDeeperInChat()" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#1a56ff;background:none;border:none;cursor:pointer">Dig Deeper in Chat &#x203A;</button>' +
+      '<div style="padding:8px 14px;border-top:1px solid #D9E0E5;display:flex;justify-content:flex-end">' +
+        '<button onclick="digDeeperInChat()" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#2F8FE5;background:none;border:none;cursor:pointer">Dig Deeper in Chat &#x203A;</button>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -2239,14 +2256,14 @@ async function runTradeFinder(modeIdx) {
     'What is the single best trade opportunity available to me in this league right now? Use PACKAGE 1 / YOU SEND / YOU GET / TARGET / VERDICT format.'
   ];
   var modeLabels = ['Cook It Up', 'I Want…', 'I’ll Give…', 'Open Market'];
-  var accents = ['#1a56ff', '#0ea86b', '#d4900a', '#8a4fcf'];
+  var accents = ['#2F8FE5', '#46A874', '#C89947', '#7457CE'];
   var prompt = modePrompts[modeIdx] || modePrompts[0];
   var accent = accents[modeIdx] || accents[0];
 
   var ctxEl = document.getElementById('tf-pkg-ctx');
   if (ctxEl) ctxEl.textContent = modeLabels[modeIdx] || 'Trade Finder';
   var listEl = document.getElementById('tf-packages-list');
-  if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:30px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#7a8fb5;letter-spacing:1px">Cooking…</div>';
+  if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:30px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#71808D;letter-spacing:1px">Cooking…</div>';
 
   var submitBtn = document.getElementById('tf-submit-btn');
   if (submitBtn) submitBtn.disabled = true;
@@ -2283,7 +2300,7 @@ async function runTradeFinder(modeIdx) {
     if (listEl) {
       listEl.innerHTML = '<div style="background:#fff5f5;border:1.5px solid rgba(224,48,64,.3);border-radius:10px;padding:20px;text-align:center;color:#9b1f30">' +
         '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:14px;letter-spacing:1px;margin-bottom:6px">Couldn’t generate packages</div>' +
-        '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5">' + (e.message || 'Try again') + '</div>' +
+        '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#71808D">' + (e.message || 'Try again') + '</div>' +
         '</div>';
     }
   } finally {
@@ -2562,7 +2579,7 @@ function renderChatHistoryList() {
   if (!list) return;
   var sorted = chatSessions.slice().sort(function(a, b) { return b.updatedAt - a.updatedAt; });
   if (!sorted.length) {
-    list.innerHTML = '<div style="padding:20px 18px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#7a8fb5;text-align:center">No conversations yet</div>';
+    list.innerHTML = '<div style="padding:20px 18px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#71808D;text-align:center">No conversations yet</div>';
     return;
   }
   list.innerHTML = sorted.map(function(s) {
@@ -3231,21 +3248,21 @@ function renderRivalsList() {
   sorted.forEach(function(t, i) {
     var lm = getRivalIntel(t.intelId);
     var hasIntel = lm && lm.blurb;
-    var rankColor = i===0 ? "#0ea86b" : i<=2 ? "#6daaff" : "#7a8fb5";
-    var intelBadge = hasIntel ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;padding:1px 5px;border-radius:4px;background:rgba(26,86,255,.08);color:#1a56ff;border:1px solid rgba(26,86,255,.2)">Intel</span>' : "";
-    var newsBadge = t.newsCount > 0 ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;padding:1px 5px;border-radius:4px;background:rgba(212,144,10,.1);color:#d4900a;border:1px solid rgba(212,144,10,.25)">'+t.newsCount+" news</span>" : "";
-    html += '<div onclick="openRival(\''+t.id+'\')" style="display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid #dce2f0;background:#ffffff;cursor:pointer;-webkit-tap-highlight-color:transparent">';
+    var rankColor = i===0 ? "#46A874" : i<=2 ? "#63B7F2" : "#71808D";
+    var intelBadge = hasIntel ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;padding:1px 5px;border-radius:4px;background:rgba(26,86,255,.08);color:#2F8FE5;border:1px solid rgba(26,86,255,.2)">Intel</span>' : "";
+    var newsBadge = t.newsCount > 0 ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;padding:1px 5px;border-radius:4px;background:rgba(212,144,10,.1);color:#C89947;border:1px solid rgba(212,144,10,.25)">'+t.newsCount+" news</span>" : "";
+    html += '<div onclick="openRival(\''+t.id+'\')" style="display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid #D9E0E5;background:#F5F7F8;cursor:pointer;-webkit-tap-highlight-color:transparent">';
     html += '<div style="width:22px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;font-weight:600;text-align:center;flex-shrink:0;color:'+rankColor+'">'+(i+1)+"</div>";
-    html += '<div style="width:38px;height:38px;border-radius:10px;background:#0f1f3d;display:flex;align-items:center;justify-content:center;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:14px;color:rgba(255,255,255,.85);flex-shrink:0">'+t.initials+"</div>";
+    html += '<div style="width:38px;height:38px;border-radius:10px;background:#08131D;display:flex;align-items:center;justify-content:center;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:14px;color:rgba(255,255,255,.85);flex-shrink:0">'+t.initials+"</div>";
     html += '<div style="flex:1;min-width:0">';
-    html += '<div style="font-size:13px;font-weight:700;color:#0f1f3d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+t.name+"</div>";
-    html += '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5;margin-top:2px">'+t.manager+" &middot; "+t.standing+"</div>";
+    html += '<div style="font-size:13px;font-weight:700;color:#08131D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+t.name+"</div>";
+    html += '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#71808D;margin-top:2px">'+t.manager+" &middot; "+t.standing+"</div>";
     html += "</div>";
     html += '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">';
-    html += '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;color:#6daaff;line-height:1">'+t.record+"</div>";
+    html += '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;color:#63B7F2;line-height:1">'+t.record+"</div>";
     html += '<div style="display:flex;gap:4px">'+intelBadge+newsBadge+"</div>";
     html += "</div>";
-    html += '<div style="font-size:16px;color:#c8d2e8;flex-shrink:0">&#x203A;</div>';
+    html += '<div style="font-size:16px;color:#C7D0D6;flex-shrink:0">&#x203A;</div>';
     html += "</div>";
   });
   container.innerHTML = html;
@@ -3265,9 +3282,9 @@ function openRival(id) {
   var wins = parseInt(t.record);
   var statsHTML = "";
   statsHTML += '<div class="rd-stat"><span class="rd-stat-val">'+t.roster.length+'</span><span class="rd-stat-lbl">Players</span></div>';
-  statsHTML += '<div class="rd-stat"><span class="rd-stat-val" style="color:#6daaff">'+t.picks+'</span><span class="rd-stat-lbl">Picks</span></div>';
-  statsHTML += '<div class="rd-stat"><span class="rd-stat-val" style="color:'+(t.news.length?"#d4900a":"#7a8fb5")+'">'+t.news.length+'</span><span class="rd-stat-lbl">News</span></div>';
-  statsHTML += '<div class="rd-stat"><span class="rd-stat-val" style="color:'+(t.intelId?"#1a56ff":"#7a8fb5")+'">'+(t.intelId?"Yes":"--")+'</span><span class="rd-stat-lbl">Intel</span></div>';
+  statsHTML += '<div class="rd-stat"><span class="rd-stat-val" style="color:#63B7F2">'+t.picks+'</span><span class="rd-stat-lbl">Picks</span></div>';
+  statsHTML += '<div class="rd-stat"><span class="rd-stat-val" style="color:'+(t.news.length?"#C89947":"#71808D")+'">'+t.news.length+'</span><span class="rd-stat-lbl">News</span></div>';
+  statsHTML += '<div class="rd-stat"><span class="rd-stat-val" style="color:'+(t.intelId?"#2F8FE5":"#71808D")+'">'+(t.intelId?"Yes":"--")+'</span><span class="rd-stat-lbl">Intel</span></div>';
   document.getElementById("rd-stats").innerHTML = statsHTML;
   currentRdTab = 0;
   document.querySelectorAll(".pc-tab").forEach(function(tab,i){ tab.classList.toggle("active",i===0); });
@@ -3290,7 +3307,7 @@ function renderRdTab(idx) {
   if (idx === 0) {
     const grouped = {QB:[],RB:[],WR:[],TE:[]};
     t.roster.forEach(p => { if(grouped[p.pos]) grouped[p.pos].push(p); });
-    const posColor = {QB:'#1a56ff',RB:'#0ea86b',WR:'#8a4fcf',TE:'#d4900a'};
+    const posColor = {QB:'#2F8FE5',RB:'#46A874',WR:'#7457CE',TE:'#C89947'};
     container.innerHTML = Object.entries(grouped).map(([pos, players]) =>
       players.length ? `<div class="rd-pos-group">${pos}</div>` + players.map(p => {
         const initials = p.name.split(' ').map(n=>n[0]).join('').slice(0,2);
@@ -3352,7 +3369,7 @@ function renderRdTab(idx) {
           <span class="rd-asset-pos">${p.pos}</span>
           <span class="rd-asset-name">${p.name}</span>
           <span class="rd-asset-ktc">${p.ktc.toLocaleString()} KTC</span>
-        </div>`).join('') : '<div class="nli-txt" style="color:#7a8fb5">No flagged assets</div>'}
+        </div>`).join('') : '<div class="nli-txt" style="color:#71808D">No flagged assets</div>'}
       </div>
       <button class="rd-btn-primary" onclick="nav('trade')">🔀 Open Trade Finder</button>
       <button class="rd-btn-secondary" onclick="nav('chat')">Ask GM About This Matchup ›</button>
@@ -3385,7 +3402,7 @@ function scPosClass(pos) {
   return {QB:'qb-badge',RB:'rb-badge',WR:'wr-badge',TE:'te-badge'}[pos] || 'rb-badge';
 }
 function scPosColor(pos) {
-  return {QB:'#1a56ff',RB:'#0ea86b',WR:'#8a4fcf',TE:'#d4900a'}[pos] || '#0f1f3d';
+  return {QB:'#2F8FE5',RB:'#46A874',WR:'#7457CE',TE:'#C89947'}[pos] || '#08131D';
 }
 
 function scAddProspect() {
@@ -3415,16 +3432,16 @@ function renderScBoard() {
   }
 
   var yearConfig = [
-    { key:'NOW',  label:'2026 Class (now)', bg:'linear-gradient(135deg,#1a56ff 0%,#0033cc 100%)', shadow:'rgba(26,86,255,.3)' },
+    { key:'NOW',  label:'2026 Class (now)', bg:'linear-gradient(135deg,#2F8FE5 0%,#0033cc 100%)', shadow:'rgba(26,86,255,.3)' },
     { key:'2027', label:'2027 Class',        bg:'linear-gradient(135deg,#e07820 0%,#b85a00 100%)', shadow:'rgba(184,90,0,.3)' },
-    { key:'2028', label:'2028 Class',        bg:'linear-gradient(135deg,#0ea86b 0%,#007a4a 100%)', shadow:'rgba(0,122,74,.3)' },
-    { key:'2029', label:'2029 Class',        bg:'linear-gradient(135deg,#8a4fcf 0%,#5c2fa0 100%)', shadow:'rgba(92,47,160,.3)' }
+    { key:'2028', label:'2028 Class',        bg:'linear-gradient(135deg,#46A874 0%,#007a4a 100%)', shadow:'rgba(0,122,74,.3)' },
+    { key:'2029', label:'2029 Class',        bg:'linear-gradient(135deg,#7457CE 0%,#5c2fa0 100%)', shadow:'rgba(92,47,160,.3)' }
   ];
   var posConfig = [
-    { key:'QB', color:'#1a56ff' },
-    { key:'RB', color:'#0ea86b' },
-    { key:'WR', color:'#8a4fcf' },
-    { key:'TE', color:'#d4900a' }
+    { key:'QB', color:'#2F8FE5' },
+    { key:'RB', color:'#46A874' },
+    { key:'WR', color:'#7457CE' },
+    { key:'TE', color:'#C89947' }
   ];
 
   var html = '';
@@ -3473,7 +3490,7 @@ function renderScBoard() {
           var jPrimary = ncCol ? ncCol[0] : pos.color;
           var jSecondary = ncCol ? ncCol[1] : '#ffffff';
           var isDk = isColorDark(jPrimary);
-          var namC = isDk ? '#ffffff' : '#0f1f3d';
+          var namC = isDk ? '#ffffff' : '#08131D';
           var nm = (p.name||'').split(' ').pop().slice(0,9).toUpperCase();
           var nfs = Math.round(36*0.16);
           var jp2 = 'M20,18 L5,32 L15,38 L15,90 L85,90 L85,38 L95,32 L80,18 Q72,12 62,14 Q58,22 50,22 Q42,22 38,14 Q28,12 20,18 Z';
@@ -3562,8 +3579,8 @@ function renderPdTab(idx) {
 
   if (idx===0) {
     var isDrafted = !!(p.drafted || (p.proTeam && p.proTeam !== ''));
-    var teamCol = isDrafted ? (getTeamColor(p.proTeam) || '#0f1f3d') : '#0f1f3d';
-    var teamCol2 = isDrafted ? (getTeamColor2(p.proTeam) || '#ffffff') : '#1e3566';
+    var teamCol = isDrafted ? (getTeamColor(p.proTeam) || '#08131D') : '#08131D';
+    var teamCol2 = isDrafted ? (getTeamColor2(p.proTeam) || '#ffffff') : '#16283A';
 
     // ── PHASE BANNER ──
     var ncaaCol = !isDrafted ? getNcaaColor(p.school) : null;
@@ -3601,12 +3618,12 @@ function renderPdTab(idx) {
     // Build selected options
     var nflTeamOptsSelected = nflTeamOpts.replace('value="'+p.proTeam+'"', 'value="'+p.proTeam+'" selected');
 
-    var detailCard = '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:12px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
-      '<div style="padding:11px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb;display:flex;align-items:center;justify-content:space-between">' +
-        '<span style="font-size:12px;font-weight:700;color:#0f1f3d">Details</span>' +
+    var detailCard = '<div style="background:#F5F7F8;border:1px solid #D9E0E5;border-radius:12px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+      '<div style="padding:11px 14px;border-bottom:1px solid #D9E0E5;background:#EEF2F5;display:flex;align-items:center;justify-content:space-between">' +
+        '<span style="font-size:12px;font-weight:700;color:#08131D">Details</span>' +
         // Drafted to NFL checkbox
-        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:'+(isDrafted?'#0ea86b':'#7a8fb5')+'">' +
-          '<input type="checkbox" id="sc-drafted-chk" '+isDraftedChk+' onclick="scToggleDraftedCurrent()" style="width:14px;height:14px;accent-color:#0ea86b;cursor:pointer">' +
+        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:'+(isDrafted?'#46A874':'#71808D')+'">' +
+          '<input type="checkbox" id="sc-drafted-chk" '+isDraftedChk+' onclick="scToggleDraftedCurrent()" style="width:14px;height:14px;accent-color:#46A874;cursor:pointer">' +
           '🏈 Drafted to NFL?' +
         '</label>' +
       '</div>' +
@@ -3614,38 +3631,38 @@ function renderPdTab(idx) {
         // Row 1: School OR NFL Team dropdown + Position
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
           '<div>' +
-            '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">' + (isDrafted ? 'NFL Team' : 'School') + '</div>' +
+            '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#71808D;margin-bottom:4px">' + (isDrafted ? 'NFL Team' : 'School') + '</div>' +
             (isDrafted
-              ? '<select style="width:100%;background:#f4f6fb;border:1.5px solid '+teamCol+';border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" id="sc-field-school" onchange="scField(currentProspect.id,\'proTeam\',this.value)">'+nflTeamOptsSelected+'</select>'
-              : '<input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" id="sc-field-school" placeholder="College" oninput="scField(currentProspect.id,\'school\',this.value)">'
+              ? '<select style="width:100%;background:#EEF2F5;border:1.5px solid '+teamCol+';border-radius:8px;padding:8px 10px;font-size:12px;color:#08131D;outline:none" id="sc-field-school" onchange="scField(currentProspect.id,\'proTeam\',this.value)">'+nflTeamOptsSelected+'</select>'
+              : '<input style="width:100%;background:#EEF2F5;border:1.5px solid #D9E0E5;border-radius:8px;padding:8px 10px;font-size:12px;color:#08131D;outline:none;box-sizing:border-box" id="sc-field-school" placeholder="College" oninput="scField(currentProspect.id,\'school\',this.value)">'
             ) +
           '</div>' +
-          '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Position</div>' +
-          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" onchange="scField(currentProspect.id,\'pos\',this.value);scUpdateProspectHeader(currentProspect)">' +
+          '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#71808D;margin-bottom:4px">Position</div>' +
+          '<select style="width:100%;background:#EEF2F5;border:1.5px solid #D9E0E5;border-radius:8px;padding:8px 10px;font-size:12px;color:#08131D;outline:none" onchange="scField(currentProspect.id,\'pos\',this.value);scUpdateProspectHeader(currentProspect)">' +
           ['QB','RB','WR','TE'].map(function(pos){ return '<option value="'+pos+'"'+(p.pos===pos?' selected':'')+'>'+pos+'</option>'; }).join('') +
           '</select></div>' +
         '</div>' +
         // Row 2: Draft Year + Grade
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-          '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Draft Year</div>' +
-          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" id="sc-field-draft" onchange="scDraftYearChange(currentProspect.id,this.value)">' +
+          '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#71808D;margin-bottom:4px">Draft Year</div>' +
+          '<select style="width:100%;background:#EEF2F5;border:1.5px solid #D9E0E5;border-radius:8px;padding:8px 10px;font-size:12px;color:#08131D;outline:none" id="sc-field-draft" onchange="scDraftYearChange(currentProspect.id,this.value)">' +
           ['NOW','2027','2028','2029'].map(function(yr){ return '<option value="'+yr+'"'+(p.draftYear===yr?' selected':'')+'>'+(yr==='NOW'?'NOW (2026)':yr)+'</option>'; }).join('') +
           '</select></div>' +
-          '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">My Grade</div>' +
-          '<input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" id="sc-field-grade" placeholder="Top 10 pick" oninput="scGrade(currentProspect.id,this.value)"></div>' +
+          '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#71808D;margin-bottom:4px">My Grade</div>' +
+          '<input style="width:100%;background:#EEF2F5;border:1.5px solid #D9E0E5;border-radius:8px;padding:8px 10px;font-size:12px;color:#08131D;outline:none;box-sizing:border-box" id="sc-field-grade" placeholder="Top 10 pick" oninput="scGrade(currentProspect.id,this.value)"></div>' +
         '</div>' +
       '</div>' +
     '</div>';
 
     // ── SCOUT NOTES ──
-    var notesCard = '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #dce2f0;background:#f4f6fb">' +
-        '<span style="font-size:12px;font-weight:700;color:#0f1f3d">Scout Notes</span>' +
-        '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(14,168,107,.1);color:#0ea86b;border:1px solid rgba(14,168,107,.25)">AI Synthesized</span>' +
+    var notesCard = '<div style="background:#F5F7F8;border:1px solid #D9E0E5;border-radius:12px;overflow:hidden;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #D9E0E5;background:#EEF2F5">' +
+        '<span style="font-size:12px;font-weight:700;color:#08131D">Scout Notes</span>' +
+        '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(14,168,107,.1);color:#46A874;border:1px solid rgba(14,168,107,.25)">AI Synthesized</span>' +
       '</div>' +
       '<div style="padding:14px;display:flex;flex-direction:column;gap:10px">' +
         '<div class="pd-notes-blurb'+(p.notes?'':' empty')+'" id="pd-notes-display">'+(p.notes||'No notes yet. Add your first observation below.')+'</div>' +
-        (p.notesLog&&p.notesLog.length ? p.notesLog.map(function(e){ return '<div style="display:flex;gap:8px;padding:6px 9px;background:#f4f6fb;border-radius:6px;border:1px solid #dce2f0;margin-bottom:4px"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#7a8fb5;flex-shrink:0">'+e.date+'</span><span style="font-size:11px;color:#3a4e72">'+e.text+'</span></div>'; }).join('') : '') +
+        (p.notesLog&&p.notesLog.length ? p.notesLog.map(function(e){ return '<div style="display:flex;gap:8px;padding:6px 9px;background:#EEF2F5;border-radius:6px;border:1px solid #D9E0E5;margin-bottom:4px"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#71808D;flex-shrink:0">'+e.date+'</span><span style="font-size:11px;color:#44576C">'+e.text+'</span></div>'; }).join('') : '') +
         '<div class="pd-note-row"><textarea class="pd-note-input" id="pd-note-input" placeholder="Route running, snap count, landing spot..."></textarea>' +
         '<button class="pd-note-btn" id="pd-note-btn" onclick="scAddNote(currentProspect.id)">Add Note</button></div>' +
         '<div class="pd-synth-row" id="pd-synth-row"><span>Synthesizing...</span></div>' +
@@ -3653,18 +3670,18 @@ function renderPdTab(idx) {
       '</div>' +
     '</div>';
 
-    var saveBtn = '<button onclick="scSaveAndSearch()" style="width:100%;padding:13px;background:#0ea86b;border:none;border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:16px;letter-spacing:2.5px;color:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">💾 Save</button>';
+    var saveBtn = '<button onclick="scSaveAndSearch()" style="width:100%;padding:13px;background:#46A874;border:none;border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:16px;letter-spacing:2.5px;color:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">💾 Save</button>';
 
     var removeBtn = (p.seasonFlagged ?
-      '<div style="background:#fff8e8;border:1px solid rgba(212,144,10,.3);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px"><span style="font-size:18px">&#x1F3C8;</span><div style="flex:1"><div style="font-size:12px;font-weight:700;color:#0f1f3d">Season started!</div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5;margin-top:2px">This prospect may be on an NFL roster now</div></div><button onclick="scRemove(currentProspect.id)" style="background:#d4900a;border:none;border-radius:8px;padding:6px 10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1px;color:#ffffff;cursor:pointer">Remove</button></div>' : '') +
-      '<button onclick="scRemove(currentProspect.id)" style="width:100%;padding:11px;background:#fff0f0;border:1px solid rgba(224,48,64,.2);border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#e03040;cursor:pointer">Remove from Board</button>';
+      '<div style="background:#fff8e8;border:1px solid rgba(212,144,10,.3);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px"><span style="font-size:18px">&#x1F3C8;</span><div style="flex:1"><div style="font-size:12px;font-weight:700;color:#08131D">Season started!</div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#71808D;margin-top:2px">This prospect may be on an NFL roster now</div></div><button onclick="scRemove(currentProspect.id)" style="background:#C89947;border:none;border-radius:8px;padding:6px 10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1px;color:#ffffff;cursor:pointer">Remove</button></div>' : '') +
+      '<button onclick="scRemove(currentProspect.id)" style="width:100%;padding:11px;background:#fff0f0;border:1px solid rgba(224,48,64,.2);border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#C75B56;cursor:pointer">Remove from Board</button>';
 
     s.innerHTML = phaseBanner + detailCard + notesCard + saveBtn + removeBtn;
 
   } else if (idx===1) {
     s.innerHTML =
       '<div style="display:flex;flex-direction:column;gap:12px">' +
-        '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#7a8fb5;margin-bottom:8px">Add YouTube Link</div>' +
+        '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#71808D;margin-bottom:8px">Add YouTube Link</div>' +
           '<div class="film-add-row"><input class="film-input" id="film-url-input" type="url" placeholder="Paste YouTube URL..."><button class="film-add-btn" onclick="scAddFilm(currentProspect.id)">Add</button></div>' +
         '</div>' +
         '<button class="film-search-btn" onclick="scSearchHL(currentProspect.name)">&#x1F3AC; &nbsp;Search Highlights on YouTube</button>' +
@@ -3674,24 +3691,24 @@ function renderPdTab(idx) {
   } else if (idx===2) {
     var news = p.newsCache || [];
 
-    var refreshHtml = '<button onclick="scRefreshNews()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#0f1f3d;cursor:pointer;margin-bottom:10px">&#x21BB; Refresh Feed</button>';
+    var refreshHtml = '<button onclick="scRefreshNews()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#EEF2F5;border:1.5px solid #D9E0E5;border-radius:8px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#08131D;cursor:pointer;margin-bottom:10px">&#x21BB; Refresh Feed</button>';
 
     var newsListHtml = news.length
-      ? '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;padding:0 14px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
+      ? '<div style="background:#F5F7F8;border:1px solid #D9E0E5;border-radius:14px;padding:0 14px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
           news.map(function(item) {
             return '<div class="pd-news-item"><div class="pd-news-meta"><span class="pd-news-date">'+(item.timeAgo||item.date||'')+'</span></div><div class="pd-news-txt">'+item.desc.replace(/<[^>]+>/g,'').slice(0,300)+'</div></div>';
           }).join('') +
         '</div>'
-      : '<div class="pd-no-news">No items found for '+p.name+'<br><span style="font-size:10px;color:#c8d2e8">Save the card to trigger a fresh search, or tap Refresh Feed.</span></div>' +
-        (p._newsDebug && p._newsDebug.length ? '<div style="margin-top:12px;background:#f4f6fb;border:1px solid #dce2f0;border-radius:8px;padding:10px 12px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#7a8fb5;line-height:1.8">' + p._newsDebug.map(function(l){ return '› ' + l; }).join('<br>') + '</div>' : '');
+      : '<div class="pd-no-news">No items found for '+p.name+'<br><span style="font-size:10px;color:#C7D0D6">Save the card to trigger a fresh search, or tap Refresh Feed.</span></div>' +
+        (p._newsDebug && p._newsDebug.length ? '<div style="margin-top:12px;background:#EEF2F5;border:1px solid #D9E0E5;border-radius:8px;padding:10px 12px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#71808D;line-height:1.8">' + p._newsDebug.map(function(l){ return '› ' + l; }).join('<br>') + '</div>' : '');
 
     s.innerHTML = refreshHtml + newsListHtml;
 
   } else {
     s.innerHTML =
-      '<div style="background:#ffffff;border:1px solid #dce2f0;border-radius:14px;padding:16px;box-shadow:0 1px 8px rgba(15,31,61,.05);display:flex;flex-direction:column;gap:12px">' +
-        '<div style="font-size:13px;color:#3a4e72;line-height:1.65">Ask the GM Assistant anything about <strong style="color:#0f1f3d">'+p.name+'</strong> — dynasty value, landing spot, scheme fit, whether to target him in the draft.</div>' +
-        '<button onclick="scAskGM(currentProspect.id)" style="width:100%;padding:13px;background:#0f1f3d;border:none;border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:16px;letter-spacing:2.5px;color:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">&#x1F9E0; &nbsp;Ask GM About '+p.name+'</button>' +
+      '<div style="background:#F5F7F8;border:1px solid #D9E0E5;border-radius:14px;padding:16px;box-shadow:0 1px 8px rgba(15,31,61,.05);display:flex;flex-direction:column;gap:12px">' +
+        '<div style="font-size:13px;color:#44576C;line-height:1.65">Ask the GM Assistant anything about <strong style="color:#08131D">'+p.name+'</strong> — dynasty value, landing spot, scheme fit, whether to target him in the draft.</div>' +
+        '<button onclick="scAskGM(currentProspect.id)" style="width:100%;padding:13px;background:#08131D;border:none;border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:16px;letter-spacing:2.5px;color:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">&#x1F9E0; &nbsp;Ask GM About '+p.name+'</button>' +
       '</div>';
   }
 }
@@ -3771,7 +3788,7 @@ function scUpdateProspectHeader(p) {
       var jPrimary = ncCol2 ? ncCol2[0] : scPosColor(p.pos);
       var jSecondary = ncCol2 ? ncCol2[1] : '#ffffff';
       var isDk = isColorDark(jPrimary);
-      var namC2 = isDk ? '#ffffff' : '#0f1f3d';
+      var namC2 = isDk ? '#ffffff' : '#08131D';
       var nm2 = (p.name||'').split(' ').pop().slice(0,9).toUpperCase();
       var nfs2 = Math.round(56*0.14);
       var numfs2 = Math.round(56*0.36);
@@ -3798,7 +3815,7 @@ function scUpdateProspectHeader(p) {
   if (badgeEl) {
     if (isDrafted) {
       badgeEl.textContent = '🏈 Drafted · ' + (p.draftYear==='NOW'?'2026':p.draftYear);
-      badgeEl.style.cssText = 'background:rgba(14,168,107,.25);color:#4dd89a;border-color:rgba(14,168,107,.4)';
+      badgeEl.style.cssText = 'background:rgba(14,168,107,.25);color:#5FC08E;border-color:rgba(14,168,107,.4)';
     } else {
       badgeEl.textContent = (p.draftYear==='NOW'?'2026':p.draftYear) + ' Draft Class';
       badgeEl.style.cssText = '';
@@ -3851,7 +3868,7 @@ async function scAddNote(id) {
 }
 
 function scRenderFilm(p) {
-  if(!p.film||!p.film.length) return '<div style="grid-column:1/-1;text-align:center;padding:20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#7a8fb5">No film added yet</div>';
+  if(!p.film||!p.film.length) return '<div style="grid-column:1/-1;text-align:center;padding:20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#71808D">No film added yet</div>';
   return p.film.map(function(f,i){
     var thumb = f.thumb ? '<img class="film-thumb" src="'+f.thumb+'" alt="'+f.title+'">' : '<div class="film-thumb-placeholder">▶</div>';
     return '<div class="film-card" onclick="scOpenFilm(this)" data-url="'+f.url+'">' +
@@ -4058,14 +4075,14 @@ async function scSaveAndSearch() {
   scSaveBoard();
 
   var saveBtn = document.querySelector('[onclick="scSaveAndSearch()"]');
-  if (saveBtn) { saveBtn.textContent = 'Saving...'; saveBtn.style.background = '#7a8fb5'; }
+  if (saveBtn) { saveBtn.textContent = 'Saving...'; saveBtn.style.background = '#71808D'; }
 
   var merged = await scFetchAllNews(p, { forceRefreshFeeds: false });
   scUpdateProspectHeader(p);
 
   if (saveBtn) {
     saveBtn.innerHTML = merged.length ? '✓ Saved · ' + merged.length + ' news hits' : '✓ Saved';
-    saveBtn.style.background = '#0ea86b';
+    saveBtn.style.background = '#46A874';
   }
   if (currentPdTab === 2) renderPdTab(2);
 }
@@ -4105,7 +4122,7 @@ function openTFPicker() {
   if (!list) return;
   var roster = liveMyRoster && liveMyRoster.length ? liveMyRoster : [];
   if (!roster.length) {
-    list.innerHTML = '<div style="padding:20px 18px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#7a8fb5;text-align:center">Roster not loaded yet — wait for Live sync</div>';
+    list.innerHTML = '<div style="padding:20px 18px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#71808D;text-align:center">Roster not loaded yet — wait for Live sync</div>';
   } else {
     list.innerHTML = roster.map(function(p) {
       var isSelected = tfTablePlayers.some(function(t){ return t.id === p.id; });
@@ -4185,28 +4202,28 @@ function removeTFTablePlayer(id) {
     <div class="chip" id="news-filter-injury" onclick="setNewsFilter(this,'injury')"><span>🩹</span><span>Injury</span></div>
     <div class="chip" id="news-filter-trans" onclick="setNewsFilter(this,'trans')"><span>🔁</span><span>Trans</span></div>
   </div>
-  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 90px;background:#0f1f3d">
+  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 90px;background:#08131D">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px">
-      <div style="display:flex;align-items:center;gap:7px;min-width:0"><div style="width:6px;height:6px;border-radius:50%;background:#0ea86b;animation:blink 2s ease infinite;flex-shrink:0"></div><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.5);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="news-screen-status">Live · Synced</span></div>
+      <div style="display:flex;align-items:center;gap:7px;min-width:0"><div style="width:6px;height:6px;border-radius:50%;background:#46A874;animation:blink 2s ease infinite;flex-shrink:0"></div><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.5);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="news-screen-status">Live · Synced</span></div>
       <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
-        <select id="news-sort-select" onchange="setNewsSort(this.value)" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#6daaff;background:#132a52;border:1px solid #1e3566;border-radius:6px;padding:4px 6px;cursor:pointer">
+        <select id="news-sort-select" onchange="setNewsSort(this.value)" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#63B7F2;background:#132a52;border:1px solid #16283A;border-radius:6px;padding:4px 6px;cursor:pointer">
           <option value="recent">Sort: Newest</option>
           <option value="team">Sort: Team</option>
           <option value="position">Sort: Position</option>
         </select>
-        <button onclick="refreshAllNews()" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#1a56ff;background:none;border:none;cursor:pointer;white-space:nowrap">↻ Refresh</button>
+        <button onclick="refreshAllNews()" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#2F8FE5;background:none;border:none;cursor:pointer;white-space:nowrap">↻ Refresh</button>
       </div>
     </div>
 
     <div id="news-feed-list"></div>
   </div>
   <div class="bnav">
-    <div class="ni" onclick="nav('home')"><span class="ni-icon">🏠</span><span class="ni-lbl">Home</span></div>
-    <div class="ni" onclick="nav('roster')"><span class="ni-icon">📋</span><span class="ni-lbl">Roster</span></div>
-    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
-    <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
-    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
-    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+    <div class="ni" onclick="nav('home')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span><span class="ni-lbl">Home</span></div>
+    <div class="ni" onclick="nav('roster')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 2h6a1 1 0 011 1v2H8V3a1 1 0 011-1z"/><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/></svg></span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg></div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni" onclick="nav('rivals')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/></svg></span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M4 7l3 3"/><path d="M20 17H9l3 3M20 17l-3-3"/></svg></span><span class="ni-lbl">Trades</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 4L7.5 9M15 4l1.5 5"/><rect x="4" y="9" width="6" height="8" rx="2"/><rect x="14" y="9" width="6" height="8" rx="2"/><path d="M10 12h4"/></svg></span><span class="ni-lbl">Scouting</span></div>
   </div>
 </div>
 
@@ -4220,24 +4237,24 @@ function removeTFTablePlayer(id) {
       <div class="logo"><span class="logo-gm">League</span><span class="logo-cmd">Rivals</span></div>
       <div style="width:50px"></div>
     </div>
-    <div class="search-bar"><span class="search-icon">&#x1F50D;</span><span class="search-txt">Search teams or players...</span></div>
+    <div class="search-bar"><span class="search-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></span><span class="search-txt">Search teams or players...</span></div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);background:#ffffff;border-bottom:1px solid #dce2f0;flex-shrink:0">
-    <div style="padding:10px 0;text-align:center;border-right:1px solid #dce2f0"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#0f1f3d">12</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#7a8fb5">Teams</span></div>
-    <div style="padding:10px 0;text-align:center;border-right:1px solid #dce2f0"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#0ea86b" id="rivals-my-record">—</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#7a8fb5">Your Record</span></div>
-    <div style="padding:10px 0;text-align:center;border-right:1px solid #dce2f0"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#6daaff">SF</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#7a8fb5">Format</span></div>
-    <div style="padding:10px 0;text-align:center"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#d4900a">12</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#7a8fb5">Teams</span></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);background:#F5F7F8;border-bottom:1px solid #D9E0E5;flex-shrink:0">
+    <div style="padding:10px 0;text-align:center;border-right:1px solid #D9E0E5"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#08131D">12</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#71808D">Teams</span></div>
+    <div style="padding:10px 0;text-align:center;border-right:1px solid #D9E0E5"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#46A874" id="rivals-my-record">—</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#71808D">Your Record</span></div>
+    <div style="padding:10px 0;text-align:center;border-right:1px solid #D9E0E5"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#63B7F2">SF</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#71808D">Format</span></div>
+    <div style="padding:10px 0;text-align:center"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:18px;display:block;line-height:1.1;color:#C89947">12</span><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:#71808D">Teams</span></div>
   </div>
   <div class="rd-scroll" id="rivals-list"></div>
   <div class="bnav">
-    <div class="ni" onclick="nav('home')"><span class="ni-icon">&#x1F3E0;</span><span class="ni-lbl">Home</span></div>
-    <div class="ni" onclick="nav('roster')"><span class="ni-icon">&#x1F4CB;</span><span class="ni-lbl">Roster</span></div>
-    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">&#x1F9E0;</div><span class="ni-lbl">Ask GM</span></div>
-    <div class="ni active" onclick="nav('rivals')"><span class="ni-icon">&#x1F465;</span><span class="ni-lbl">Rivals</span></div>
-    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">&#x1F500;</span><span class="ni-lbl">Trades</span></div>
+    <div class="ni" onclick="nav('home')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span><span class="ni-lbl">Home</span></div>
+    <div class="ni" onclick="nav('roster')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 2h6a1 1 0 011 1v2H8V3a1 1 0 011-1z"/><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/></svg></span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg></div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni active" onclick="nav('rivals')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/></svg></span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M4 7l3 3"/><path d="M20 17H9l3 3M20 17l-3-3"/></svg></span><span class="ni-lbl">Trades</span></div>
   
   
-    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 4L7.5 9M15 4l1.5 5"/><rect x="4" y="9" width="6" height="8" rx="2"/><rect x="14" y="9" width="6" height="8" rx="2"/><path d="M10 12h4"/></svg></span><span class="ni-lbl">Scouting</span></div>
   </div>
 </div>
 
@@ -4273,14 +4290,14 @@ function removeTFTablePlayer(id) {
   </div>
   <div class="rd-scroll" id="rd-content"></div>
   <div class="bnav">
-    <div class="ni" onclick="nav('home')"><span class="ni-icon">&#x1F3E0;</span><span class="ni-lbl">Home</span></div>
-    <div class="ni" onclick="nav('roster')"><span class="ni-icon">&#x1F4CB;</span><span class="ni-lbl">Roster</span></div>
-    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">&#x1F9E0;</div><span class="ni-lbl">Ask GM</span></div>
-    <div class="ni active" onclick="nav('rivals')"><span class="ni-icon">&#x1F465;</span><span class="ni-lbl">Rivals</span></div>
-    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">&#x1F500;</span><span class="ni-lbl">Trades</span></div>
+    <div class="ni" onclick="nav('home')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span><span class="ni-lbl">Home</span></div>
+    <div class="ni" onclick="nav('roster')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 2h6a1 1 0 011 1v2H8V3a1 1 0 011-1z"/><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/></svg></span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg></div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni active" onclick="nav('rivals')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/></svg></span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M4 7l3 3"/><path d="M20 17H9l3 3M20 17l-3-3"/></svg></span><span class="ni-lbl">Trades</span></div>
   
   
-    <div class="ni" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+    <div class="ni" onclick="nav('scout')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 4L7.5 9M15 4l1.5 5"/><rect x="4" y="9" width="6" height="8" rx="2"/><rect x="14" y="9" width="6" height="8" rx="2"/><path d="M10 12h4"/></svg></span><span class="ni-lbl">Scouting</span></div>
   </div>
 </div>
 
@@ -4307,7 +4324,7 @@ function removeTFTablePlayer(id) {
       <div class="logo"><span class="logo-gm">Scouting</span><span class="logo-cmd">Center</span></div>
       <div class="hdr-right">
         <div class="live-chip"><div class="live-dot"></div><span class="live-text">Live</span></div>
-        <div class="hdr-btn" onclick="nav('settings')">⚙️</div>
+        <div class="hdr-btn" onclick="nav('settings')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
       </div>
     </div>
   </div>
@@ -4336,12 +4353,12 @@ function removeTFTablePlayer(id) {
     </div>
   </div>
     <div class="bnav">
-    <div class="ni" onclick="nav('home')"><span class="ni-icon">🏠</span><span class="ni-lbl">Home</span></div>
-    <div class="ni" onclick="nav('roster')"><span class="ni-icon">📋</span><span class="ni-lbl">Roster</span></div>
-    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
-    <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
-    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
-    <div class="ni active" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+    <div class="ni" onclick="nav('home')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span><span class="ni-lbl">Home</span></div>
+    <div class="ni" onclick="nav('roster')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 2h6a1 1 0 011 1v2H8V3a1 1 0 011-1z"/><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/></svg></span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg></div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni" onclick="nav('rivals')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/></svg></span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M4 7l3 3"/><path d="M20 17H9l3 3M20 17l-3-3"/></svg></span><span class="ni-lbl">Trades</span></div>
+    <div class="ni active" onclick="nav('scout')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 4L7.5 9M15 4l1.5 5"/><rect x="4" y="9" width="6" height="8" rx="2"/><rect x="14" y="9" width="6" height="8" rx="2"/><path d="M10 12h4"/></svg></span><span class="ni-lbl">Scouting</span></div>
   </div>
 </div>
 
@@ -4372,12 +4389,12 @@ function removeTFTablePlayer(id) {
   </div>
   <div class="pd-scroll" id="pd-scroll"></div>
   <div class="bnav">
-    <div class="ni" onclick="nav('home')"><span class="ni-icon">🏠</span><span class="ni-lbl">Home</span></div>
-    <div class="ni" onclick="nav('roster')"><span class="ni-icon">📋</span><span class="ni-lbl">Roster</span></div>
-    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle">🧠</div><span class="ni-lbl">Ask GM</span></div>
-    <div class="ni" onclick="nav('rivals')"><span class="ni-icon">👥</span><span class="ni-lbl">Rivals</span></div>
-    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon">🔀</span><span class="ni-lbl">Trades</span></div>
-    <div class="ni active" onclick="nav('scout')"><span class="ni-icon">🔭</span><span class="ni-lbl">Scouting</span></div>
+    <div class="ni" onclick="nav('home')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span><span class="ni-lbl">Home</span></div>
+    <div class="ni" onclick="nav('roster')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 2h6a1 1 0 011 1v2H8V3a1 1 0 011-1z"/><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/></svg></span><span class="ni-lbl">Roster</span></div>
+    <div class="ni ask-ni" onclick="nav('chat')"><div class="ask-circle"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg></div><span class="ni-lbl">Ask GM</span></div>
+    <div class="ni" onclick="nav('rivals')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/></svg></span><span class="ni-lbl">Rivals</span></div>
+    <div class="ni trade-ni" onclick="nav('trade')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M4 7l3 3"/><path d="M20 17H9l3 3M20 17l-3-3"/></svg></span><span class="ni-lbl">Trades</span></div>
+    <div class="ni active" onclick="nav('scout')"><span class="ni-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M9 4L7.5 9M15 4l1.5 5"/><rect x="4" y="9" width="6" height="8" rx="2"/><rect x="14" y="9" width="6" height="8" rx="2"/><path d="M10 12h4"/></svg></span><span class="ni-lbl">Scouting</span></div>
   </div>
 </div>
 
