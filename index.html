@@ -1435,51 +1435,6 @@ function renderTFPartnerChips() {
 var rotowireItems = [];
 
 async function fetchRotoFeed(url) {
-  // Try allorigins /get (JSON wrapper) then /raw (direct XML)
-  // Add timestamp to bust allorigins cache of the target feed
-  var cacheBust = '?_t=' + Math.floor(Date.now()/60000); // changes every minute
-  var bustUrl = url + (url.includes('?') ? '&' : '?') + '_cb=' + Math.floor(Date.now()/60000);
-  var proxies = [
-    { url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(bustUrl), mode: 'json' },
-    { url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(bustUrl), mode: 'xml' }
-  ];
-  for (var pi = 0; pi < proxies.length; pi++) {
-    try {
-      var res = await fetch(proxies[pi].url, { cache: 'no-store' });
-      if (!res.ok) { console.warn('[Feed] proxy', pi, 'HTTP', res.status); continue; }
-      var xmlStr;
-      if (proxies[pi].mode === 'json') {
-        var data = await res.json();
-        xmlStr = data.contents || '';
-      } else {
-        xmlStr = await res.text();
-      }
-      if (!xmlStr || xmlStr.length < 100) { console.warn('[Feed] proxy', pi, 'empty response'); continue; }
-      var xml = new DOMParser().parseFromString(xmlStr, 'text/xml');
-      var parseErr = xml.querySelector('parsererror');
-      if (parseErr) { console.warn('[Feed] proxy', pi, 'XML parse error'); continue; }
-      var items = Array.from(xml.querySelectorAll('item'));
-      console.log('[Feed]', url.split('?')[0].split('/').pop(), 'via proxy', pi, ':', items.length, 'items, xml len:', xmlStr.length);
-      if (!items.length) continue;
-      return items.map(function(item) {
-        var getT = function(tag) {
-          var el = item.querySelector(tag);
-          return el ? (el.textContent || el.innerHTML || '').replace(/<!\[CDATA\[|\]\]>/g,'').trim() : '';
-        };
-        var title = getT('title');
-        var desc = getT('description').replace(/<[^>]+>/g,'');
-        var pub = getT('pubDate');
-        var playerName = title.split(/[:]/)[0].trim();
-        var teamMatch = (title+' '+desc).match(/\b(ARI|ATL|BAL|BUF|CAR|CHI|CIN|CLE|DAL|DEN|DET|GB|HOU|IND|JAC|KC|LAC|LAR|LV|MIA|MIN|NE|NO|NYG|NYJ|PHI|PIT|SEA|SF|TB|TEN|WAS)\b/);
-        return { title:title, desc:desc, playerName:playerName, team:teamMatch?teamMatch[1]:'', timeAgo:getTimeAgo(new Date(pub)), pubDate:pub };
-      });
-    } catch(e) {
-      console.warn('[Feed] proxy', pi, 'error:', e.message);
-    }
-  }
-  console.warn('[Feed] all proxies failed for', url);
-  return [];
-}async function fetchRotoFeed(url) {
   // Try two proxies in sequence — allorigins first, corsproxy as fallback
   var proxies = [
     'https://api.allorigins.win/get?url=' + encodeURIComponent(url),
@@ -1772,37 +1727,35 @@ function renderNewsTray() {
 async function loadSleeperData() {
   setLiveStatus('Syncing…', '#d4900a');
   try {
-    // 1. Get my user ID
-    var userRes = await fetch('https://api.sleeper.app/v1/user/' + MY_USER_ID);
-    var userData = await userRes.json();
+    // None of these four requests depend on each other's results — only the
+    // "find my roster" step below needs both userData and sleeperRosters —
+    // so run them concurrently instead of one round trip at a time.
+    var cached = null;
+    try { cached = sessionStorage.getItem('sleeperPlayers'); } catch(e) {}
+
+    var results = await Promise.all([
+      fetch('https://api.sleeper.app/v1/user/' + MY_USER_ID).then(function(r) { return r.json(); }),
+      fetch('https://api.sleeper.app/v1/league/' + LEAGUE_ID + '/rosters').then(function(r) { return r.json(); }),
+      fetch('https://api.sleeper.app/v1/league/' + LEAGUE_ID + '/users').then(function(r) { return r.json(); }),
+      cached ? Promise.resolve(JSON.parse(cached)) : fetch('https://api.sleeper.app/v1/players/nfl').then(function(r) { return r.json(); })
+    ]);
+    var userData = results[0];
+    sleeperRosters = results[1];
+    var usersArr = results[2];
+    sleeperPlayers = results[3];
+
     mySleeperUserId = userData.user_id;
-
-    // 2. Get all rosters
-    var rostersRes = await fetch('https://api.sleeper.app/v1/league/' + LEAGUE_ID + '/rosters');
-    sleeperRosters = await rostersRes.json();
-
-    // 3. Get all users
-    var usersRes = await fetch('https://api.sleeper.app/v1/league/' + LEAGUE_ID + '/users');
-    var usersArr = await usersRes.json();
     usersArr.forEach(function(u) { sleeperUsers[u.user_id] = u; });
+    if (!cached) {
+      try { sessionStorage.setItem('sleeperPlayers', JSON.stringify(sleeperPlayers)); } catch(e) {}
+    }
 
-    // 4. Find my roster
+    // Find my roster
     for (var i = 0; i < sleeperRosters.length; i++) {
       if (sleeperRosters[i].owner_id === mySleeperUserId) {
         myRosterId = sleeperRosters[i].roster_id;
         break;
       }
-    }
-
-    // 5. Load player database (large — cache aggressively)
-    var cached = null;
-    try { cached = sessionStorage.getItem('sleeperPlayers'); } catch(e) {}
-    if (cached) {
-      sleeperPlayers = JSON.parse(cached);
-    } else {
-      var playersRes = await fetch('https://api.sleeper.app/v1/players/nfl');
-      sleeperPlayers = await playersRes.json();
-      try { sessionStorage.setItem('sleeperPlayers', JSON.stringify(sleeperPlayers)); } catch(e) {}
     }
 
     sleeperLoaded = true;
@@ -2302,11 +2255,6 @@ function closeTFSheetAndChat() {
   nav('chat');
 }
 
-function closeTFSheetAndChat() {
-  closeTFSheet();
-  nav('chat');
-}
-
 // ─────────────────────────────────
 // PLAYER DATA
 // ─────────────────────────────────
@@ -2358,19 +2306,22 @@ let currentPlayer = 'ip';
 let currentPcTab = 0;
 let playerNavSource = 'home';
 
+// Shared team-name lookup — also used by buildMessageContext() to detect
+// teams mentioned in chat (by nickname or abbreviation) so it can inject a
+// live depth chart even when no specific player was named.
+var TEAM_NAME_TO_ABBR = {
+  'Bears':'CHI','Bengals':'CIN','Bills':'BUF','Broncos':'DEN','Browns':'CLE',
+  'Buccaneers':'TB','Cardinals':'ARI','Chargers':'LAC','Chiefs':'KC','Colts':'IND',
+  'Cowboys':'DAL','Dolphins':'MIA','Eagles':'PHI','Falcons':'ATL','Giants':'NYG',
+  '49ers':'SF','Jaguars':'JAC','Jets':'NYJ','Lions':'DET','Packers':'GB',
+  'Panthers':'CAR','Patriots':'NE','Raiders':'LV','Rams':'LAR','Ravens':'BAL',
+  'Saints':'NO','Seahawks':'SEA','Steelers':'PIT','Texans':'HOU','Titans':'TEN',
+  'Vikings':'MIN','Commanders':'WAS'
+};
+
 function getTeamAbbr(teamStr) {
-  // Map common team names to abbreviations
-  var nameMap = {
-    'Bears':'CHI','Bengals':'CIN','Bills':'BUF','Broncos':'DEN','Browns':'CLE',
-    'Buccaneers':'TB','Cardinals':'ARI','Chargers':'LAC','Chiefs':'KC','Colts':'IND',
-    'Cowboys':'DAL','Dolphins':'MIA','Eagles':'PHI','Falcons':'ATL','Giants':'NYG',
-    '49ers':'SF','Jaguars':'JAC','Jets':'NYJ','Lions':'DET','Packers':'GB',
-    'Panthers':'CAR','Patriots':'NE','Raiders':'LV','Rams':'LAR','Ravens':'BAL',
-    'Saints':'NO','Seahawks':'SEA','Steelers':'PIT','Texans':'HOU','Titans':'TEN',
-    'Vikings':'MIN','Commanders':'WAS'
-  };
-  for (var name in nameMap) {
-    if ((teamStr||'').includes(name)) return nameMap[name];
+  for (var name in TEAM_NAME_TO_ABBR) {
+    if ((teamStr||'').includes(name)) return TEAM_NAME_TO_ABBR[name];
   }
   return 'FA';
 }
@@ -2747,37 +2698,81 @@ function buildMessageContext(userText) {
     }
   });
 
-  if (!resolved.length) return '';
-
-  // Build authoritative facts block
-  var factLines = resolved.slice(0, 5).map(function(pl) {
-    var parts = [pl.full_name, pl.position, pl.team || 'FA'];
-    if (pl.age) parts.push('age ' + pl.age);
-    if (pl.years_exp !== undefined && pl.years_exp !== null) parts.push((pl.years_exp === 0 ? 'rookie' : pl.years_exp + 'yr vet'));
-    if (pl.depth_chart_position && pl.depth_chart_order) parts.push('depth: ' + pl.depth_chart_position + (pl.depth_chart_order > 1 ? '#' + pl.depth_chart_order : ''));
-    if (pl.injury_status && pl.injury_status !== 'Healthy') parts.push(pl.injury_status);
-    return '- ' + parts.join(' | ');
-  });
-
-  blocks.push('AUTHORITATIVE PLAYER FACTS (Sleeper, current as of today — use these over any prior knowledge):\n' + factLines.join('\n'));
-
-  // Find news matching any resolved player
-  var newsHits = [];
-  resolved.slice(0, 5).forEach(function(pl) {
-    var ln = pl.last_name || pl.full_name.split(' ').pop() || '';
-    var fn = pl.first_name || pl.full_name.split(' ')[0] || '';
-    rotowireItems.forEach(function(item) {
-      if (newsItemMatchesPlayer(item, fn, ln) && newsHits.length < 8) {
-        newsHits.push('[' + pl.full_name + '] ' + (item.title || '').slice(0, 100) + ' — ' + (item.desc || '').slice(0, 150));
-      }
+  if (resolved.length) {
+    // Build authoritative facts block
+    var factLines = resolved.slice(0, 5).map(function(pl) {
+      var parts = [pl.full_name, pl.position, pl.team || 'FA'];
+      if (pl.age) parts.push('age ' + pl.age);
+      if (pl.years_exp !== undefined && pl.years_exp !== null) parts.push((pl.years_exp === 0 ? 'rookie' : pl.years_exp + 'yr vet'));
+      if (pl.depth_chart_position && pl.depth_chart_order) parts.push('depth: ' + pl.depth_chart_position + (pl.depth_chart_order > 1 ? '#' + pl.depth_chart_order : ''));
+      if (pl.injury_status && pl.injury_status !== 'Healthy') parts.push(pl.injury_status);
+      return '- ' + parts.join(' | ');
     });
-  });
 
-  if (newsHits.length) {
-    blocks.push('RECENT NEWS ON MENTIONED PLAYERS:\n' + newsHits.join('\n'));
+    blocks.push('AUTHORITATIVE PLAYER FACTS (Sleeper, current as of today — use these over any prior knowledge):\n' + factLines.join('\n'));
+
+    // Find news matching any resolved player
+    var newsHits = [];
+    resolved.slice(0, 5).forEach(function(pl) {
+      var ln = pl.last_name || pl.full_name.split(' ').pop() || '';
+      var fn = pl.first_name || pl.full_name.split(' ')[0] || '';
+      rotowireItems.forEach(function(item) {
+        if (newsItemMatchesPlayer(item, fn, ln) && newsHits.length < 8) {
+          newsHits.push('[' + pl.full_name + '] ' + (item.title || '').slice(0, 100) + ' — ' + (item.desc || '').slice(0, 150));
+        }
+      });
+    });
+
+    if (newsHits.length) {
+      blocks.push('RECENT NEWS ON MENTIONED PLAYERS:\n' + newsHits.join('\n'));
+    }
   }
 
-  blocks.push('CRITICAL: If your prior knowledge about any player above conflicts with the authoritative facts, DEFER to the facts. Do not claim a player is on a team different from what is listed above.');
+  // Detect teams mentioned by nickname or abbreviation — even when no
+  // specific player was named (e.g. "what does the Chargers backfield look
+  // like") — and inject a live depth chart. Without this, a team mentioned
+  // only in passing never triggers a get_team_roster tool call, and Claude
+  // is free to reason about it from stale training data. This is the fix
+  // for the Dobbins/Chargers-style bug: the correct roster is just always
+  // there, so there's nothing to "forget" to look up.
+  var mentionedTeams = {};
+  for (var teamName in TEAM_NAME_TO_ABBR) {
+    if (userText.indexOf(teamName) >= 0) mentionedTeams[TEAM_NAME_TO_ABBR[teamName]] = true;
+  }
+  var abbrMatches = userText.match(/\b(ARI|ATL|BAL|BUF|CAR|CHI|CIN|CLE|DAL|DEN|DET|GB|HOU|IND|JAC|JAX|KC|LAC|LAR|LV|MIA|MIN|NE|NO|NYG|NYJ|PHI|PIT|SEA|SF|TB|TEN|WAS)\b/g) || [];
+  abbrMatches.forEach(function(a) { mentionedTeams[a === 'JAX' ? 'JAC' : a] = true; });
+
+  var teamNames = Object.keys(mentionedTeams).slice(0, 3);
+  if (teamNames.length) {
+    var teamBlocks = [];
+    teamNames.forEach(function(team) {
+      var teamPlayers = [];
+      for (var pid in sleeperPlayers) {
+        var pl = sleeperPlayers[pid];
+        if (!pl || pl.team !== team || ['QB','RB','WR','TE'].indexOf(pl.position) < 0) continue;
+        teamPlayers.push(pl);
+      }
+      if (!teamPlayers.length) return;
+      var posOrder = {QB:0, RB:1, WR:2, TE:3};
+      teamPlayers.sort(function(a, b) {
+        var pa = posOrder[a.position], pb = posOrder[b.position];
+        return pa !== pb ? pa - pb : (a.depth_chart_order || 99) - (b.depth_chart_order || 99);
+      });
+      var lines = teamPlayers.slice(0, 12).map(function(pl) {
+        var dc = pl.depth_chart_order ? ' #' + pl.depth_chart_order : '';
+        var inj = pl.injury_status && pl.injury_status !== 'Healthy' ? ', ' + pl.injury_status : '';
+        return '- ' + pl.full_name + ' (' + pl.position + dc + inj + ')';
+      });
+      teamBlocks.push(team + ':\n' + lines.join('\n'));
+    });
+    if (teamBlocks.length) {
+      blocks.push('AUTHORITATIVE TEAM DEPTH CHARTS (Sleeper, current as of today — use these over any prior knowledge about who plays where):\n' + teamBlocks.join('\n\n'));
+    }
+  }
+
+  if (!blocks.length) return '';
+
+  blocks.push('CRITICAL: If your prior knowledge about any player or team above conflicts with the authoritative facts, DEFER to the facts. Do not claim a player is on a team different from what is listed above, or name a starter/competitor who is not listed.');
 
   return blocks.join('\n\n');
 }
