@@ -645,11 +645,6 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .ch-hist-delete:hover { color:#e03040; }
 
 
-/* ── TRADE SHEET ── */
-.tf-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; }
-.tf-overlay.open { display:block; }
-.tf-sheet { position:fixed; bottom:-100%; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:#ffffff; border-radius:20px 20px 0 0; z-index:201; padding-bottom:env(safe-area-inset-bottom,0); max-height:75vh; display:flex; flex-direction:column; transition:bottom .3s cubic-bezier(.32,.72,0,1); }
-.tf-sheet.open { bottom:0; }
 
 </style>
 </head>
@@ -954,56 +949,11 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     <div class="tf-packages-sec" id="tf-packages-sec">
       <div class="tf-packages-head">
         <span class="tf-packages-lbl" style="color:#7a8fb5">Suggested Packages</span>
-        <span class="tf-packages-ctx" id="tf-pkg-ctx" style="color:#7a8fb5">vs Renegades · Cook It Up</span>
+        <span class="tf-packages-ctx" id="tf-pkg-ctx" style="color:#7a8fb5">Configure above, then Cook It Up</span>
       </div>
-
-      <div class="tf-pkg" onclick="nav('chat')">
-        <div class="tf-pkg-top">
-          <span class="tf-pkg-lbl">Package 1 · Best Fit</span>
-          <span class="tf-pkg-score tf-pkg-hot">Strong ✓</span>
-        </div>
-        <div class="tf-trade-row">
-          <div class="tf-trade-side">
-            <div class="tf-trade-side-lbl">You send</div>
-            <span class="tf-ptag">I. Pacheco</span><br>
-            <span class="tf-ptag">2027 2nd</span>
-          </div>
-          <div class="tf-trade-arrow">⇄</div>
-          <div class="tf-trade-side">
-            <div class="tf-trade-side-lbl">You get</div>
-            <span class="tf-ptag">J. Addison</span>
-          </div>
-        </div>
-        <div class="tf-pkg-footer">
-          <span class="tf-pkg-intel">🧠 Intel: <strong>Renegades anxious, will deal</strong></span>
-          <button class="tf-pkg-eval" onclick="event.stopPropagation();nav('chat')">Evaluate ›</button>
-        </div>
+      <div id="tf-packages-list">
+        <div style="text-align:center;padding:30px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#7a8fb5;letter-spacing:1px">Set your structure, intent, and position above, then tap Cook It Up for real suggestions.</div>
       </div>
-
-      <div class="tf-pkg" onclick="nav('chat')">
-        <div class="tf-pkg-top">
-          <span class="tf-pkg-lbl">Package 2 · Aggressive</span>
-          <span class="tf-pkg-score tf-pkg-warm">Risky ⚠</span>
-        </div>
-        <div class="tf-trade-row">
-          <div class="tf-trade-side">
-            <div class="tf-trade-side-lbl">You send</div>
-            <span class="tf-ptag">Q. Judkins</span><br>
-            <span class="tf-ptag">2027 1st</span>
-          </div>
-          <div class="tf-trade-arrow">⇄</div>
-          <div class="tf-trade-side">
-            <div class="tf-trade-side-lbl">You get</div>
-            <span class="tf-ptag">J. Addison</span><br>
-            <span class="tf-ptag">2027 3rd</span>
-          </div>
-        </div>
-        <div class="tf-pkg-footer">
-          <span class="tf-pkg-intel">🧠 Intel: <strong>Overpaying for name value</strong></span>
-          <button class="tf-pkg-eval" onclick="event.stopPropagation();nav('chat')">Evaluate ›</button>
-        </div>
-      </div>
-
     </div>
 
   </div><!-- end tf-bg -->
@@ -1019,19 +969,6 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
   </div>
 </div>
 
-<!-- ═══════════════════════════════
-     TRADE FINDER BOTTOM SHEET
-═══════════════════════════════ -->
-<div class="tf-overlay" id="tf-overlay" onclick="closeTFSheet()"></div>
-<div class="tf-sheet" id="tf-sheet">
-  <div class="tf-sheet-accent" id="tf-sheet-accent"></div>
-  <div class="tf-sheet-pull"></div>
-  <div class="tf-sheet-hd">
-    <div class="tf-sheet-title" id="tf-sheet-title">Cook It Up</div>
-    <div class="tf-sheet-close" onclick="closeTFSheet()">✕</div>
-  </div>
-  <div class="tf-sheet-body" id="tf-sheet-body"></div>
-</div>
 <!-- ═══════════════════════════════
      SETTINGS SCREEN
 ═══════════════════════════════ -->
@@ -2156,110 +2093,7 @@ function nav(target) {
 // ─────────────────────────────────
 // TRADE FINDER SHEET
 // ─────────────────────────────────
-const tfSheetData = [
-  {
-    title: '🔀 Cook It Up',
-    accent: 'var(--red)',
-    html: () => `
-      <div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;color:var(--dim);margin-bottom:12px">AI scans both rosters + leaguemate intel to build packages</div>
-      <div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px">Who are you targeting?</div>
-      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px">
-        ${rivalTeams.map(t=>`<div class="lm-chip" onclick="this.classList.toggle('sel')" style="flex-shrink:0"><div class="lm-init">${t.initials}</div><span class="lm-nm">${t.name.split(' ')[0]}</span></div>`).join('')}
-      </div>
-      <div style="height:1px;background:var(--border);margin:14px -18px"></div>
-      <div class="tf-results">
-        <div class="tfrc" onclick="closeTFSheetAndChat()">
-          <div class="tfrc-top"><span class="tfrc-lbl">Package 1 · Best Fit</span><span class="tfrc-score sc-hot">Strong ✓</span></div>
-          <div class="trade-row">
-            <div class="ts"><div class="ts-lbl">You send</div><span class="ptag">I. Pacheco</span><br><span class="ptag">2027 2nd</span></div>
-            <span class="tarrow">⇄</span>
-            <div class="ts"><div class="ts-lbl">You get</div><span class="ptag">J. Addison</span></div>
-          </div>
-          <div class="tfrc-foot"><span class="intel-flag">🧠 Intel: <strong>Renegades anxious, will deal</strong></span><button class="tf-eval" onclick="closeTFSheetAndChat()">Evaluate ›</button></div>
-        </div>
-        <div class="tfrc" onclick="closeTFSheetAndChat()">
-          <div class="tfrc-top"><span class="tfrc-lbl">Package 2 · Aggressive</span><span class="tfrc-score sc-warm">Risky ⚠</span></div>
-          <div class="trade-row">
-            <div class="ts"><div class="ts-lbl">You send</div><span class="ptag">Q. Judkins</span><br><span class="ptag">2027 1st</span></div>
-            <span class="tarrow">⇄</span>
-            <div class="ts"><div class="ts-lbl">You get</div><span class="ptag">J. Addison</span><br><span class="ptag">2027 3rd</span></div>
-          </div>
-          <div class="tfrc-foot"><span class="intel-flag">🧠 Intel: <strong>Overpaying for name value</strong></span><button class="tf-eval" onclick="closeTFSheetAndChat()">Evaluate ›</button></div>
-        </div>
-      </div>
-      <button class="cook-btn" onclick="closeTFSheetAndChat()" style="margin-top:6px">🔀 &nbsp;Cook Something Else</button>
-    `
-  },
-  {
-    title: '🎯 I Want…',
-    accent: 'var(--green)',
-    html: () => `
-      <div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;color:var(--dim);margin-bottom:14px">Tell the GM who you're targeting. AI scans which teams own them and builds a package.</div>
-      <div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px">I'm targeting</div>
-      <input placeholder="Player name or position..." style="width:100%;background:var(--off);border:1px solid var(--border2);border-radius:8px;padding:11px 14px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:13px;color:var(--text);outline:none;margin-bottom:14px">
-      <div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px">Worth moving</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
-        ${['I. Pacheco','T. Spears','P. Nacua','X. Worthy'].map(n=>`<div class="lm-chip" onclick="this.classList.toggle('sel')" style="flex-shrink:0"><span class="lm-nm">${n}</span></div>`).join('')}
-      </div>
-      <button class="cook-btn" onclick="closeTFSheetAndChat()">🎯 &nbsp;Find Me That Player</button>
-    `
-  },
-  {
-    title: '📤 I\'ll Give…',
-    accent: 'var(--accent)',
-    html: () => `
-      <div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;color:var(--dim);margin-bottom:14px">Put an asset on the table. AI scans all 12 rosters for best return value.</div>
-      <div class="tf-lbl">Select who you'd move</div>
-      <div class="tf-results">
-        ${['ip','ts','pn','xw'].map(id=>{ const p=players[id]; return `<div class="tfrc" onclick="closeTFSheetAndChat()"><div class="trade-row"><div class="ts"><div class="ts-lbl">On the table</div><span class="ptag">${p.name}</span></div><div style="text-align:right;flex:1"><span class="tfrc-score sc-hot" style="font-size:8px">${p.ktc} KTC</span></div></div></div>`; }).join('')}
-      </div>
-    `
-  },
-  {
-    title: '🌐 Open Market',
-    accent: 'var(--gold)',
-    html: () => `
-      <div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;color:var(--dim);margin-bottom:14px">Scans all 12 rosters for the best available deal based on your intent and roster needs.</div>
-      <div style="background:var(--navy);border-radius:12px;padding:16px;text-align:center;margin-bottom:14px">
-        <div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);margin-bottom:4px">12 Rosters</div>
-        <div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:rgba(255,255,255,.35);letter-spacing:1px">Ready to scan</div>
-      </div>
-      <button class="cook-btn" onclick="closeTFSheetAndChat()">🌐 &nbsp;Scan All Rosters</button>
-      <div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:var(--dim);text-align:center;margin-top:8px">AI will factor your intent + position priority</div>
-    `
-  }
-];
-
-function openTFSheet(modeIdx) {
-  var intentEl = document.querySelector('.tf-ichip.sel');
-  var intent = intentEl ? intentEl.querySelector('.tf-ichip-lbl').textContent : 'general';
-  var posSel = Array.from(document.querySelectorAll('.tf-pbtn[class*="sel-"]')).map(function(b){ return b.textContent; });
-  var posStr = posSel.length ? posSel.join(', ') : 'any position';
-  var structure = tradeType === 'multi' ? teamCount + '-team trade' : '2-way trade';
-  var tableStr = tfTablePlayers.length
-    ? 'Shopping: ' + tfTablePlayers.map(function(p){ return p.name; }).join(', ') + '. '
-    : '';
-
-  var modePrompts = [
-    'Cook up 2 realistic trade packages for me. ' + tableStr + 'Structure: ' + structure + '. Intent: ' + intent + '. Priority: ' + posStr + '. Use PACKAGE 1 / YOU SEND / YOU GET / TARGET / VERDICT format.',
-    'Find me 1-2 players to target via trade. ' + tableStr + 'I need: ' + posStr + '. Which rivals likely have them and what is a fair offer?',
-    'Which players on my roster should I sell right now? ' + tableStr + 'What can I realistically get back?',
-    'What is the single best trade opportunity available to me in this league right now?'
-  ];
-
-  var prompt = modePrompts[modeIdx] || modePrompts[0];
-
-  // Fully reset chat history and UI for a clean trade request
-  chatHistory = [];
-  var msgs = document.getElementById('fc-msgs');
-  if (msgs) msgs.innerHTML = '';
-
-  // Rebuild system prompt with live data
-  if (liveMyRoster && liveMyRoster.length) buildSystemPrompt();
-
-  clearChat();
-  sendChatMessage(prompt);
-}
+var lastTFResult = null;
 
 function renderTFPackages(text, accent) {
   // Parse PACKAGE blocks from Claude response
@@ -2300,18 +2134,103 @@ function renderTFPackages(text, accent) {
         (verdictLine ? '<div style="font-size:11px;color:#3a4e72;line-height:1.55;padding:8px 10px;background:#f4f6fb;border-radius:8px;border-left:3px solid ' + (accent||'#1a56ff') + '">' + verdictLine + '</div>' : '') +
       '</div>' +
       '<div style="padding:8px 14px;border-top:1px solid #dce2f0;display:flex;justify-content:flex-end">' +
-        '<button onclick="goToChat()" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#1a56ff;background:none;border:none;cursor:pointer">Dig Deeper in Chat &#x203A;</button>' +
+        '<button onclick="digDeeperInChat()" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#1a56ff;background:none;border:none;cursor:pointer">Dig Deeper in Chat &#x203A;</button>' +
       '</div>' +
     '</div>';
   }).join('');
 }
 
-function closeTFSheet() {
-  document.getElementById('tf-overlay').classList.remove('open');
-  document.getElementById('tf-sheet').classList.remove('open');
+// Runs the selected Trade Finder mode against the live chat API and renders
+// real results in place — replaces the old openTFSheet(), which built a
+// prompt, dumped it unsent into the Chat screen's input box, and then threw
+// (it called .catch() on a plain function's return value, which is always
+// undefined). No API call ever happened; "Suggested Packages" below was
+// static placeholder HTML that never changed.
+async function runTradeFinder(modeIdx) {
+  var intentEl = document.querySelector('.tf-ichip.sel');
+  var intent = intentEl ? intentEl.querySelector('.tf-ichip-lbl').textContent : 'general';
+  var posSel = Array.from(document.querySelectorAll('.tf-pbtn[class*="sel-"]')).map(function(b){ return b.textContent; });
+  var posStr = posSel.length ? posSel.join(', ') : 'any position';
+  var structure = tradeType === 'multi' ? teamCount + '-team trade' : '2-way trade';
+  var tableStr = tfTablePlayers.length
+    ? 'Shopping: ' + tfTablePlayers.map(function(p){ return p.name; }).join(', ') + '. '
+    : '';
+
+  var modePrompts = [
+    'Cook up 2 realistic trade packages for me. ' + tableStr + 'Structure: ' + structure + '. Intent: ' + intent + '. Priority: ' + posStr + '. Use PACKAGE 1 / YOU SEND / YOU GET / TARGET / VERDICT format.',
+    'Find me 1-2 players to target via trade. ' + tableStr + 'I need: ' + posStr + '. Which rivals likely have them and what is a fair offer? Use PACKAGE 1 / YOU SEND / YOU GET / TARGET / VERDICT format.',
+    'Which players on my roster should I sell right now? ' + tableStr + 'What can I realistically get back? Use PACKAGE 1 / YOU SEND / YOU GET / TARGET / VERDICT format.',
+    'What is the single best trade opportunity available to me in this league right now? Use PACKAGE 1 / YOU SEND / YOU GET / TARGET / VERDICT format.'
+  ];
+  var modeLabels = ['Cook It Up', 'I Want…', 'I’ll Give…', 'Open Market'];
+  var accents = ['#1a56ff', '#0ea86b', '#d4900a', '#8a4fcf'];
+  var prompt = modePrompts[modeIdx] || modePrompts[0];
+  var accent = accents[modeIdx] || accents[0];
+
+  var ctxEl = document.getElementById('tf-pkg-ctx');
+  if (ctxEl) ctxEl.textContent = modeLabels[modeIdx] || 'Trade Finder';
+  var listEl = document.getElementById('tf-packages-list');
+  if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:30px 20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#7a8fb5;letter-spacing:1px">Cooking…</div>';
+
+  var submitBtn = document.getElementById('tf-submit-btn');
+  if (submitBtn) submitBtn.disabled = true;
+
+  var sysPrompt = window.liveSystemPrompt || systemPrompt;
+  try {
+    var contextAddendum = buildMessageContext(prompt);
+    if (contextAddendum) sysPrompt = sysPrompt + '\n\n' + contextAddendum;
+  } catch (e) {}
+
+  try {
+    var res = await fetch('/.netlify/functions/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1000,
+        system: sysPrompt,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    if (!res.ok) {
+      var errText = await res.text();
+      throw new Error('API error (' + res.status + '): ' + errText.slice(0, 150));
+    }
+    var data = await res.json();
+    var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : '';
+    if (!reply) throw new Error('Empty response — try again');
+
+    lastTFResult = { prompt: prompt, reply: reply };
+    if (listEl) listEl.innerHTML = renderTFPackages(reply, accent);
+  } catch (e) {
+    if (listEl) {
+      listEl.innerHTML = '<div style="background:#fff5f5;border:1.5px solid rgba(224,48,64,.3);border-radius:10px;padding:20px;text-align:center;color:#9b1f30">' +
+        '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:14px;letter-spacing:1px;margin-bottom:6px">Couldn’t generate packages</div>' +
+        '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;color:#7a8fb5">' + (e.message || 'Try again') + '</div>' +
+        '</div>';
+    }
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+  }
 }
-function closeTFSheetAndChat() {
-  closeTFSheet();
+
+// "Dig Deeper in Chat" hands the trade-finder exchange off into a real,
+// resumable chat session (instead of the old goToChat(), which just
+// navigated to whatever chat happened to already be open with nothing
+// related to what you just saw).
+function digDeeperInChat() {
+  if (!lastTFResult) { nav('chat'); return; }
+  var s = chatNewSessionObj();
+  s.messages.push({ role: 'user', content: lastTFResult.prompt });
+  s.messages.push({ role: 'assistant', content: lastTFResult.reply });
+  s.title = chatAutoTitle(lastTFResult.prompt);
+  s.updatedAt = Date.now();
+  chatSessions.unshift(s);
+  activeChatId = s.id;
+  chatHistory = s.messages;
+  chatSaveSessions();
+  chatPersistActiveId();
+  renderChatFromHistory();
   nav('chat');
 }
 
@@ -2889,7 +2808,7 @@ function selectTFMode(idx) {
   if (el) el.innerHTML = labels[idx];
 }
 function submitTFWidget() {
-  openTFSheet(currentTFMode).catch(function(e){ console.error('TF sheet error:', e); });
+  runTradeFinder(currentTFMode).catch(function(e){ console.error('Trade Finder error:', e); });
 }
 
 function toggleIntent(el) {
