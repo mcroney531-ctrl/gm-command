@@ -3620,12 +3620,12 @@ function renderPdTab(idx) {
           '<div>' +
             '<div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">' + (isDrafted ? 'NFL Team' : 'School') + '</div>' +
             (isDrafted
-              ? '<select style="width:100%;background:#f4f6fb;border:1.5px solid '+teamCol+';border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" id="sc-field-school" onchange="scField(currentProspect.id,'proTeam',this.value)">'+nflTeamOptsSelected+'</select>'
-              : '<input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" id="sc-field-school" placeholder="College" oninput="scField(currentProspect.id,'school',this.value)">'
+              ? '<select style="width:100%;background:#f4f6fb;border:1.5px solid '+teamCol+';border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" id="sc-field-school" onchange="scField(currentProspect.id,\'proTeam\',this.value)">'+nflTeamOptsSelected+'</select>'
+              : '<input style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none;box-sizing:border-box" id="sc-field-school" placeholder="College" oninput="scField(currentProspect.id,\'school\',this.value)">'
             ) +
           '</div>' +
           '<div><div style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8fb5;margin-bottom:4px">Position</div>' +
-          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" onchange="scField(currentProspect.id,'pos',this.value);scUpdateProspectHeader(currentProspect)">' +
+          '<select style="width:100%;background:#f4f6fb;border:1.5px solid #dce2f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f1f3d;outline:none" onchange="scField(currentProspect.id,\'pos\',this.value);scUpdateProspectHeader(currentProspect)">' +
           ['QB','RB','WR','TE'].map(function(pos){ return '<option value="'+pos+'"'+(p.pos===pos?' selected':'')+'>'+pos+'</option>'; }).join('') +
           '</select></div>' +
         '</div>' +
