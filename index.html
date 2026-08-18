@@ -95,28 +95,29 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .sec-link { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; cursor: pointer; background: none; border: none; }
 
 /* ── SNAPSHOT ── */
-.snap { background: linear-gradient(165deg,var(--navy-mid) 0%,var(--navy) 100%); border-radius: 14px; padding: 16px; position: relative; overflow: hidden; border: 1px solid var(--navy-line); box-shadow: 0 10px 26px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05); flex-shrink: 0; }
-.snap::before { content: ''; position: absolute; top: -40px; right: -30px; width: 130px; height: 130px; border-radius: 50%; background: rgba(99,183,242,.05); }
-.snap-status { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
-.snap-status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--ice); animation: blink 2s ease infinite; }
-.snap-status-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 2px; color: var(--ice); text-transform: uppercase; }
-.snap-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
-.snap-name { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--white); }
-.snap-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1.5px; color: rgba(244,247,250,.4); text-transform: uppercase; margin-top: 3px; }
+.snap { position: relative; border-radius: 16px; overflow: hidden; flex-shrink: 0; background-image: linear-gradient(180deg, rgba(8,19,29,.1) 0%, rgba(8,19,29,.35) 100%), url('hero-stadium.jpg'); background-size: cover; background-position: center 55%; box-shadow: 0 16px 36px rgba(0,0,0,.4); }
+.snap-glass { position: relative; padding: 16px; background: rgba(248,250,252,.62); backdrop-filter: blur(18px) saturate(190%); -webkit-backdrop-filter: blur(18px) saturate(190%); border: 1px solid rgba(255,255,255,.55); box-shadow: inset 0 1px 0 rgba(255,255,255,.6); }
+.snap-glass::after { content: ''; position: absolute; top: -36px; right: -30px; width: 150px; height: 150px; border-radius: 50%; border: 1.5px solid rgba(47,143,229,.32); pointer-events: none; }
+.snap-status { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; position: relative; }
+.snap-status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: blink 2s ease infinite; }
+.snap-status-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; }
+.snap-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; position: relative; }
+.snap-name { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 21px; font-weight: 700; letter-spacing: .5px; color: var(--text); }
+.snap-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1.5px; color: var(--dim); text-transform: uppercase; margin-top: 3px; }
 .snap-rec { text-align: right; }
-.snap-rec-num { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 30px; color: var(--ice); line-height: 1; }
-.snap-rec-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(244,247,250,.35); letter-spacing: 1px; text-transform: uppercase; }
-.snap-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
-.snap-stat { background: rgba(255,255,255,.03); border-radius: 8px; padding: 8px 6px; text-align: center; border: 1px solid var(--navy-line); }
-.snap-sync { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--navy-line); }
-.snap-sync-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: rgba(244,247,250,.4); text-transform: uppercase; }
-.snap-sync-btn { display: flex; align-items: center; gap: 5px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ice); background: none; border: none; padding: 3px 0; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+.snap-rec-num { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 30px; font-weight: 700; color: var(--accent); line-height: 1; }
+.snap-rec-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
+.snap-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; position: relative; }
+.snap-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; background: rgba(255,255,255,.5); border-radius: 10px; padding: 10px 6px; text-align: center; border: 1px solid rgba(255,255,255,.65); box-shadow: inset 0 1px 0 rgba(255,255,255,.6); }
+.stat-ic { width: 15px; height: 15px; color: var(--accent); display: flex; }
+.snap-sync { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(20,35,50,.12); position: relative; }
+.snap-sync-txt { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; color: var(--dim); text-transform: uppercase; }
+.snap-sync-btn { display: flex; align-items: center; gap: 5px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); background: none; border: none; padding: 3px 0; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
 .snap-sync-btn svg { width: 10px; height: 10px; flex-shrink: 0; }
 .snap-sync-btn:active { opacity: .5; }
 .snap-sync-btn.syncing { opacity: .5; pointer-events: none; }
-.sv { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 14px; font-weight: 500; color: var(--white); display: block; margin-bottom: 2px; }
-.sv.blue { color: var(--ice); } .sv.gold { color: var(--gold); }
-.sl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color: rgba(244,247,250,.32); letter-spacing: 1px; text-transform: uppercase; }
+.sv { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); display: block; }
+.sl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
 
 /* ── CHAT CARD ── */
 .chat-card { background: var(--white); border-radius: 16px; border: 1px solid var(--border2); overflow: hidden; box-shadow: 0 12px 30px rgba(8,19,29,.16), 0 1px 3px rgba(8,19,29,.08); }
@@ -712,20 +713,22 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
   <div class="scroll">
     <!-- snapshot -->
     <div class="snap">
+      <div class="snap-glass">
       <div class="snap-status"><span class="snap-status-dot"></span><span class="snap-status-txt">War Room Active</span></div>
       <div class="snap-top">
         <div><div class="snap-name" id="snap-team-name">The Psych Ward</div><div class="snap-sub">TitansTrev55 · Offseason 2026</div></div>
         <div class="snap-rec"><div class="snap-rec-num" id="snap-record">7–5</div><div class="snap-rec-lbl">Record</div></div>
       </div>
       <div class="snap-stats">
-        <div class="snap-stat"><span class="sv" id="snap-active">24</span><span class="sl">Active</span></div>
-        <div class="snap-stat"><span class="sv" id="snap-ir">4</span><span class="sl">IR</span></div>
-        <div class="snap-stat"><span class="sv blue">3</span><span class="sl">'27 Picks</span></div>
-        <div class="snap-stat"><span class="sv gold">4th</span><span class="sl">Standing</span></div>
+        <div class="snap-stat"><span class="stat-ic"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg></span><span class="sv" id="snap-active">24</span><span class="sl">Active</span></div>
+        <div class="snap-stat"><span class="stat-ic"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg></span><span class="sv" id="snap-ir">4</span><span class="sl">IR</span></div>
+        <div class="snap-stat"><span class="stat-ic"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.7-6.2 3.7 1.6-7-5.4-4.8 7.1-.7z"/></svg></span><span class="sv">3</span><span class="sl">'27 Picks</span></div>
+        <div class="snap-stat"><span class="stat-ic"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v4a4 4 0 01-8 0V4z"/><path d="M8 5H5a1 1 0 00-1 1c0 2 1.5 3.5 3.5 3.8M16 5h3a1 1 0 011 1c0 2-1.5 3.5-3.5 3.8"/><path d="M12 12v3M9 20h6M10 17h4v3h-4z"/></svg></span><span class="sv">4th</span><span class="sl">Standing</span></div>
       </div>
       <div class="snap-sync">
         <span class="snap-sync-txt">Last synced <span id="snap-sync-time">—</span></span>
         <button class="snap-sync-btn" id="snap-sync-btn" onclick="syncNow()">↻ Sync Now</button>
+      </div>
       </div>
     </div>
     <!-- chat card -->
