@@ -4,239 +4,19 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-// Tool definitions backed by the always-on Report Cards FastAPI server.
-// REPORTCARDS_API_URL must be set in Netlify environment variables.
-// Tools are only injected when the env var is present — GM Command
-// degrades gracefully to plain Claude without them.
-const TOOLS = [
-  {
-    name: 'get_player_value',
-    description:
-      'Look up dynasty and redraft fantasy value for a player by name. ' +
-      'Returns FantasyCalc dynasty value, position rank, redraft value, 30-day trend, ' +
-      'AND current Sleeper data: team, depth_chart_order (1=starter), status, and injury_status. ' +
-      'Use for any question about what a player is worth in dynasty. ' +
-      'Each result includes a player_id — pass it to get_player_news for full injury/practice details.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        player_name: {
-          type: 'string',
-          description: "Player's full or partial name (e.g. 'Ja\'Marr Chase', 'Josh Allen', 'Pollard')",
-        },
-      },
-      required: ['player_name'],
-    },
-  },
-  {
-    name: 'get_roster',
-    description:
-      'Get the full skill-position roster for a dynasty team owner, with FantasyCalc dynasty ' +
-      'values attached to each player. Sorted by dynasty value. Use to answer questions about ' +
-      'roster composition, depth by position, or overall asset value.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        owner: {
-          type: 'string',
-          description: "Sleeper display name of the roster owner (e.g. 'TitansTrev55')",
-        },
-      },
-      required: ['owner'],
-    },
-  },
-  {
-    name: 'get_league_rosters_summary',
-    description:
-      'Get position-group depth (player count, total dynasty value, top single-asset value at ' +
-      'QB/RB/WR/TE) for every team in the league in one call. Use this to find trade partners: a ' +
-      'team thin at a position you\'re deep in is a target to sell to; a team overloaded at a ' +
-      'position you need may be willing to move a piece there. Also useful for ranking teams by ' +
-      'overall asset value.',
-    input_schema: {
-      type: 'object',
-      properties: {},
-      required: [],
-    },
-  },
-  {
-    name: 'get_trending_players',
-    description:
-      'Get current trending add activity on Sleeper — players being picked up most in ' +
-      'the last 24 hours. Skill-position players only (QB/RB/WR/TE). ' +
-      'Use for waiver wire and speculative add questions.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        limit: {
-          type: 'integer',
-          description: 'Number of trending players to return (1-100, default 25)',
-        },
-      },
-      required: [],
-    },
-  },
-  {
-    name: 'get_league_info',
-    description:
-      'Get the canonical league settings for Dynasty Daddies: scoring format, roster slots, ' +
-      'number of teams, PPR setting, superflex configuration, dynasty rules.',
-    input_schema: {
-      type: 'object',
-      properties: {},
-      required: [],
-    },
-  },
-  {
-    name: 'get_team_roster',
-    description:
-      'Get all current skill-position players on an NFL team, sorted by position and depth chart order. ' +
-      'depth_chart_order=1 means the starter. ' +
-      'ALWAYS call this before naming a player\'s competition or backfield situation — ' +
-      'never assume from training data who is on a team, because players get cut and traded. ' +
-      'Example: call get_team_roster("LAC") before saying who the Chargers RB1 is.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        team: {
-          type: 'string',
-          description: 'NFL team abbreviation (e.g. "LAC", "JAX", "WAS", "KC", "SF")',
-        },
-      },
-      required: ['team'],
-    },
-  },
-  {
-    name: 'get_player_news',
-    description:
-      'Get a player\'s CURRENT NFL status from live Sleeper data: team, depth chart position ' +
-      '(depth_chart_order=1 means starter), injury status, and practice participation. ' +
-      'Call this whenever you need to verify present-day facts — roster cuts, team changes, ' +
-      'depth chart shifts — because your training data is ~1 year behind. ' +
-      'Requires the Sleeper player_id returned by get_player_value.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        sleeper_id: {
-          type: 'string',
-          description: "Sleeper player ID (the player_id field from get_player_value results)",
-        },
-      },
-      required: ['sleeper_id'],
-    },
-  },
-  {
-    name: 'get_player_blurb',
-    description:
-      'Get a short LLM-written narrative blurb about a player from LeagueLogs — context on ' +
-      'role changes, injury notes, or hot/cold streaks beyond raw stats. Not every player has ' +
-      'one; blurb will be null if there is no recent material. ' +
-      'LeagueLogs attribution is required whenever you use this data: if blurb is non-null, ' +
-      'end your response with a short plain-text attribution line, e.g. "Powered by LeagueLogs (leaguelogs.com)". ' +
-      'Requires the Sleeper player_id returned by get_player_value.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        sleeper_id: {
-          type: 'string',
-          description: "Sleeper player ID (the player_id field from get_player_value results)",
-        },
-      },
-      required: ['sleeper_id'],
-    },
-  },
-  {
-    name: 'evaluate_trade',
-    description:
-      'Evaluate a proposed trade using actual FantasyCalc dynasty values — not a guess. ' +
-      'Give the sleeper_ids each side is sending away; returns each side\'s total value sent, ' +
-      'the net value delta, and a fairness read (even trade / slight edge / lopsided). ' +
-      'ALWAYS use this for any trade-fairness question instead of estimating values from memory — ' +
-      'get sleeper_ids from get_player_value or get_roster first.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        team_a_sends: {
-          type: 'array',
-          items: { type: 'string' },
-          description: 'Sleeper player_ids that side A is giving up (going to side B)',
-        },
-        team_b_sends: {
-          type: 'array',
-          items: { type: 'string' },
-          description: 'Sleeper player_ids that side B is giving up (going to side A)',
-        },
-      },
-      required: ['team_a_sends', 'team_b_sends'],
-    },
-  },
-];
-
-async function executeTool(name, input, apiBase) {
-  switch (name) {
-    case 'get_player_value': {
-      const q = encodeURIComponent(input.player_name || '');
-      const resp = await fetch(`${apiBase}/players/search?q=${q}`);
-      if (!resp.ok) return { error: `Player search failed (HTTP ${resp.status})` };
-      return resp.json();
-    }
-    case 'get_roster': {
-      const owner = encodeURIComponent(input.owner || '');
-      const resp = await fetch(`${apiBase}/roster/${owner}`);
-      if (!resp.ok) return { error: `Roster fetch failed (HTTP ${resp.status})` };
-      return resp.json();
-    }
-    case 'get_league_rosters_summary': {
-      const resp = await fetch(`${apiBase}/league/rosters/summary`);
-      if (!resp.ok) return { error: `League rosters summary fetch failed (HTTP ${resp.status})` };
-      return resp.json();
-    }
-    case 'get_trending_players': {
-      const limit = Math.min(100, Math.max(1, input.limit || 25));
-      const resp = await fetch(`${apiBase}/players/trending?limit=${limit}`);
-      if (!resp.ok) return { error: `Trending fetch failed (HTTP ${resp.status})` };
-      return resp.json();
-    }
-    case 'get_league_info': {
-      const resp = await fetch(`${apiBase}/league`);
-      if (!resp.ok) return { error: `League info fetch failed (HTTP ${resp.status})` };
-      return resp.json();
-    }
-    case 'get_team_roster': {
-      const team = encodeURIComponent((input.team || '').toUpperCase());
-      const resp = await fetch(`${apiBase}/teams/${team}/roster`);
-      if (!resp.ok) return { error: `Team roster fetch failed (HTTP ${resp.status})` };
-      return resp.json();
-    }
-    case 'get_player_news': {
-      const id = encodeURIComponent(input.sleeper_id || '');
-      const resp = await fetch(`${apiBase}/players/${id}/news`);
-      if (!resp.ok) return { error: `Player news fetch failed (HTTP ${resp.status})` };
-      return resp.json();
-    }
-    case 'get_player_blurb': {
-      const id = encodeURIComponent(input.sleeper_id || '');
-      const resp = await fetch(`${apiBase}/players/${id}/blurb`);
-      if (!resp.ok) return { error: `Player blurb fetch failed (HTTP ${resp.status})` };
-      return resp.json();
-    }
-    case 'evaluate_trade': {
-      const resp = await fetch(`${apiBase}/trade/evaluate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          team_a_sends: input.team_a_sends || [],
-          team_b_sends: input.team_b_sends || [],
-        }),
-      });
-      if (!resp.ok) return { error: `Trade evaluation failed (HTTP ${resp.status})` };
-      return resp.json();
-    }
-    default:
-      return { error: `Unknown tool: ${name}` };
-  }
-}
-
+// Thin proxy to the Report Cards FastAPI server's /chat endpoint, which runs
+// the actual Claude tool-calling loop server-side on Render.
+//
+// Why this moved off Netlify: a tool-calling conversation can chain 3-5
+// round trips (each a full Claude API call), which reliably blew past
+// Netlify's 10s free-tier function ceiling on anything needing more than a
+// tool call or two. Render has no such ceiling, and tool execution there is
+// a direct in-process function call instead of an HTTP round-trip back out
+// to this same proxy — both the timeout and the extra latency are gone.
+//
+// If REPORTCARDS_API_URL isn't set, this degrades gracefully to a plain,
+// tool-less Claude call straight from here — same fallback behavior as
+// before.
 exports.handler = async function (event, context) {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: CORS_HEADERS, body: '' };
@@ -259,122 +39,41 @@ exports.handler = async function (event, context) {
   try {
     const body = JSON.parse(event.body);
 
-    // Strip any tools the frontend may have sent; we control tool injection.
-    // Also override the system prompt to inject today's date — Claude's training
-    // data is ~1 year behind, so without this it reasons from a stale NFL reality.
-    const { messages: incomingMessages, tools: _tools, system: frontendSystem, prefetch, ...rest } = body;
-    const messages = [...(incomingMessages || [])];
-    const tools = reportCardsUrl ? TOOLS : undefined;
-    const today = new Date().toISOString().split('T')[0];
+    if (reportCardsUrl) {
+      // Strip whatever the frontend sent for `tools` — the Render endpoint
+      // controls tool injection now, same as this function used to.
+      const { tools: _tools, ...forwardBody } = body;
 
-    // Optional prefetch: some prompts (Trade Finder especially) reliably need
-    // league-wide data the CRITICAL RULES would otherwise make Claude fetch
-    // itself via a tool call — costing a full extra round trip (Anthropic +
-    // Render) per rule triggered. A "cook up trade packages" prompt can chain
-    // 4-5 such round trips and blow Netlify's function timeout. Fetching the
-    // known-needed data up front in parallel, before the first Anthropic
-    // call, cuts that down to 1-2 rounds for the parts Claude still has to
-    // verify per-player (values, depth chart, trade fairness).
-    let prefetchedContext = '';
-    if (prefetch && reportCardsUrl) {
-      const keys = Array.isArray(prefetch) ? prefetch : ['league_rosters_summary'];
-      const results = await Promise.allSettled(
-        keys.map(async (key) => {
-          if (key === 'league_rosters_summary') {
-            const resp = await fetch(`${reportCardsUrl}/league/rosters/summary`);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            return { key, data: await resp.json() };
-          }
-          throw new Error(`unknown prefetch key: ${key}`);
-        })
-      );
-      const fetched = results.filter((r) => r.status === 'fulfilled').map((r) => r.value);
-      if (fetched.length) {
-        prefetchedContext =
-          `\n\nPREFETCHED DATA (already fetched for you — do NOT call the matching tool again, use this directly):\n` +
-          fetched.map((f) => `### ${f.key}\n${JSON.stringify(f.data)}`).join('\n\n');
-      }
-    }
-
-    const system =
-      `Today's date is ${today}. Your NFL training data has a cutoff around mid-2025 — roughly one full season behind. ` +
-      `CRITICAL RULES — always follow before answering:\n` +
-      `1. Call get_player_value for any player you discuss to get their live team, depth_chart_order, and status.\n` +
-      `2. Call get_team_roster before naming ANY player's competition or describing a backfield/WR corps — ` +
-      `never assume from training data who is on a team. Players get cut, traded, and replaced every offseason.\n` +
-      `3. Call get_player_news for any player whose current depth chart position, injury, or team membership is central to the answer.\n` +
-      `4. If a player's team in tool results is null or missing, they are a free agent or out of the league — do not claim they compete with anyone.\n` +
-      `5. If you use a non-null blurb from get_player_blurb, end your response with a short plain-text ` +
-      `attribution line: "Powered by LeagueLogs (leaguelogs.com)" — required by their terms.\n` +
-      `6. For any question about whether a trade is fair, call evaluate_trade with the sleeper_ids on ` +
-      `each side — never estimate the value delta yourself.\n` +
-      (frontendSystem ? `\n\n${frontendSystem}` : '') +
-      prefetchedContext;
-
-    let finalResponse = null;
-
-    // Tool-calling loop — continue until Claude returns a text response.
-    // Safety cap of 5 rounds prevents runaway loops.
-    for (let round = 0; round < 5; round++) {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      const resp = await fetch(`${reportCardsUrl}/chat`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          ...rest,
-          system,
-          messages,
-          ...(tools ? { tools } : {}),
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(forwardBody),
       });
-
       const data = await resp.json();
-
-      if (!resp.ok) {
-        return {
-          statusCode: resp.status,
-          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        };
-      }
-
-      // No tool calls — this is the final answer.
-      if (data.stop_reason !== 'tool_use') {
-        finalResponse = data;
-        break;
-      }
-
-      // Execute all tool_use blocks in this turn concurrently.
-      const toolUseBlocks = data.content.filter((b) => b.type === 'tool_use');
-      const toolResults = await Promise.all(
-        toolUseBlocks.map(async (block) => {
-          const result = await executeTool(block.name, block.input, reportCardsUrl);
-          return {
-            type: 'tool_result',
-            tool_use_id: block.id,
-            content: JSON.stringify(result),
-          };
-        })
-      );
-
-      // Append the assistant turn + tool results, then loop.
-      messages.push({ role: 'assistant', content: data.content });
-      messages.push({ role: 'user', content: toolResults });
-    }
-
-    if (!finalResponse) {
-      finalResponse = {
-        error: 'Tool-calling loop reached maximum rounds without a final text response.',
+      return {
+        statusCode: resp.status,
+        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       };
     }
 
+    // Graceful degradation: no Report Cards backend configured — plain
+    // Claude call, no tools, no roster/news context.
+    const { tools: _tools, ...rest } = body;
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify(rest),
+    });
+    const data = await resp.json();
     return {
-      statusCode: 200,
+      statusCode: resp.status,
       headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-      body: JSON.stringify(finalResponse),
+      body: JSON.stringify(data),
     };
   } catch (err) {
     return {

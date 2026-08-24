@@ -2242,6 +2242,31 @@ function renderTFPackages(text, accent) {
 // (it called .catch() on a plain function's return value, which is always
 // undefined). No API call ever happened; "Suggested Packages" below was
 // static placeholder HTML that never changed.
+
+// Calls the Report Cards backend's /chat endpoint directly from the browser
+// — the actual Claude tool-calling loop runs there (Render), not in a
+// Netlify function. Netlify's free-tier functions hard-cap at 10s, and a
+// tool-calling conversation chaining 3-5 rounds reliably blew past that.
+// Going straight to Render sidesteps the ceiling entirely. Falls back to
+// the Netlify proxy (plain Claude, no tools) only if Render is genuinely
+// unreachable — network failure or non-2xx, not a normal {error:...} body.
+const REPORTCARDS_CHAT_URL = 'https://ddreportcards.onrender.com/chat';
+async function callChatAPI(payload) {
+  try {
+    const resp = await fetch(REPORTCARDS_CHAT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (resp.ok) return resp;
+  } catch (e) { /* network/CORS failure reaching Render — fall back below */ }
+  return fetch('/.netlify/functions/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+}
+
 async function runTradeFinder(modeIdx) {
   var intentEl = document.querySelector('.tf-ichip.sel');
   var intent = intentEl ? intentEl.querySelector('.tf-ichip-lbl').textContent : 'general';
@@ -2278,16 +2303,11 @@ async function runTradeFinder(modeIdx) {
   } catch (e) {}
 
   try {
-    var res = await fetch('/.netlify/functions/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 1000,
-        system: sysPrompt,
-        messages: [{ role: 'user', content: prompt }],
-        prefetch: ['league_rosters_summary']
-      })
+    var res = await callChatAPI({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 1000,
+      system: sysPrompt,
+      messages: [{ role: 'user', content: prompt }]
     });
     if (!res.ok) {
       var errText = await res.text();
@@ -2674,15 +2694,11 @@ async function sendChat() {
   if (contextAddendum) sysPrompt = sysPrompt + '\n\n' + contextAddendum;
 
   try {
-    const res = await fetch('/.netlify/functions/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 1000,
-        system: sysPrompt,
-        messages: chatHistory
-      })
+    const res = await callChatAPI({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 1000,
+      system: sysPrompt,
+      messages: chatHistory
     });
     if (!res.ok) {
       var errText = await res.text();
@@ -3022,11 +3038,7 @@ async function addIntel(id) {
     : `You are a dynasty fantasy football GM assistant. First intel note:\n"""\n${note}\n"""\n\nWrite a short, direct tendencies breakdown (2-4 sentences) based on this note. Analytical tone. Return only the breakdown text.`;
 
   try {
-    const res = await fetch('/.netlify/functions/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
-    });
+    const res = await callChatAPI({ model: 'claude-sonnet-4-5', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] });
     const data = await res.json();
     const updated = data.content?.[0]?.text?.trim();
     if (updated) {
@@ -3854,7 +3866,7 @@ async function scAddNote(id) {
     ? 'Dynasty fantasy football scout notes on a prospect. Existing notes: ' + p.notes + ' New observation: ' + note + ' Rewrite as a single cohesive paragraph incorporating the new observation. Analytical scouting tone. Return only the updated notes.'
     : 'Dynasty fantasy football scout. First observation on a prospect: ' + note + ' Write a short scouting note (2-3 sentences). Analytical tone. Return only the text.';
   try {
-    var res=await fetch('/.netlify/functions/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:500,messages:[{role:'user',content:prompt}]})});
+    var res=await callChatAPI({model:'claude-sonnet-4-5',max_tokens:500,messages:[{role:'user',content:prompt}]});
     var data=await res.json();
     var updated=data.content&&data.content[0]?data.content[0].text.trim():null;
     if(updated){
