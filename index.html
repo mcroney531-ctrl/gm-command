@@ -2491,13 +2491,15 @@ function renderPcTab(idx) {
 // ─────────────────────────────────
 // CHAT (Claude API)
 // ─────────────────────────────────
+// Fallback system prompt, used ONLY when the live Sleeper sync hasn't produced
+// window.liveSystemPrompt yet (see buildSystemPrompt). It deliberately contains
+// no roster, news, or intel: this used to carry a hardcoded demo roster and
+// invented headlines from an early build, which meant any failed or slow Sleeper
+// load silently handed Claude fabricated facts as authoritative context. State
+// the absence instead — the tools fetch the real data.
 const systemPrompt = `You are the GM Assistant for a dynasty fantasy football team called "The Psych Ward" in a 12-team superflex, half-PPR league. The user's Sleeper username is TitansTrev55.
 
-Current roster: Caleb Williams (QB, CHI, 23), Jayden Daniels (QB, WAS, 24), Bijan Robinson (RB, ATL, 23), Isiah Pacheco (RB, KC, 26, DTD-Knee), Tyjae Spears (RB, TEN, 22), Justin Jefferson (WR, MIN, 26), Ladd McConkey (WR, LAC, 23), Puka Nacua (WR, LAR, 24), Xavier Worthy (WR, KC, 22), Quinshon Judkins (WR, TB, 23), Trey McBride (TE, ARI, 25), Cole Kmet (TE, CHI, 26). Draft capital: three 2027 firsts.
-
-Recent news: McConkey had 8 targets at OTAs as clear WR1; Pacheco not cleared for practice knee day-to-day; Jordan Addison (owned by rival) trade rumored; AJ Brown trade to Patriots expected.
-
-Leaguemate intel: JC (Renegades) is aggressive and panic-sells, loves name value, will overpay for veterans. D. Mills (Shutdown Corner) is analytical, patient, won't overpay. K. Birch (Algorithm) undervalues TEs and RBs relative to market.
+The live roster sync has not completed, so you have NO roster, news, or leaguemate context in this prompt. Do not invent any. Use your tools to look up the user's roster, player values, and current NFL situations before answering anything that depends on them.
 
 Your trusted analyst sources (must reference appropriately): Matt Waldman for RBs, Josh Norris/Hayden Winks for overall, Nate Tice for QBs, Matt Harmon/Steve Smith Sr. for WRs, Robert Mays for all positions.
 
