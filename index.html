@@ -2171,7 +2171,12 @@ window.addEventListener('DOMContentLoaded', function() {
   loadSleeperData();
   chatInitSessions();
   // Pre-warm the Render API so it isn't cold on the first chat message.
-  fetch('/.netlify/functions/warmup').catch(function() {});
+  // This used to hop through /.netlify/functions/warmup, which fired an
+  // un-awaited ping and returned — Netlify freezes the container the moment
+  // a handler returns, so the ping usually died before it connected, and it
+  // no-oped entirely unless REPORTCARDS_API_URL happened to be set. Pinging
+  // Render straight from the browser has neither failure mode.
+  warmReportCards();
 });
 
 // ─────────────────────────────────
@@ -2186,6 +2191,9 @@ function nav(target) {
   document.getElementById('screen-' + target).classList.add('active');
   prevScreen = currentScreen;
   currentScreen = target;
+  // Opening the chat screen is the earliest reliable signal that a message
+  // is coming — wake Render while the user is still typing it.
+  if (target === 'chat') warmReportCards();
   if (target === 'settings') renderSettings();
   if (target === 'intel') renderIntel();
   if (target === 'rivals') renderRivalsList();
@@ -2262,21 +2270,91 @@ function renderTFPackages(text, accent) {
 // Going straight to Render sidesteps the ceiling entirely. Falls back to
 // the Netlify proxy (plain Claude, no tools) only if Render is genuinely
 // unreachable — network failure or non-2xx, not a normal {error:...} body.
-const REPORTCARDS_CHAT_URL = 'https://ddreportcards.onrender.com/chat';
-async function callChatAPI(payload) {
+const REPORTCARDS_BASE = 'https://ddreportcards.onrender.com';
+const REPORTCARDS_CHAT_URL = REPORTCARDS_BASE + '/chat';
+
+// Render's free tier spins the service down after ~15 minutes idle, and
+// /chat is the only thing this app ever calls there — so the first message
+// of almost every session used to pay a cold boot on top of the tool loop.
+// That was most of what "chat is slow" actually meant. A /health ping on
+// load (and again when the chat screen opens) wakes it while the user is
+// still reading the page, so their first question hits a warm process.
+let rcWarmedAt = 0;
+function warmReportCards() {
+  if (Date.now() - rcWarmedAt < 10 * 60 * 1000) return;
+  rcWarmedAt = Date.now();
+  fetch(REPORTCARDS_BASE + '/health', { method: 'GET', cache: 'no-store' })
+    .catch(function() { rcWarmedAt = 0; });
+}
+
+// Every fact this app states about a player has to come from a live lookup.
+// callChatAPI therefore assumes a request needs the tool-enabled backend and
+// refuses to answer without it; a caller that is only reshaping text the
+// user typed opts out explicitly with { needsLiveData: false }.
+//
+// It used to fall back to the Netlify function on any failure at all, and
+// that function would answer without tools if it could not reach Render.
+// A roster question served that way came back in the same bubble and the
+// same confident voice with every fact drawn from training data, and a
+// Render error would surface as Netlify's generic 10s 504 — so the failure
+// was invisible twice over. No answer is better than a sourceless one, and
+// the real error is more useful than a laundered one.
+async function callChatAPI(payload, opts) {
+  const needsLiveData = !(opts && opts.needsLiveData === false);
+
+  let resp;
   try {
-    const resp = await fetch(REPORTCARDS_CHAT_URL, {
+    resp = await fetch(REPORTCARDS_CHAT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    if (resp.ok) return resp;
-  } catch (e) { /* network/CORS failure reaching Render — fall back below */ }
+  } catch (e) {
+    // Render is unreachable: offline, DNS, blocked, CORS.
+    if (needsLiveData) {
+      throw new Error(
+        'Can’t reach the data backend, so there are no live rosters, values, ' +
+        'or depth charts behind an answer right now. Not going to guess — ' +
+        'try again in a moment. (' + (e.message || 'network error') + ')'
+      );
+    }
+    return callToollessFallback(payload);
+  }
+
+  if (resp.ok) return resp;
+
+  // Render answered, just not with a result. That is its answer, not a
+  // reason to ask a second backend the same question and show its error
+  // instead — surface what actually went wrong.
+  const detail = await readErrorDetail(resp);
+  if (needsLiveData) {
+    throw new Error('Data backend error (' + resp.status + '): ' + detail);
+  }
+  return callToollessFallback(payload);
+}
+
+async function callToollessFallback(payload) {
+  const body = Object.assign({}, payload, { allow_toolless: true });
   return fetch('/.netlify/functions/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(body),
   });
+}
+
+// Error bodies arrive as JSON from FastAPI/Anthropic and as plain text from
+// proxies and gateways. Pull out the human-readable part either way.
+async function readErrorDetail(resp) {
+  let text = '';
+  try { text = await resp.text(); } catch (e) { return 'no response body'; }
+  try {
+    const parsed = JSON.parse(text);
+    const msg = parsed.error && parsed.error.message ? parsed.error.message
+      : (typeof parsed.error === 'string' ? parsed.error : null)
+      || (typeof parsed.detail === 'string' ? parsed.detail : null);
+    if (msg) return msg;
+  } catch (e) { /* not JSON — fall through to the raw text */ }
+  return (text || 'no response body').slice(0, 200);
 }
 
 async function runTradeFinder(modeIdx) {
@@ -2321,10 +2399,6 @@ async function runTradeFinder(modeIdx) {
       system: sysPrompt,
       messages: [{ role: 'user', content: prompt }]
     });
-    if (!res.ok) {
-      var errText = await res.text();
-      throw new Error('API error (' + res.status + '): ' + errText.slice(0, 150));
-    }
     var data = await res.json();
     var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : '';
     if (!reply) throw new Error('Empty response — try again');
@@ -2680,10 +2754,6 @@ async function sendChat() {
       system: sysPrompt,
       messages: chatHistory
     });
-    if (!res.ok) {
-      var errText = await res.text();
-      throw new Error('API error (' + res.status + '): ' + errText.slice(0, 200));
-    }
     const data = await res.json();
     const reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Something went wrong — try again.';
     typingEl.remove();
@@ -3057,7 +3127,12 @@ async function addIntel(id) {
     : `You are a dynasty fantasy football GM assistant. First intel note:\n"""\n${note}\n"""\n\nWrite a short, direct tendencies breakdown (2-4 sentences) based on this note. Analytical tone. Return only the breakdown text.`;
 
   try {
-    const res = await callChatAPI({ model: 'claude-sonnet-4-5', max_tokens: 4000, messages: [{ role: 'user', content: prompt }] });
+    // Reshapes the note the user just typed — no roster, value, or news
+    // fact is involved, so this one may be served without the tool backend.
+    const res = await callChatAPI(
+      { model: 'claude-sonnet-4-5', max_tokens: 4000, messages: [{ role: 'user', content: prompt }] },
+      { needsLiveData: false }
+    );
     const data = await res.json();
     const updated = data.content?.[0]?.text?.trim();
     if (updated) {
@@ -3785,7 +3860,11 @@ async function scAddNote(id) {
     ? 'Dynasty fantasy football scout notes on a prospect. Existing notes: ' + p.notes + ' New observation: ' + note + ' Rewrite as a single cohesive paragraph incorporating the new observation. Analytical scouting tone. Return only the updated notes.'
     : 'Dynasty fantasy football scout. First observation on a prospect: ' + note + ' Write a short scouting note (2-3 sentences). Analytical tone. Return only the text.';
   try {
-    var res=await callChatAPI({model:'claude-sonnet-4-5',max_tokens:500,messages:[{role:'user',content:prompt}]});
+    // Same as the leaguemate blurb: pure rewrite of the user's own observation.
+    var res=await callChatAPI(
+      {model:'claude-sonnet-4-5',max_tokens:500,messages:[{role:'user',content:prompt}]},
+      {needsLiveData:false}
+    );
     var data=await res.json();
     var updated=data.content&&data.content[0]?data.content[0].text.trim():null;
     if(updated){
