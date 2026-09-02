@@ -1027,6 +1027,8 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     <div class="settings-section">Assistant</div>
     <div class="settings-row"><div class="sr-left"><div class="sr-icon sri-5">🤖</div><div class="sr-info"><div class="sr-title">GM Persona</div><div class="sr-sub">Claude Sonnet · Custom system prompt</div></div></div><span class="sr-arrow">›</span></div>
     <div class="settings-row"><div class="sr-left"><div class="sr-icon sri-1">📚</div><div class="sr-info"><div class="sr-title">Analyst Sources</div><div class="sr-sub">Waldman, Harmon, Norris, Tice…</div></div></div><span class="sr-arrow">›</span></div>
+    <div class="settings-section">Access</div>
+    <div class="settings-row" onclick="gmPromptAccessKey()"><div class="sr-left"><div class="sr-icon sri-5">🔑</div><div class="sr-info"><div class="sr-title">Assistant Access Key</div><div class="sr-sub" id="settings-key-sub">—</div></div></div><span class="sr-arrow">›</span></div>
   </div>
 </div>
 
@@ -2304,9 +2306,12 @@ async function callChatAPI(payload, opts) {
 
   let resp;
   try {
+    const headers = { 'Content-Type': 'application/json' };
+    const key = gmAccessKey();
+    if (key) headers['X-GM-Key'] = key;
     resp = await fetch(REPORTCARDS_CHAT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify(payload),
     });
   } catch (e) {
@@ -2328,6 +2333,11 @@ async function callChatAPI(payload, opts) {
   // instead — surface what actually went wrong.
   const detail = await readErrorDetail(resp);
   if (needsLiveData) {
+    // Point an auth failure at the one screen that can fix it, rather than
+    // showing a bare 401 that reads like the backend is broken.
+    if (resp.status === 401 || resp.status === 403) {
+      throw new Error(detail + ' Add it under Settings → Assistant Access Key.');
+    }
     throw new Error('Data backend error (' + resp.status + '): ' + detail);
   }
   return callToollessFallback(payload);
@@ -2993,7 +3003,42 @@ function togglePos(el, cls) { el.classList.toggle(cls); }
 // ─────────────────────────────────
 // SETTINGS / LEAGUEMATE INTEL
 // ─────────────────────────────────
-function renderSettings() { /* already in DOM */ }
+// The /chat endpoint spends an Anthropic key and the frontend is a static
+// page, so it has to be reachable without a login — which makes it worth
+// gating. The key is kept in localStorage rather than in this file: index.html
+// is committed, so a literal here would live in git history forever, which is
+// strictly worse than page source. Per-device entry keeps it out of the repo.
+//
+// This is a speed bump, not authentication. What actually bounds the damage
+// is server-side: the model allowlist, the token ceiling, the per-IP rate
+// limit and the daily spend cap in chat_guard.py. If the key is unset on the
+// server, nothing here is enforced and the app works exactly as before.
+const GM_KEY_STORAGE = 'gmCommandAccessKey';
+
+function gmAccessKey() {
+  try { return localStorage.getItem(GM_KEY_STORAGE) || ''; }
+  catch (e) { return ''; }
+}
+
+function gmPromptAccessKey() {
+  var current = gmAccessKey();
+  var entered = window.prompt(
+    'Assistant access key\n\nMatches GM_CHAT_SECRET on the Report Cards API. ' +
+    'Leave blank to clear it. Stored on this device only.',
+    current
+  );
+  if (entered === null) return;
+  try {
+    if (entered.trim()) localStorage.setItem(GM_KEY_STORAGE, entered.trim());
+    else localStorage.removeItem(GM_KEY_STORAGE);
+  } catch (e) { /* private mode — key simply won't persist */ }
+  renderSettings();
+}
+
+function renderSettings() {
+  var sub = document.getElementById('settings-key-sub');
+  if (sub) sub.textContent = gmAccessKey() ? 'Set on this device' : 'Not set — tap to add';
+}
 
 function showIntel() { nav('intel'); renderIntel(); }
 
