@@ -865,7 +865,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
       </div>
       <div class="pc-val">
         <div class="pc-ktc" id="pc-ktc">—</div>
-        <div class="pc-ktc-lbl" id="pc-ktc-lbl">KTC Value</div>
+        <div class="pc-ktc-lbl" id="pc-ktc-lbl">Dynasty Value</div>
         <div class="pc-trend tr-dn" id="pc-trend">↓ −180 / 30d</div>
       </div>
     </div>
@@ -1856,8 +1856,7 @@ function buildMyRoster() {
       age: p.age || '?',
       number: p.number || null,
       initials: getInitials((p.first_name || '') + ' ' + (p.last_name || '')),
-      status: p.injury_status || p.status || 'Active',
-      ktc: '—'
+      status: p.injury_status || p.status || 'Active'
     };
   }).filter(function(p) { return p.pos !== 'DEF' && p.pos !== 'K'; })
     .sort(function(a,b) {
@@ -1884,7 +1883,6 @@ function buildRivalTeams() {
         name: (p.first_name || '') + ' ' + (p.last_name || pid),
         team: p.team || 'FA',
         age: p.age || '?',
-        ktc: 0,
         flag: ''
       };
     }).filter(function(p) { return p.pos !== 'DEF' && p.pos !== 'K' && p.pos !== '?'; })
@@ -3535,10 +3533,6 @@ function renderRdTab(idx) {
             <div class="rd-psub">${p.team} · Age ${p.age}</div>
           </div>
           ${flagHtml}
-          <div class="rd-pright">
-            <div class="rd-pktc">${p.ktc.toLocaleString()}</div>
-            <div class="rd-pktc-lbl">KTC</div>
-          </div>
         </div>`;
       }).join('') : ''
     ).join('');
@@ -3583,7 +3577,6 @@ function renderRdTab(idx) {
         ${flagged.length ? flagged.map(p=>`<div class="rd-asset-row">
           <span class="rd-asset-pos">${p.pos}</span>
           <span class="rd-asset-name">${p.name}</span>
-          <span class="rd-asset-ktc">${p.ktc.toLocaleString()} KTC</span>
         </div>`).join('') : '<div class="nli-txt" style="color:#71808D">No flagged assets</div>'}
       </div>
       <button class="rd-btn-primary" onclick="nav('trade')">🔀 Open Trade Finder</button>
