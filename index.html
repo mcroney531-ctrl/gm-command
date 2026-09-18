@@ -239,7 +239,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .fc-msgs { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; background: var(--white); }
 .fc-msgs::-webkit-scrollbar { display: none; }
 .fc-input-wrap { display: flex; gap: 8px; align-items: flex-end; padding: 12px 18px; border-top: 1px solid var(--border); background: var(--white); flex-shrink: 0; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
-.fc-textarea { flex: 1; background: var(--off); border: 1px solid var(--border2); border-radius: 20px; padding: 10px 16px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 13px; color: var(--text); resize: none; outline: none; min-height: 44px; max-height: 120px; line-height: 1.45; transition: border-color .15s; }
+.fc-textarea { flex: 1; background: var(--off); border: 1px solid var(--border2); border-radius: 20px; padding: 10px 16px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 13px; color: var(--text); resize: none; outline: none; min-height: 44px; max-height: 160px; line-height: 1.45; transition: border-color .15s; }
 .fc-textarea::placeholder { color: var(--dim); }
 .fc-textarea:focus { border-color: var(--accent); }
 .fc-send { width: 44px; height: 44px; background: var(--navy); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity .15s; }
@@ -816,7 +816,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     </div>
   </div>
   <div class="fc-input-wrap">
-    <textarea class="fc-textarea" id="fc-input" placeholder="Ask anything — trade eval, waiver, roster audit..." rows="1" onkeydown="handleKey(event)"></textarea>
+    <textarea class="fc-textarea" id="fc-input" placeholder="Ask anything — trade eval, waiver, roster audit..." rows="1" enterkeyhint="enter" onkeydown="handleKey(event)"></textarea>
     <button class="fc-send" onclick="sendChat()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
   </div>
 </div>
@@ -3103,13 +3103,21 @@ function addTyping() {
 }
 
 function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+  // Enter inserts a newline. It used to send unless Shift was held, which on
+  // a touch keyboard left no way to type a second line at all — there is no
+  // Shift+Enter on a phone, so every attempt at a paragraph break fired the
+  // message half-written instead. Sending is the send button's job, with
+  // Cmd/Ctrl+Enter as a desktop shortcut.
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    e.preventDefault();
+    sendChat();
+  }
 }
 
 // auto-resize textarea
 document.getElementById('fc-input').addEventListener('input', function() {
   this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  this.style.height = Math.min(this.scrollHeight, 160) + 'px';
 });
 
 // ─────────────────────────────────
