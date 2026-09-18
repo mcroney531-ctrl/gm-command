@@ -2634,11 +2634,40 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+// Coerce one stored session into a shape the rest of the app can rely on,
+// or drop it. Returns null for anything unsalvageable.
+function chatNormalizeSession(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  var messages = Array.isArray(raw.messages) ? raw.messages.filter(function(m) {
+    return m && typeof m === 'object' && typeof m.content === 'string'
+      && (m.role === 'user' || m.role === 'assistant');
+  }) : [];
+  var created = typeof raw.createdAt === 'number' && isFinite(raw.createdAt) ? raw.createdAt : Date.now();
+  var updated = typeof raw.updatedAt === 'number' && isFinite(raw.updatedAt) ? raw.updatedAt : created;
+  return {
+    id: (typeof raw.id === 'string' && raw.id) ? raw.id
+        : ('sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8)),
+    title: (typeof raw.title === 'string' && raw.title) ? raw.title : 'New Chat',
+    messages: messages,
+    createdAt: created,
+    updatedAt: updated
+  };
+}
+
+// Everything downstream assumed whatever came out of localStorage had the
+// shape chatNewSessionObj() produces. It doesn't have to: storage outlives
+// the code that wrote it, and a session saved by an older build — or any
+// entry with messages missing — made s.messages.length throw. That killed
+// the History button silently (openChatHistory renders before it shows, so
+// the throw stopped the sheet ever appearing) and, if the bad session
+// happened to be the active one, threw during page load instead.
+//
+// Validating here means no consumer has to: nothing malformed reaches
+// chatSessions in the first place.
 function chatLoadSessions() {
-  try {
-    var s = localStorage.getItem(CHAT_SESSIONS_KEY);
-    chatSessions = s ? JSON.parse(s) : [];
-  } catch(e) { chatSessions = []; }
+  var raw = null;
+  try { raw = JSON.parse(localStorage.getItem(CHAT_SESSIONS_KEY) || 'null'); } catch(e) { raw = null; }
+  chatSessions = (Array.isArray(raw) ? raw : []).map(chatNormalizeSession).filter(Boolean);
 }
 function chatSaveSessions() {
   try { localStorage.setItem(CHAT_SESSIONS_KEY, JSON.stringify(chatSessions)); } catch(e) {}
@@ -2703,9 +2732,23 @@ function chatInitSessions() {
 }
 
 function openChatHistory() {
-  renderChatHistoryList();
-  document.getElementById('ch-history-overlay').classList.add('show');
-  document.getElementById('ch-history-sheet').style.display = 'flex';
+  // Show first, fill second. Rendering the list used to come first, so any
+  // error in it left the button doing nothing at all — the worst possible
+  // failure for a control whose only job is to open something. An empty
+  // sheet is a bug you can see and close; a dead button is one you can't.
+  var overlay = document.getElementById('ch-history-overlay');
+  var sheet = document.getElementById('ch-history-sheet');
+  if (overlay) overlay.classList.add('show');
+  if (sheet) sheet.style.display = 'flex';
+  try {
+    renderChatHistoryList();
+  } catch (e) {
+    var list = document.getElementById('ch-history-list');
+    if (list) {
+      list.innerHTML = '<div style="padding:20px 18px;font-family:Zalando Sans SemiExpanded,sans-serif;'
+        + 'font-size:10px;color:#9b1f30;text-align:center">Couldn\u2019t read saved conversations.</div>';
+    }
+  }
 }
 function closeChatHistory() {
   document.getElementById('ch-history-overlay').classList.remove('show');
@@ -2721,7 +2764,7 @@ function renderChatHistoryList() {
   }
   list.innerHTML = sorted.map(function(s) {
     var dateStr = new Date(s.updatedAt).toLocaleDateString('en-US', {month:'short', day:'numeric'});
-    var count = s.messages.length;
+    var count = (s.messages || []).length;
     return '<div class="tf-picker-item ch-hist-item' + (s.id === activeChatId ? ' selected' : '') + '" onclick="switchChatSession(' + JSON.stringify(s.id) + ')">' +
       '<div class="tf-picker-pinfo">' +
         '<div class="tf-picker-pname">' + escapeHtml(s.title || 'New Chat') + '</div>' +
