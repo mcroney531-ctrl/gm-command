@@ -1767,24 +1767,39 @@ async function loadSleeperData() {
     // None of these four requests depend on each other's results — only the
     // "find my roster" step below needs both userData and sleeperRosters —
     // so run them concurrently instead of one round trip at a time.
+    // The player dictionary was cached with no TTL and no timestamp.
+    // sessionStorage lives as long as the tab, and as an installed PWA that
+    // can be weeks, so every team assignment in the app could be arbitrarily
+    // old while the UI still read "Live". That is how a receiver stayed on a
+    // team he had left and a signed player kept showing as a free agent —
+    // and because this dictionary feeds the chat context, the assistant was
+    // being told those stale assignments were current as of today.
     var cached = null;
-    try { cached = sessionStorage.getItem('sleeperPlayers'); } catch(e) {}
+    try { cached = JSON.parse(sessionStorage.getItem(PLAYER_DB_KEY) || 'null'); } catch(e) {}
+    var cachedFresh = !!(cached && cached.fetchedAt
+                         && (Date.now() - cached.fetchedAt) < PLAYER_DB_TTL_MS);
 
     var results = await Promise.all([
       fetch('https://api.sleeper.app/v1/user/' + MY_USER_ID).then(function(r) { return r.json(); }),
       fetch('https://api.sleeper.app/v1/league/' + LEAGUE_ID + '/rosters').then(function(r) { return r.json(); }),
       fetch('https://api.sleeper.app/v1/league/' + LEAGUE_ID + '/users').then(function(r) { return r.json(); }),
-      cached ? Promise.resolve(JSON.parse(cached)) : fetch('https://api.sleeper.app/v1/players/nfl').then(function(r) { return r.json(); })
+      cachedFresh ? Promise.resolve(cached.players) : fetch('https://api.sleeper.app/v1/players/nfl').then(function(r) { return r.json(); })
     ]);
     var userData = results[0];
     sleeperRosters = results[1];
     var usersArr = results[2];
     sleeperPlayers = results[3];
+    sleeperPlayersFetchedAt = cachedFresh ? cached.fetchedAt : Date.now();
 
     mySleeperUserId = userData.user_id;
     usersArr.forEach(function(u) { sleeperUsers[u.user_id] = u; });
-    if (!cached) {
-      try { sessionStorage.setItem('sleeperPlayers', JSON.stringify(sleeperPlayers)); } catch(e) {}
+    if (!cachedFresh) {
+      try {
+        sessionStorage.removeItem('sleeperPlayers'); // untimestamped v1 cache
+        sessionStorage.setItem(PLAYER_DB_KEY, JSON.stringify({
+          fetchedAt: sleeperPlayersFetchedAt, players: sleeperPlayers
+        }));
+      } catch(e) { /* quota — fine, it refetches next load */ }
     }
 
     // Find my roster
@@ -1916,6 +1931,41 @@ function clearChat() {
     buildSystemPrompt();
     updateHomeChatPreview();
   }
+}
+
+// The player dictionary is big enough to want caching and volatile enough
+// to need an expiry. Six hours matches the backend's own cache.
+var PLAYER_DB_KEY = 'sleeperPlayers.v2';
+var PLAYER_DB_TTL_MS = 6 * 60 * 60 * 1000;
+var sleeperPlayersFetchedAt = 0;
+
+function playerDbAgeLabel() {
+  if (!sleeperPlayersFetchedAt) return 'age unknown';
+  var mins = Math.round((Date.now() - sleeperPlayersFetchedAt) / 60000);
+  if (mins < 2) return 'fetched just now';
+  if (mins < 90) return 'fetched ' + mins + ' minutes ago';
+  return 'fetched ' + Math.round(mins / 60) + ' hours ago';
+}
+
+// Every player_id rostered anywhere in the league, mapped to who holds it.
+//
+// This is what makes a name lookup exact instead of a guess. When the user
+// says "Antonio Williams" and an Antonio Williams is sitting on his roster,
+// his player_id is already known — there is nothing to resolve. Searching
+// 11,000 NFL players by name and picking one throws away an answer already
+// in hand, and it is how the assistant ended up asking him which Antonio
+// Williams he meant about a player he owns.
+function leagueRosterIndex() {
+  var index = {};
+  if (!sleeperRosters) return index;
+  sleeperRosters.forEach(function(roster) {
+    var user = (sleeperUsers && sleeperUsers[roster.owner_id]) || {};
+    var who = roster.owner_id === mySleeperUserId
+      ? 'YOUR roster'
+      : (user.display_name || 'roster ' + roster.roster_id);
+    (roster.players || []).forEach(function(pid) { index[pid] = who; });
+  });
+  return index;
 }
 
 function buildSystemPrompt() {
@@ -2824,16 +2874,38 @@ function buildMessageContext(userText) {
     lastNameMap[ln].push(pl);
   }
 
-  // Resolve full-name matches first
+  // Resolve full-name matches, roster members first.
+  //
+  // This used to take the FIRST match from a for-in over ~11,000 players —
+  // whichever duplicate the dictionary happened to yield. Two players share
+  // a name, one is on the user's roster and one is an unsigned nobody, and
+  // it was a coin flip which one got injected as fact. Roster membership
+  // settles it outright: if he is talking about a player somebody in this
+  // league owns, that is the player.
+  var rosterIndex = leagueRosterIndex();
   var resolved = [];
+
+  function rankCandidates(cands) {
+    return cands.slice().sort(function(a, b) {
+      var aR = rosterIndex[a.player_id] ? 0 : 1;
+      var bR = rosterIndex[b.player_id] ? 0 : 1;
+      if (aR !== bR) return aR - bR;                 // rostered in this league
+      var aT = a.team ? 0 : 1, bT = b.team ? 0 : 1;
+      if (aT !== bT) return aT - bT;                 // then on an NFL roster
+      var aS = a.search_rank == null ? 1e9 : a.search_rank;
+      var bS = b.search_rank == null ? 1e9 : b.search_rank;
+      return aS - bS;                                // then by relevance
+    });
+  }
+
   possibleNames.forEach(function(name) {
+    var target = name.toLowerCase();
+    var cands = [];
     for (var pid in sleeperPlayers) {
       var pl = sleeperPlayers[pid];
-      if (pl && pl.full_name && pl.full_name.toLowerCase() === name.toLowerCase()) {
-        resolved.push(pl);
-        return;
-      }
+      if (pl && pl.full_name && pl.full_name.toLowerCase() === target) cands.push(pl);
     }
+    if (cands.length) resolved.push(rankCandidates(cands)[0]);
   });
 
   // Resolve last-name-only references (e.g. "trade for Bech")
@@ -2842,18 +2914,34 @@ function buildMessageContext(userText) {
     var clean = w.replace(/[^A-Za-z]/g, '').toLowerCase();
     if (clean.length < 4) return; // skip short words to avoid noise
     var hits = lastNameMap[clean];
-    if (hits && hits.length === 1) {
-      // Unambiguous last-name match
-      if (!resolved.some(function(r){ return r.player_id === hits[0].player_id; })) {
-        resolved.push(hits[0]);
-      }
+    if (!hits || !hits.length) return;
+    // A single league-rostered player with this last name is unambiguous even
+    // when the name isn't NFL-wide — he is far likelier to be discussing a
+    // player somebody owns than a namesake nobody rosters.
+    var owned = hits.filter(function(h){ return rosterIndex[h.player_id]; });
+    var pick = owned.length === 1 ? owned[0] : (hits.length === 1 ? hits[0] : null);
+    if (pick && !resolved.some(function(r){ return r.player_id === pick.player_id; })) {
+      resolved.push(pick);
     }
   });
 
   if (resolved.length) {
-    // Build authoritative facts block
+    // A starting point for lookups — explicitly NOT an authority.
+    //
+    // This block used to be labelled "AUTHORITATIVE PLAYER FACTS (Sleeper,
+    // current as of today — use these over any prior knowledge)" and closed
+    // with an instruction to DEFER to it. None of that was true or safe: the
+    // data comes from a cached dictionary of unknown age, the player was
+    // picked by an unranked name match, and "use these over any prior
+    // knowledge" outranked the live server-side lookups that exist precisely
+    // to be more current than this. The assistant was being ordered to trust
+    // the stalest source in the system. It now carries its real age and the
+    // correct precedence: a tool result beats this every time.
     var factLines = resolved.slice(0, 5).map(function(pl) {
-      var parts = [pl.full_name, pl.position, pl.team || 'FA'];
+      var parts = [pl.full_name, pl.position, pl.team || 'no NFL team listed'];
+      var owner = rosterIndex[pl.player_id];
+      if (owner) parts.push('rostered: ' + owner);
+      parts.push('player_id ' + pl.player_id);
       if (pl.age) parts.push('age ' + pl.age);
       if (pl.years_exp !== undefined && pl.years_exp !== null) parts.push((pl.years_exp === 0 ? 'rookie' : pl.years_exp + 'yr vet'));
       if (pl.depth_chart_position && pl.depth_chart_order) parts.push('depth: ' + pl.depth_chart_position + (pl.depth_chart_order > 1 ? '#' + pl.depth_chart_order : ''));
@@ -2861,7 +2949,10 @@ function buildMessageContext(userText) {
       return '- ' + parts.join(' | ');
     });
 
-    blocks.push('AUTHORITATIVE PLAYER FACTS (Sleeper, current as of today — use these over any prior knowledge):\n' + factLines.join('\n'));
+    blocks.push(
+      'PLAYERS HE APPEARS TO BE NAMING (resolved locally from a Sleeper player dictionary ' +
+      playerDbAgeLabel() + '; a starting point, NOT an authority):\n' + factLines.join('\n')
+    );
 
     // Find news matching any resolved player
     var newsHits = [];
@@ -2918,13 +3009,32 @@ function buildMessageContext(userText) {
       teamBlocks.push(team + ':\n' + lines.join('\n'));
     });
     if (teamBlocks.length) {
-      blocks.push('AUTHORITATIVE TEAM DEPTH CHARTS (Sleeper, current as of today — use these over any prior knowledge about who plays where):\n' + teamBlocks.join('\n\n'));
+      // Same correction as the player block: this is assembled from the
+      // cached dictionary, so it is exactly as old as that cache. Labelling
+      // it "current as of today" and telling the model to prefer it over
+      // everything is what kept a departed receiver on his old team's depth
+      // chart — the live backend lookup said otherwise and was overruled by
+      // this.
+      blocks.push(
+        'TEAM DEPTH CHARTS FROM LOCAL CACHE (' + playerDbAgeLabel() + '; a starting ' +
+        'point, NOT an authority — call get_team_roster to confirm before naming ' +
+        'anyone as a starter or a competitor for touches):\n' + teamBlocks.join('\n\n')
+      );
     }
   }
 
   if (!blocks.length) return '';
 
-  blocks.push('CRITICAL: If your prior knowledge about any player or team above conflicts with the authoritative facts, DEFER to the facts. Do not claim a player is on a team different from what is listed above, or name a starter/competitor who is not listed.');
+  blocks.push(
+    'HOW TO USE THE ABOVE: the player_ids are reliable — they came from the roster ' +
+    'and the name match, so use them instead of searching by name again. Everything ' +
+    'else (team, depth chart, injury, who else is in a position group) comes from a ' +
+    'local cache and may be out of date, so a live lookup OVERRIDES it: call ' +
+    'get_player_news or get_team_roster and use what comes back. Two things never ' +
+    'follow from this context alone — that a player is a free agent, and that a ' +
+    'teammate listed here is still on that team. If a player appears on a roster in ' +
+    'this league, his identity is settled: do not ask the user which player he meant.'
+  );
 
   return blocks.join('\n\n');
 }
