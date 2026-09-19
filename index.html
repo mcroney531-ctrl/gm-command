@@ -230,36 +230,139 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 /* ════════════════════════════
    FULL CHAT SCREEN
 ════════════════════════════ */
-.fc-header { background: var(--navy); padding: 14px 18px 12px; flex-shrink: 0; }
-.fc-hrow { display: flex; align-items: center; justify-content: space-between; }
-.back-btn { display: flex; align-items: center; gap: 5px; background: none; border: none; cursor: pointer; color: rgba(255,255,255,.5); font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 0; }
-.fc-title { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--white); }
-.fc-meta { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.3); letter-spacing: .8px; }
-.fc-ctx { display: flex; align-items: center; gap: 5px; padding: 8px 18px; border-bottom: 1px solid var(--border); background: var(--off); flex-shrink: 0; }
-.fc-msgs { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; background: var(--white); }
+/* ═══════════════════════════════════════════════════════════
+   GM ASSISTANT CHAT SURFACE — locked design system
+   Tokens are verbatim from the handoff's design-tokens.css. They are
+   --gm-* prefixed and scoped to this screen's classes, so they sit
+   alongside the app's existing --navy/--off palette without colliding.
+   No green appears anywhere below; that is a locked decision.
+   ═══════════════════════════════════════════════════════════ */
+.gmc-hero, .gmc-toolbar, .fc-msgs, .gmc-composer {
+  --gm-assistant-fill-top: #EEF0F4;
+  --gm-assistant-fill-bottom: #DFE3EA;
+  --gm-assistant-edge-top: #A9B3C7;
+  --gm-assistant-edge-bottom: #27385C;
+  --gm-assistant-text: #172033;
+  --gm-user-fill-top: #5F7A98;
+  --gm-user-fill-base: #496380;
+  --gm-user-fill-bottom: #3A516B;
+  --gm-toolbar-top: #E3EBF5;
+  --gm-toolbar-bottom: #D6E1EE;
+  --gm-toolbar-secondary: #8FA2B8;
+  --gm-toolbar-pressed: #1F3A5F;
+  --gm-toolbar-pressed-glow: #182F4E;
+  --gm-divider: #D6E1EE;
+  --gm-focus: #3B82F6;
+  --gm-attention: #C89947;
+  --gm-transition: 180ms cubic-bezier(.2,.7,.2,1);
+}
+
+/* ── Hero banner ──
+   The art is a background, never a control: every interactive thing on it
+   is live HTML so it stays reachable, focusable and legible at any size.
+   The scrim is bottom-weighted rather than left-weighted so the locked
+   handwritten slogan survives while the live title below it stays readable. */
+.gmc-hero { position: relative; flex-shrink: 0; height: 126px; background: var(--navy); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
+.gmc-hero-art { position: absolute; inset: 0; background-image: url('gm-hero-banner.webp'); background-size: auto 165%; background-position: 78% 50%; }
+.gmc-hero-art::after { content: ''; position: absolute; inset: 0; background:
+    linear-gradient(180deg, rgba(8,19,29,.30) 0%, rgba(8,19,29,.06) 34%, rgba(8,19,29,.58) 76%, rgba(8,19,29,.90) 100%),
+    linear-gradient(90deg, rgba(8,19,29,.72) 0%, rgba(8,19,29,.34) 30%, rgba(8,19,29,.04) 52%, rgba(8,19,29,0) 64%); }
+.gmc-hero-top { position: relative; display: flex; align-items: flex-start; justify-content: space-between; padding: 10px 12px 0; }
+.gmc-hero-actions { display: flex; gap: 8px; }
+.gmc-back, .gmc-round { display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,.22); background: rgba(8,19,29,.46); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); color: var(--white); cursor: pointer; transition: background var(--gm-transition), transform var(--gm-transition); }
+/* 44px hit area on a 34px visual, per the mobile minimum-target rule. */
+.gmc-back { height: 34px; padding: 0 13px; border-radius: 17px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase; gap: 4px; }
+.gmc-round { width: 34px; height: 34px; border-radius: 50%; }
+.gmc-round svg { width: 17px; height: 17px; }
+.gmc-back::after, .gmc-round::after { content: ''; position: absolute; inset: -5px; }
+.gmc-back, .gmc-round { position: relative; }
+.gmc-back:active, .gmc-round:active { background: rgba(8,19,29,.74); transform: scale(.96); }
+.gmc-hero-id { position: relative; padding: 0 16px 13px; }
+.gmc-hero-title { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 25px; font-weight: 700; letter-spacing: 1.6px; color: var(--white); line-height: 1.05; text-shadow: 0 2px 10px rgba(8,19,29,.6); }
+.gmc-hero-status { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; color: rgba(245,247,248,.82); text-shadow: 0 1px 6px rgba(8,19,29,.7); }
+/* Steel, not green. Amber only when something is actually degraded. */
+.gmc-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #A9B3C7; flex-shrink: 0; }
+.gmc-hero-status[data-state="degraded"] .gmc-status-dot { background: var(--gm-attention); }
+.gmc-hero-status[data-state="offline"] .gmc-status-dot { background: #C75B56; }
+
+/* ── Context toolbar ──
+   Two independent things live here and must not be confused:
+     DATA STATE  — is this source actually available to the assistant.
+                   Healthy is the quiet default: no badge, no tick, no green.
+                   Only a degraded source draws attention.
+     INTERACTION — hover/press feedback on a tap. Navy pressed is ONLY this.
+                   It never means "loaded". */
+.gmc-toolbar-wrap { position: relative; flex-shrink: 0; padding: 10px 12px; background: var(--white); border-bottom: 1px solid var(--border); }
+/* The strip scrolls horizontally rather than wrapping (per the responsive
+   spec), but a clipped word with no edge treatment just looks broken. A
+   short fade at the right says "there is more" without adding a control. */
+.gmc-toolbar-wrap::after { content: ''; position: absolute; top: 11px; bottom: 11px; right: 13px; width: 26px; border-radius: 0 19px 19px 0; pointer-events: none; background: linear-gradient(90deg, rgba(214,225,238,0) 0%, #D6E1EE 78%); }
+.gmc-toolbar { display: flex; align-items: center; min-height: 40px; border-radius: 20px; padding: 0 4px; background: linear-gradient(180deg, var(--gm-toolbar-top), var(--gm-toolbar-bottom)); border: 1px solid rgba(107,127,153,.18); box-shadow: 0 4px 14px rgba(15,31,51,.07), inset 0 1px 0 rgba(255,255,255,.75); overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.gmc-toolbar::-webkit-scrollbar { display: none; }
+.gmc-tool { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; min-height: 40px; padding: 0 12px; border: 0; background: transparent; border-radius: 14px; cursor: pointer; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1.1px; text-transform: uppercase; color: #243956; transition: background var(--gm-transition), color var(--gm-transition), box-shadow var(--gm-transition); }
+.gmc-tool + .gmc-tool { box-shadow: inset 1px 0 0 var(--gm-divider); }
+.gmc-tool svg { width: 14px; height: 14px; flex-shrink: 0; }
+.gmc-tool:hover { background: rgba(255,255,255,.44); }
+.gmc-tool:active { color: #F7F9FC; background: var(--gm-toolbar-pressed); box-shadow: 0 5px 16px rgba(24,47,78,.28); }
+.gmc-tool:focus-visible { outline: 3px solid rgba(59,130,246,.52); outline-offset: -2px; }
+/* Degraded source: an amber dot and a spelled-out aria-label. Restrained,
+   and never a permanent success badge in the other direction. */
+.gmc-tool[data-state="degraded"] { color: #6B5626; }
+.gmc-tool-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gm-attention); flex-shrink: 0; }
+.gmc-tool[aria-busy="true"] .gmc-tool-dot { background: none; border: 1.5px solid rgba(36,57,86,.28); border-top-color: #243956; width: 10px; height: 10px; animation: gmcSpin .7s linear infinite; }
+@keyframes gmcSpin { to { transform: rotate(360deg); } }
+.gmc-meta { flex-shrink: 0; margin-left: auto; padding: 0 12px 0 14px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: .8px; color: var(--gm-toolbar-secondary); white-space: nowrap; }
+.gmc-meta[data-state="degraded"] { color: #8A7233; }
+
+/* ── Messages ── */
+.fc-msgs { flex: 1; overflow-y: auto; padding: 18px 16px 8px; display: flex; flex-direction: column; gap: 20px; background: var(--white); }
 .fc-msgs::-webkit-scrollbar { display: none; }
-.fc-input-wrap { display: flex; gap: 8px; align-items: flex-end; padding: 12px 18px; border-top: 1px solid var(--border); background: var(--white); flex-shrink: 0; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
-.fc-textarea { flex: 1; background: var(--off); border: 1px solid var(--border2); border-radius: 20px; padding: 10px 16px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 13px; color: var(--text); resize: none; outline: none; min-height: 44px; max-height: 160px; line-height: 1.45; transition: border-color .15s; }
-.fc-textarea::placeholder { color: var(--dim); }
-.fc-textarea:focus { border-color: var(--accent); }
-.fc-send { width: 44px; height: 44px; background: var(--navy); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity .15s; }
-.fc-send:active { opacity: .75; }
-.fc-send svg { width: 15px; height: 15px; fill: white; }
-.fc-msg { display: flex; flex-direction: column; gap: 4px; animation: fadeUp .25s ease; }
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.fc-who { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); display: flex; align-items: center; gap: 6px; }
-.fc-avatar { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; display: block; background: var(--navy); }
-.fc-msg.you .fc-who { justify-content: flex-end; }
-.fc-msg.you .fc-who { color: var(--accent); }
-.fc-bubble { padding: 11px 14px; border-radius: 10px; font-size: 13px; line-height: 1.65; max-width: 88%; }
-.fc-msg .fc-bubble { background: var(--off); border: 1px solid var(--border); color: var(--text); border-radius: 3px 10px 10px 10px; }
-.fc-msg.you { align-items: flex-end; }
-.fc-msg.you .fc-bubble { background: var(--navy); color: rgba(255,255,255,.9); border-radius: 10px 3px 10px 10px; }
-.fc-bubble strong { color: var(--accent); font-weight: 700; }
-.fc-note { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); margin-top: 6px; }
+.fc-msg { display: flex; flex-direction: column; gap: 5px; animation: fadeUp .25s ease; max-width: 86%; align-self: flex-start; }
+.fc-msg.you { align-self: flex-end; align-items: flex-end; }
+/* Same speaker again: tighten the gap and drop the repeated label. */
+.fc-msg.grp { margin-top: -11px; }
+.fc-msg.grp .fc-who { display: none; }
+.fc-who { display: flex; align-items: center; gap: 7px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
+.fc-msg.you .fc-who { justify-content: flex-end; color: #6B7F99; }
+.fc-time { font-size: 8px; letter-spacing: .6px; color: var(--gm-toolbar-secondary); text-transform: none; }
+.fc-avatar { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; display: block; background: var(--navy); }
+.fc-bubble { position: relative; border-radius: 16px; padding: 13px 16px; font-size: 13.5px; line-height: 1.5; box-shadow: 0 5px 14px rgba(15,31,51,.11); overflow: hidden; }
+/* Assistant: icy vertical gradient, thin left accent edge only. The edge
+   gradient is deliberately REVERSED — light at top, dark at bottom. */
+.fc-msg .fc-bubble { color: var(--gm-assistant-text); background: linear-gradient(180deg, var(--gm-assistant-fill-top) 0%, var(--gm-assistant-fill-bottom) 100%); border: 1px solid rgba(39,56,92,.08); }
+.fc-msg .fc-bubble::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; background: linear-gradient(180deg, var(--gm-assistant-edge-top) 0%, var(--gm-assistant-edge-bottom) 100%); }
+.fc-msg .fc-bubble > * { position: relative; }
+/* User: smooth solid-material gradient, no accent edge, no pattern. */
+.fc-msg.you .fc-bubble { color: #FFFFFF; background: linear-gradient(180deg, var(--gm-user-fill-top) 0%, var(--gm-user-fill-base) 48%, var(--gm-user-fill-bottom) 100%); border: 1px solid rgba(20,41,65,.18); }
+.fc-msg.you .fc-bubble::before { content: none; }
+.fc-bubble strong { font-weight: 700; color: #27385C; }
+.fc-msg.you .fc-bubble strong { color: #FFFFFF; }
+.fc-note { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: #7A879B; margin-top: 7px; letter-spacing: .3px; }
+.fc-msg.you .fc-note { color: rgba(255,255,255,.62); }
 .fc-verdict { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 9px 12px; background: var(--navy); border-radius: 8px; }
 .fc-vlbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 14px; letter-spacing: 2px; color: var(--white); }
 .fc-vsub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(255,255,255,.4); margin-left: auto; }
+
+/* ── Composer ── */
+.gmc-composer { flex-shrink: 0; display: flex; gap: 9px; align-items: flex-end; padding: 10px 14px; padding-bottom: max(10px, env(safe-area-inset-bottom)); background: var(--white); border-top: 1px solid var(--border); }
+.gmc-field { flex: 1; display: flex; align-items: flex-end; background: rgba(255,255,255,.92); border: 1px solid rgba(107,127,153,.30); border-radius: 22px; box-shadow: 0 6px 18px rgba(15,31,51,.08); transition: border-color var(--gm-transition), box-shadow var(--gm-transition); }
+.gmc-field:focus-within { border-color: rgba(31,58,95,.55); box-shadow: 0 6px 20px rgba(15,31,51,.13); }
+.fc-textarea { flex: 1; background: none; border: 0; outline: none; resize: none; padding: 12px 8px 12px 17px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 13.5px; line-height: 1.45; color: var(--gm-assistant-text); min-height: 44px; max-height: 160px; }
+.fc-textarea::placeholder { color: #8FA2B8; }
+.fc-send { width: 44px; height: 44px; flex-shrink: 0; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #2A476B 0%, var(--gm-toolbar-pressed) 55%, #182F4E 100%); box-shadow: 0 5px 14px rgba(24,47,78,.30); transition: transform var(--gm-transition), box-shadow var(--gm-transition); }
+.fc-send:active { transform: scale(.94); box-shadow: 0 3px 9px rgba(24,47,78,.34); }
+.fc-send svg { width: 16px; height: 16px; fill: #F7F9FC; }
+.gmc-tool:focus-visible, .gmc-round:focus-visible, .gmc-back:focus-visible, .fc-send:focus-visible { outline: 3px solid rgba(59,130,246,.55); outline-offset: 2px; }
+
+/* Short screens: compress the banner before touching body text, so the
+   first message is still visible on a small phone in landscape. */
+@media (max-height: 680px) { .gmc-hero { height: 102px; } .gmc-hero-title { font-size: 21px; } }
+@media (prefers-reduced-motion: reduce) {
+  .fc-msg { animation: none; }
+  .gmc-tool[aria-busy="true"] .gmc-tool-dot { animation-duration: 2s; }
+}
+.back-btn { display: flex; align-items: center; gap: 5px; background: none; border: none; cursor: pointer; color: rgba(255,255,255,.5); font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 0; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* ════════════════════════════
    ROSTER SCREEN
@@ -796,30 +899,29 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
      FULL CHAT SCREEN
 ═══════════════════════════════ -->
 <div class="screen" id="screen-chat">
-  <div class="fc-header">
-    <div class="fc-hrow">
-      <button class="back-btn" onclick="nav('home')">‹ &nbsp;Home</button>
-      <div><div class="fc-title">GM Assistant</div><div class="fc-meta">Claude Sonnet · Roster + News injected</div></div>
-      <div style="display:flex;gap:6px;flex-shrink:0">
-        <button onclick="openChatHistory()" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.5);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:4px 8px;cursor:pointer">History</button>
-        <button onclick="clearChat()" style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.5);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:4px 8px;cursor:pointer">New Chat</button>
+  <header class="gmc-hero">
+    <div class="gmc-hero-art" aria-hidden="true"></div>
+    <div class="gmc-hero-top">
+      <button class="gmc-back" onclick="nav('home')" aria-label="Back to home">‹ Home</button>
+      <div class="gmc-hero-actions">
+        <button class="gmc-round" onclick="openChatHistory()" aria-label="Recent conversations" title="Recent conversations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg></button>
+        <button class="gmc-round" onclick="clearChat()" aria-label="New chat" title="New chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
       </div>
     </div>
-  </div>
-  <div class="fc-ctx">
-    <span class="ctx-pill on">Roster ✓</span>
-    <span class="ctx-pill on">News ✓</span>
-    <span class="ctx-pill">Rivals</span>
-  </div>
-  <div class="fc-msgs" id="fc-msgs">
-    <div class="fc-msg">
-      <span class="fc-who">GM Assistant</span>
-      <div class="fc-bubble"><span id="chat-opening-msg">War room is live. <strong>Roster loaded</strong>, news feeds syncing. What are we working on?<div class="fc-note">// Roster live from Sleeper · All 12 rosters pulled from Sleeper</div></div>
+    <div class="gmc-hero-id">
+      <h1 class="gmc-hero-title">GM Assistant</h1>
+      <p class="gmc-hero-status" id="gmc-hero-status"><span class="gmc-status-dot"></span><span id="gmc-hero-status-text">Connecting…</span></p>
     </div>
+  </header>
+  <div class="gmc-toolbar-wrap">
+    <div class="gmc-toolbar" id="gmc-toolbar" role="toolbar" aria-label="Context sources"></div>
   </div>
-  <div class="fc-input-wrap">
-    <textarea class="fc-textarea" id="fc-input" placeholder="Ask anything — trade eval, waiver, roster audit..." rows="1" enterkeyhint="enter" onkeydown="handleKey(event)"></textarea>
-    <button class="fc-send" onclick="sendChat()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+  <div class="fc-msgs" id="fc-msgs" role="log" aria-live="polite" aria-label="Conversation"></div>
+  <div class="gmc-composer">
+    <div class="gmc-field">
+      <textarea class="fc-textarea" id="fc-input" placeholder="Message GM Assistant…" rows="1" enterkeyhint="enter" aria-label="Message GM Assistant" onkeydown="handleKey(event)"></textarea>
+    </div>
+    <button class="fc-send" onclick="sendChat()" aria-label="Send message"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
   </div>
 </div>
 
@@ -1414,9 +1516,11 @@ function updateHomeChatPreview() {
   if (!liveMyRoster || !liveMyRoster.length) return;
   var count = liveMyRoster.length;
   var names = liveMyRoster.slice(0,4).map(function(p){ return p.name.split(' ').pop(); }).join(', ');
+  // Starts a sentence, so it has to be capitalised — this read
+  // "...and the rest. news feeds syncing." until now.
   var newsPhrase = dataHealth.feeds.at
     ? newsFeedLabel().replace(/^News · /, 'News: ')
-    : 'news feeds syncing';
+    : 'News feeds syncing';
   var msg = 'War room is live. <strong>' + count + '-man roster loaded</strong> — ' + names + ' and the rest. ' + newsPhrase + '. What are we working on?';
 
   // Update home preview card
@@ -1549,6 +1653,7 @@ async function loadRotowireFeed(silent) {
     console.log('[Feeds] after dedup:', rotowireItems.length, 'items');
     renderNewsTray();
     renderFeedSourcesRow();
+    renderChatToolbar();
     renderLeagueTicker();
     if (typeof currentProspect !== 'undefined' && currentProspect) scFetchProspectNews(currentProspect);
   } catch(err) {
@@ -1944,6 +2049,7 @@ async function loadSleeperData() {
     lastSyncTime = Date.now();
     refreshLiveStatus();
     updateSyncTime();
+    refreshChatSurface();
 
     // Rebuild app data from live Sleeper data
     buildMyRoster();
@@ -2262,7 +2368,11 @@ var sleeperLoadPromise = null;
 
 function loadSleeperDataOnce() {
   if (sleeperLoadPromise) return sleeperLoadPromise;
-  sleeperLoadPromise = loadSleeperData().finally(function() { sleeperLoadPromise = null; });
+  sleeperLoadPromise = loadSleeperData().finally(function() {
+    sleeperLoadPromise = null;
+    refreshChatSurface();
+  });
+  refreshChatSurface();  // paint the syncing state immediately
   return sleeperLoadPromise;
 }
 
@@ -2296,7 +2406,7 @@ window.addEventListener('focus', refreshIfStale);
 
 // The age on screen has to keep moving even when nothing refetches, or
 // "2m ago" sits there reading "2m ago" an hour later.
-setInterval(function() { updateSyncTime(); refreshLiveStatus(); }, 60000);
+setInterval(function() { updateSyncTime(); refreshLiveStatus(); refreshChatSurface(); }, 60000);
 
 // ── League Ticker — real trade/transaction items from the Rotowire feed,
 // same detection rule as the News screen's "Trans" filter. ──
@@ -2490,7 +2600,7 @@ function nav(target) {
   currentScreen = target;
   // Opening the chat screen is the earliest reliable signal that a message
   // is coming — wake Render while the user is still typing it.
-  if (target === 'chat') warmReportCards();
+  if (target === 'chat') { warmReportCards(); refreshChatSurface(); }
   if (target === 'settings') renderSettings();
   if (target === 'intel') renderIntel();
   if (target === 'rivals') renderRivalsList();
@@ -2874,7 +2984,7 @@ let chatHistory = [];
 // ─────────────────────────────────
 var CHAT_SESSIONS_KEY = 'gmc_chat_sessions';
 var CHAT_ACTIVE_KEY = 'gmc_active_chat_id';
-var CHAT_OPENING_HTML = '<div class="fc-msg"><span class="fc-who"><img class="fc-avatar" src="gm-avatar.webp" alt="" width="30" height="30" decoding="async">GM Assistant</span><div class="fc-bubble"><span id="chat-opening-msg">War room is live. <strong>Roster loaded</strong>, news feeds syncing. What are we working on?<div class="fc-note">// Roster live from Sleeper · All 12 rosters pulled from Sleeper</div></span></div></div>';
+var CHAT_OPENING_HTML = '<div class="fc-msg" data-role="ai"><span class="fc-who"><img class="fc-avatar" src="gm-avatar.webp" alt="" width="26" height="26" decoding="async">GM Assistant</span><div class="fc-bubble"><span id="chat-opening-msg">War room is live. <strong>Roster loaded</strong>, news feeds syncing. What are we working on?<div class="fc-note">// Roster live from Sleeper · All 12 rosters pulled from Sleeper</div></span></div></div>';
 var chatSessions = [];
 var activeChatId = null;
 
@@ -2961,6 +3071,104 @@ function chatTouchActiveSession(userText) {
   if (s.title === 'New Chat' && userText) s.title = chatAutoTitle(userText);
   s.updatedAt = Date.now();
   chatSaveSessions();
+}
+
+// ── Context toolbar ──
+//
+// Two things live in this strip and they are deliberately kept apart:
+//
+//   DATA STATE  — whether Roster / News / Rivals context is actually
+//                 available to the assistant. Healthy is the QUIET default:
+//                 no tick, no badge, no green. Only a degraded source draws
+//                 attention, with an amber dot and a spelled-out label.
+//   INTERACTION — hover and press feedback when the user taps an item. The
+//                 navy pressed state means "you are pressing this" and
+//                 nothing else. It never implies the data is loaded.
+//
+// The old pills conflated the two: a green tick was both "loaded" and the
+// only styling the element had. Removing green without replacing it with
+// another permanent success badge is the whole point.
+var CHAT_TOOLS_UI = [
+  { key: 'roster', label: 'Roster', screen: 'roster',
+    icon: '<ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5"/><path d="M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',
+    ready: function() { return !!(liveMyRoster && liveMyRoster.length); },
+    missing: 'roster not loaded' },
+  { key: 'news', label: 'News', screen: 'news',
+    icon: '<path d="M4 5h11a1 1 0 011 1v13H5a1 1 0 01-1-1z"/><path d="M16 9h3a1 1 0 011 1v8a1 1 0 01-1 1h-3"/><path d="M7 9h5M7 12h5M7 15h3"/>',
+    ready: function() { return !!(window.rotowireItems && rotowireItems.length); },
+    missing: 'no news items loaded' },
+  { key: 'rivals', label: 'Rivals', screen: 'rivals',
+    icon: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/>',
+    ready: function() { return !!(window.rivalTeams && rivalTeams.length); },
+    missing: 'rival rosters not loaded' }
+];
+
+function chatToolbarMeta() {
+  if (!lastSyncTime) return { text: 'Not synced yet', degraded: true };
+  var failed = dataHealth.sleeper.failed;
+  // An unqualified "Updated 2m ago" over a partial pull is the exact lie
+  // this toolbar is supposed to stop telling.
+  var age = (Date.now() - lastSyncTime) < 60000
+    ? 'Updated just now'
+    : 'Updated ' + getTimeAgo(lastSyncTime) + ' ago';
+  if (failed.length) return { text: age + ' · no ' + failed.join(', '), degraded: true };
+  return { text: age, degraded: false };
+}
+
+function renderChatToolbar() {
+  var bar = document.getElementById('gmc-toolbar');
+  if (!bar) return;
+  var syncing = !!sleeperLoadPromise;
+
+  var html = CHAT_TOOLS_UI.map(function(t) {
+    var ok = false;
+    try { ok = t.ready(); } catch (e) { ok = false; }
+    var state = syncing ? 'loading' : (ok ? 'ready' : 'degraded');
+    // The accessible name carries the state, so the amber dot is never the
+    // only way to know a source is missing.
+    var aria = t.label + (state === 'loading' ? ' — syncing'
+                        : state === 'degraded' ? ' — ' + t.missing : '');
+    var dot = (state === 'ready') ? '' : '<span class="gmc-tool-dot"></span>';
+    return '<button type="button" class="gmc-tool" data-state="' + state + '"'
+      + (state === 'loading' ? ' aria-busy="true"' : '')
+      + ' aria-label="' + escapeHtml(aria) + '"'
+      + ' onclick="nav(\'' + t.screen + '\')">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + t.icon + '</svg>'
+      + '<span>' + escapeHtml(t.label) + '</span>' + dot + '</button>';
+  }).join('');
+
+  var meta = chatToolbarMeta();
+  html += '<span class="gmc-meta" data-state="' + (meta.degraded ? 'degraded' : 'ok') + '">'
+       + escapeHtml(meta.text) + '</span>';
+  bar.innerHTML = html;
+}
+
+// The hero's status line reports what the app actually is, not a decorative
+// "Online". The model name is the one the chat call sites really send.
+function renderChatHeroStatus() {
+  var wrap = document.getElementById('gmc-hero-status');
+  var txt = document.getElementById('gmc-hero-status-text');
+  if (!wrap || !txt) return;
+  var state = 'ok', label;
+  if (!sleeperLoaded) {
+    state = 'offline';
+    label = 'Connecting · Claude Sonnet 5';
+  } else if (dataHealth.sleeper.failed.length) {
+    state = 'degraded';
+    label = 'Partial data · Claude Sonnet 5';
+  } else if (dataAgeMs() > STALE_AFTER_MS) {
+    state = 'degraded';
+    label = 'Data ' + getTimeAgo(lastSyncTime) + ' old · Claude Sonnet 5';
+  } else {
+    label = 'Online · Claude Sonnet 5';
+  }
+  wrap.setAttribute('data-state', state);
+  txt.textContent = label;
+}
+
+function refreshChatSurface() {
+  renderChatToolbar();
+  renderChatHeroStatus();
 }
 
 // Repaint #fc-msgs from chatHistory (used on load and session switch —
@@ -3102,7 +3310,7 @@ async function sendChat() {
   if (!text) return;
   input.value = '';
   input.style.height = 'auto';
-  addFCMsg('you', text);
+  addFCMsg('you', text, { time: fcClock() });
   chatHistory.push({ role: 'user', content: text });
   chatTouchActiveSession(text);
   const typingEl = addTyping();
@@ -3147,7 +3355,7 @@ async function sendChat() {
     const data = await res.json();
     const reply = replyText(data) || replyError(data);
     typingEl.remove();
-    addFCMsg('ai', reply);
+    addFCMsg('ai', reply, { time: fcClock() });
     chatHistory.push({ role: 'assistant', content: reply });
     chatTouchActiveSession();
   } catch(e) {
@@ -3384,13 +3592,39 @@ function rosterNewsLines() {
   });
 }
 
-function addFCMsg(role, text) {
+// Clock time for a message, shown only on messages created in this session.
+//
+// There is deliberately no timestamp on replayed history. chatHistory is
+// handed to the Anthropic Messages API verbatim, and that API rejects a
+// message object carrying keys other than role and content — so a `ts` field
+// would 400 the next request. Storing times in a parallel structure would
+// mean changing what the session persists, which BEHAVIOR_SPEC puts out of
+// scope for a visual pass. A time that is right or absent beats one that is
+// invented at render time from when the page happened to load.
+function fcClock() {
+  try {
+    return new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  } catch (e) { return ''; }
+}
+
+function addFCMsg(role, text, opts) {
   const msgs = document.getElementById('fc-msgs');
   const div = document.createElement('div');
   div.className = 'fc-msg' + (role === 'you' ? ' you' : '');
+  div.dataset.role = role;
+
+  // Consecutive turns from the same speaker drop the repeated avatar and
+  // label and sit closer together, so an exchange reads as a conversation
+  // rather than a stack of identically-headed cards.
+  const prev = msgs.lastElementChild;
+  if (prev && prev.classList.contains('fc-msg') && prev.dataset.role === role) {
+    div.classList.add('grp');
+  }
+
+  const stamp = (opts && opts.time) ? '<span class="fc-time">' + escapeHtml(opts.time) + '</span>' : '';
   const who = role === 'you'
-    ? '<span class="fc-who">You</span>'
-    : '<span class="fc-who"><img class="fc-avatar" src="gm-avatar.webp" alt="" width="30" height="30" decoding="async">GM Assistant</span>';
+    ? `<span class="fc-who">You${stamp}</span>`
+    : `<span class="fc-who"><img class="fc-avatar" src="gm-avatar.webp" alt="" width="26" height="26" decoding="async">GM Assistant${stamp}</span>`;
   div.innerHTML = `${who}<div class="fc-bubble">${safeRichText(text)}</div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
@@ -3401,7 +3635,10 @@ function addTyping() {
   const msgs = document.getElementById('fc-msgs');
   const div = document.createElement('div');
   div.className = 'fc-msg';
-  div.innerHTML = `<span class="fc-who">GM Assistant</span><div class="fc-bubble" style="background:var(--off);border:1px solid var(--border);padding:14px 16px"><div style="display:flex;gap:4px;align-items:center"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div></div>`;
+  div.dataset.role = 'ai';
+  div.setAttribute('aria-busy', 'true');
+  div.setAttribute('aria-label', 'GM Assistant is replying');
+  div.innerHTML = `<span class="fc-who"><img class="fc-avatar" src="gm-avatar.webp" alt="" width="26" height="26" decoding="async">GM Assistant</span><div class="fc-bubble" style="padding:15px 17px"><div style="display:flex;gap:4px;align-items:center"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div></div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
   return div;
