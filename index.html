@@ -247,8 +247,10 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .fc-send svg { width: 15px; height: 15px; fill: white; }
 .fc-msg { display: flex; flex-direction: column; gap: 4px; animation: fadeUp .25s ease; }
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.fc-who { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
-.fc-msg.you .fc-who { color: var(--accent); text-align: right; }
+.fc-who { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); display: flex; align-items: center; gap: 6px; }
+.fc-avatar { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; display: block; background: var(--navy); }
+.fc-msg.you .fc-who { justify-content: flex-end; }
+.fc-msg.you .fc-who { color: var(--accent); }
 .fc-bubble { padding: 11px 14px; border-radius: 10px; font-size: 13px; line-height: 1.65; max-width: 88%; }
 .fc-msg .fc-bubble { background: var(--off); border: 1px solid var(--border); color: var(--text); border-radius: 3px 10px 10px 10px; }
 .fc-msg.you { align-items: flex-end; }
@@ -2655,7 +2657,7 @@ let chatHistory = [];
 // ─────────────────────────────────
 var CHAT_SESSIONS_KEY = 'gmc_chat_sessions';
 var CHAT_ACTIVE_KEY = 'gmc_active_chat_id';
-var CHAT_OPENING_HTML = '<div class="fc-msg"><span class="fc-who">GM Assistant</span><div class="fc-bubble"><span id="chat-opening-msg">War room is live. <strong>Roster loaded</strong>, Rotowire synced. What are we working on?<div class="fc-note">// Roster live from Sleeper · All 12 rosters pulled from Sleeper</div></span></div></div>';
+var CHAT_OPENING_HTML = '<div class="fc-msg"><span class="fc-who"><img class="fc-avatar" src="gm-avatar.webp" alt="" width="30" height="30" decoding="async">GM Assistant</span><div class="fc-bubble"><span id="chat-opening-msg">War room is live. <strong>Roster loaded</strong>, Rotowire synced. What are we working on?<div class="fc-note">// Roster live from Sleeper · All 12 rosters pulled from Sleeper</div></span></div></div>';
 var chatSessions = [];
 var activeChatId = null;
 
@@ -3128,7 +3130,10 @@ function addFCMsg(role, text) {
   const msgs = document.getElementById('fc-msgs');
   const div = document.createElement('div');
   div.className = 'fc-msg' + (role === 'you' ? ' you' : '');
-  div.innerHTML = `<span class="fc-who">${role==='you'?'You':'GM Assistant'}</span><div class="fc-bubble">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`;
+  const who = role === 'you'
+    ? '<span class="fc-who">You</span>'
+    : '<span class="fc-who"><img class="fc-avatar" src="gm-avatar.webp" alt="" width="30" height="30" decoding="async">GM Assistant</span>';
+  div.innerHTML = `${who}<div class="fc-bubble">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
   return div;
