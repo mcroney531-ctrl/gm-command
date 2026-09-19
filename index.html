@@ -124,22 +124,33 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .cc-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--navy); border-bottom: 1px solid var(--navy-line); }
 .cc-title { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 15px; letter-spacing: 1.5px; color: var(--white); }
 .cc-meta { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(244,247,250,.35); }
-.cc-ctx { display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-bottom: 1px solid var(--border); background: var(--white); }
-.ctx-pill { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: .8px; text-transform: uppercase; padding: 2px 8px; border-radius: 5px; border: 1px solid var(--border); color: var(--dim); background: var(--off); }
-.ctx-pill.on { background: rgba(70,168,116,.09); border-color: rgba(70,168,116,.32); color: var(--green); }
+.cc-ctx { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #E3EBF5, #D6E1EE); }
+/* Same rule as the real toolbar: healthy is quiet. No tick, no green, no
+   permanent success badge — only a degraded source says anything. */
+.cc-src { display: inline-flex; align-items: center; gap: 5px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: #243956; }
+.cc-src[data-state="degraded"] { color: #6B5626; }
+.cc-src-dot { width: 5px; height: 5px; border-radius: 50%; background: #C89947; flex-shrink: 0; }
+.cc-src-sep { width: 1px; height: 11px; background: #C3D0E0; }
 .cc-msgs { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--border); background: var(--surface); }
-.msg { display: flex; flex-direction: column; gap: 3px; }
-.msg-who { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
-.msg.you .msg-who { color: var(--accent); text-align: right; }
-.bubble { padding: 10px 13px; border-radius: 8px; font-size: 12px; line-height: 1.6; max-width: 92%; }
-.msg-ai .bubble { background: var(--white); border: 1px solid var(--border); color: var(--text); }
+.msg { display: flex; flex-direction: column; gap: 4px; }
+.msg-who { display: flex; align-items: center; gap: 6px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); }
+.msg.you .msg-who { color: #6B7F99; justify-content: flex-end; }
+.msg-avatar { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; display: block; background: var(--navy); }
+/* The locked bubble system, scaled down for the preview card. Same icy fill
+   and same reversed accent edge (light top -> dark bottom) as the real chat,
+   so the preview and the thing it previews are visibly one product. */
+.bubble { position: relative; overflow: hidden; padding: 11px 14px; border-radius: 14px; font-size: 12px; line-height: 1.5; max-width: 92%; box-shadow: 0 4px 12px rgba(15,31,51,.10); }
+.msg-ai .bubble { background: linear-gradient(180deg, #EEF0F4 0%, #DFE3EA 100%); border: 1px solid rgba(39,56,92,.08); color: #172033; }
+.msg-ai .bubble::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 3px; background: linear-gradient(180deg, #A9B3C7 0%, #27385C 100%); }
+.msg-ai .bubble > * { position: relative; }
 .msg.you { align-items: flex-end; }
-.msg.you .bubble { background: var(--navy); color: rgba(244,247,250,.9); }
-.bubble strong { color: var(--accent); font-weight: 700; }
+.msg.you .bubble { background: linear-gradient(180deg, #5F7A98 0%, #496380 48%, #3A516B 100%); border: 1px solid rgba(20,41,65,.18); color: #FFFFFF; }
+.bubble strong { color: #27385C; font-weight: 700; }
+.msg.you .bubble strong { color: #FFFFFF; }
 .verdict { display: flex; align-items: center; gap: 8px; margin-top: 7px; padding: 8px 11px; background: var(--navy); border-radius: 6px; border-left: 2px solid var(--ice); }
 .verdict-lbl { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 13px; letter-spacing: 2px; color: var(--white); }
 .verdict-sub { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: rgba(244,247,250,.4); margin-left: auto; }
-.src-note { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: var(--dim); margin-top: 5px; }
+.src-note { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; color: #7A879B; margin-top: 6px; letter-spacing: .3px; }
 .typing { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
 .tdot { width: 5px; height: 5px; border-radius: 50%; background: var(--border2); animation: tdot 1.2s ease infinite; }
 .tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
@@ -297,6 +308,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
    spec), but a clipped word with no edge treatment just looks broken. A
    short fade at the right says "there is more" without adding a control. */
 .gmc-toolbar-wrap::after { content: ''; position: absolute; top: 11px; bottom: 11px; right: 13px; width: 26px; border-radius: 0 19px 19px 0; pointer-events: none; background: linear-gradient(90deg, rgba(214,225,238,0) 0%, #D6E1EE 78%); }
+.gmc-tools { display: flex; align-items: center; flex-shrink: 0; }
 .gmc-toolbar { display: flex; align-items: center; min-height: 40px; border-radius: 20px; padding: 0 4px; background: linear-gradient(180deg, var(--gm-toolbar-top), var(--gm-toolbar-bottom)); border: 1px solid rgba(107,127,153,.18); box-shadow: 0 4px 14px rgba(15,31,51,.07), inset 0 1px 0 rgba(255,255,255,.75); overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .gmc-toolbar::-webkit-scrollbar { display: none; }
 .gmc-tool { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; min-height: 40px; padding: 0 12px; border: 0; background: transparent; border-radius: 14px; cursor: pointer; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: 1.1px; text-transform: uppercase; color: #243956; transition: background var(--gm-transition), color var(--gm-transition), box-shadow var(--gm-transition); }
@@ -311,7 +323,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .gmc-tool-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gm-attention); flex-shrink: 0; }
 .gmc-tool[aria-busy="true"] .gmc-tool-dot { background: none; border: 1.5px solid rgba(36,57,86,.28); border-top-color: #243956; width: 10px; height: 10px; animation: gmcSpin .7s linear infinite; }
 @keyframes gmcSpin { to { transform: rotate(360deg); } }
-.gmc-meta { flex-shrink: 0; margin-left: auto; padding: 0 12px 0 14px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: .8px; color: var(--gm-toolbar-secondary); white-space: nowrap; }
+.gmc-meta { flex-shrink: 0; margin-left: auto; padding: 0 10px 0 11px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 8px; letter-spacing: .5px; color: var(--gm-toolbar-secondary); white-space: nowrap; }
 .gmc-meta[data-state="degraded"] { color: #8A7233; }
 
 /* ── Messages ── */
@@ -840,14 +852,10 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     <div>
       <div class="sec-head"><span class="sec-title">GM Assistant</span><button class="sec-link" onclick="nav('chat')">Full Chat ›</button></div>
       <div class="chat-card">
-        <div class="cc-header"><span class="cc-title">GM Assistant</span><span class="cc-meta">Claude Sonnet · Roster injected · News synced</span></div>
-        <div class="cc-ctx">
-          <span class="ctx-pill on">Roster ✓</span>
-          <span class="ctx-pill on">News ✓</span>
-          <span class="ctx-pill">Rivals</span>
-        </div>
+        <div class="cc-header"><span class="cc-title">GM Assistant</span><span class="cc-meta" id="cc-meta">Claude Sonnet 5</span></div>
+        <div class="cc-ctx" id="cc-ctx"></div>
         <div class="cc-msgs">
-          <div class="msg msg-ai"><span class="msg-who">GM Assistant</span><div class="bubble"><span id="home-chat-preview-msg">War room is live. <strong>Roster loaded</strong>, news feeds syncing. What are we working on?<div class="src-note">// Roster live from Sleeper · All 12 rosters pulled</div></span></div></div>
+          <div class="msg msg-ai"><span class="msg-who"><img class="msg-avatar" src="gm-avatar.webp" alt="" width="20" height="20" decoding="async">GM Assistant</span><div class="bubble"><span id="home-chat-preview-msg">War room is live. <strong>Roster loaded</strong>, news feeds syncing. What are we working on?<div class="src-note">// Roster live from Sleeper · All 12 rosters pulled</div></span></div></div>
         </div>
         <div class="cc-input">
           <input type="text" placeholder="Ask anything..." onclick="nav('chat')">
@@ -914,7 +922,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     </div>
   </header>
   <div class="gmc-toolbar-wrap">
-    <div class="gmc-toolbar" id="gmc-toolbar" role="toolbar" aria-label="Context sources"></div>
+    <div class="gmc-toolbar"><nav class="gmc-tools" id="gmc-toolbar" aria-label="Context sources"></nav><span class="gmc-meta" id="gmc-meta"></span></div>
   </div>
   <div class="fc-msgs" id="fc-msgs" role="log" aria-live="polite" aria-label="Conversation"></div>
   <div class="gmc-composer">
@@ -1484,8 +1492,18 @@ function setLiveStatus(text, color) {
 // that records which sources actually answered on the last pull, so the UI
 // can say "5 of 6 feeds" instead of presenting a partial pull as a whole one.
 var dataHealth = {
-  sleeper: { ok: [], failed: [], at: 0 },
+  // `failed`/`ok` hold display labels; `failedKeys` holds the same failures
+  // as stable identifiers, because anything deciding whether a feature is
+  // usable has to compare on keys, not on prose meant for a status line.
+  sleeper: { ok: [], failed: [], failedKeys: [], at: 0 },
   feeds:   { ok: [], failed: [], at: 0 }
+};
+
+var SLEEPER_SOURCE_LABELS = {
+  user: 'your Sleeper account',
+  rosters: 'league rosters',
+  users: 'league managers',
+  players: 'the NFL player list'
 };
 
 // How the news feeds are described wherever a count is shown. Six feeds are
@@ -1653,7 +1671,11 @@ async function loadRotowireFeed(silent) {
     console.log('[Feeds] after dedup:', rotowireItems.length, 'items');
     renderNewsTray();
     renderFeedSourcesRow();
-    renderChatToolbar();
+    refreshChatSurface();
+    // The preview blurb names the feed state, so it has to be rebuilt when
+    // the feeds land. It wasn't, so the card sat on "News feeds syncing"
+    // with a full tray of items behind it.
+    updateHomeChatPreview();
     renderLeagueTicker();
     if (typeof currentProspect !== 'undefined' && currentProspect) scFetchProspectNews(currentProspect);
   } catch(err) {
@@ -1973,16 +1995,16 @@ async function loadSleeperData() {
     // "null", which parses without complaint and became an empty league.
     // Each source now has to come back and look like itself.
     var sources = [
-      { key: 'user', label: 'your Sleeper account',
+      { key: 'user', label: SLEEPER_SOURCE_LABELS.user,
         load: function() { return sleeperFetch('https://api.sleeper.app/v1/user/' + MY_USER_ID); },
         valid: function(v) { return !!(v && v.user_id); } },
-      { key: 'rosters', label: 'league rosters',
+      { key: 'rosters', label: SLEEPER_SOURCE_LABELS.rosters,
         load: function() { return sleeperFetch('https://api.sleeper.app/v1/league/' + LEAGUE_ID + '/rosters'); },
         valid: function(v) { return Array.isArray(v) && v.length > 0; } },
-      { key: 'users', label: 'league managers',
+      { key: 'users', label: SLEEPER_SOURCE_LABELS.users,
         load: function() { return sleeperFetch('https://api.sleeper.app/v1/league/' + LEAGUE_ID + '/users'); },
         valid: function(v) { return Array.isArray(v) && v.length > 0; } },
-      { key: 'players', label: 'the NFL player list',
+      { key: 'players', label: SLEEPER_SOURCE_LABELS.players,
         load: function() { return cachedFresh ? Promise.resolve(cached.players) : sleeperFetch('https://api.sleeper.app/v1/players/nfl'); },
         // A truncated or error payload can still be an object. The real
         // dictionary is ~11,000 entries; anything under a thousand is not it.
@@ -1990,7 +2012,7 @@ async function loadSleeperData() {
     ];
 
     var settled = await Promise.allSettled(sources.map(function(src) { return src.load(); }));
-    var got = {}, okNames = [], failedNames = [];
+    var got = {}, okNames = [], failedNames = [], failedKeys = [];
     settled.forEach(function(r, i) {
       var src = sources[i];
       if (r.status === 'fulfilled' && src.valid(r.value)) {
@@ -1998,11 +2020,12 @@ async function loadSleeperData() {
         okNames.push(src.label);
       } else {
         failedNames.push(src.label);
+        failedKeys.push(src.key);
         console.warn('[Sleeper] ' + src.key + ' unusable:',
           r.status === 'rejected' ? r.reason : 'failed validation');
       }
     });
-    dataHealth.sleeper = { ok: okNames, failed: failedNames, at: Date.now() };
+    dataHealth.sleeper = { ok: okNames, failed: failedNames, failedKeys: failedKeys, at: Date.now() };
 
     // No player dictionary, current or cached, means nothing can be named:
     // buildMyRoster would render a column of raw player_ids as if it were a
@@ -2472,15 +2495,9 @@ function updateSnapCard() {
   // Update rivals meta bar record
   var rivRecEl = document.getElementById('rivals-my-record');
   if (rivRecEl) rivRecEl.textContent = record;
-  // Mark Rivals context pill as loaded
-  if (rivalTeams.length > 0) {
-    document.querySelectorAll('.ctx-pill').forEach(function(p) {
-      if (p.textContent.trim() === 'Rivals') {
-        p.textContent = 'Rivals ✓';
-        p.classList.add('on');
-      }
-    });
-  }
+  // The Home card's context strip is rendered from dataHealth, not poked
+  // at by whoever happens to finish loading.
+  renderHomeCtxStrip();
 }
 
 function pcSetText(id, val) {
@@ -3090,29 +3107,103 @@ function chatTouchActiveSession(userText) {
 // another permanent success badge is the whole point.
 var CHAT_TOOLS_UI = [
   { key: 'roster', label: 'Roster', screen: 'roster',
-    icon: '<ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5"/><path d="M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',
-    ready: function() { return !!(liveMyRoster && liveMyRoster.length); },
-    missing: 'roster not loaded' },
+    icon: '<ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5"/><path d="M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>' },
   { key: 'news', label: 'News', screen: 'news',
-    icon: '<path d="M4 5h11a1 1 0 011 1v13H5a1 1 0 01-1-1z"/><path d="M16 9h3a1 1 0 011 1v8a1 1 0 01-1 1h-3"/><path d="M7 9h5M7 12h5M7 15h3"/>',
-    ready: function() { return !!(window.rotowireItems && rotowireItems.length); },
-    missing: 'no news items loaded' },
+    icon: '<path d="M4 5h11a1 1 0 011 1v13H5a1 1 0 01-1-1z"/><path d="M16 9h3a1 1 0 011 1v8a1 1 0 01-1 1h-3"/><path d="M7 9h5M7 12h5M7 15h3"/>' },
   { key: 'rivals', label: 'Rivals', screen: 'rivals',
-    icon: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/>',
-    ready: function() { return !!(window.rivalTeams && rivalTeams.length); },
-    missing: 'rival rosters not loaded' }
+    icon: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="8.8" r="2.6"/><path d="M15.7 14.3c2.9.4 4.8 2.5 4.8 5.7"/>' }
 ];
+
+// Which Sleeper sources each context item actually depends on. Roster and
+// Rivals both die without the player dictionary; Rivals additionally needs
+// the manager list to have names to show.
+var CHAT_TOOL_NEEDS = {
+  roster: ['rosters', 'players'],
+  rivals: ['rosters', 'users', 'players']
+};
+
+// The health of one context source, read off the real dataHealth objects.
+//
+// Two ways a source can be degraded, and the second is the one that was
+// being missed: it can be empty, or it can be PARTIAL — holding data while
+// some of what feeds it came back dark. News was reported healthy on
+// rotowireItems.length alone, so two of six feeds answering looked identical
+// to six of six. Roster and Rivals had the same hole from the other
+// direction: Batch 1C deliberately keeps the last good data on screen when a
+// refresh fails, so "I have rows" stopped meaning "my last pull worked".
+function chatSourceHealth(key) {
+  if (key === 'news') {
+    var f = dataHealth.feeds;
+    var total = f.ok.length + f.failed.length;
+    if (!window.rotowireItems || !rotowireItems.length) {
+      return { state: 'degraded', note: 'no news items loaded' };
+    }
+    if (total && f.failed.length) {
+      return { state: 'degraded', note: f.ok.length + ' of ' + total + ' feeds reporting' };
+    }
+    return { state: 'ready', note: '' };
+  }
+
+  var failedKeys = dataHealth.sleeper.failedKeys || [];
+  var broken = (CHAT_TOOL_NEEDS[key] || []).filter(function(k) { return failedKeys.indexOf(k) >= 0; });
+  if (broken.length) {
+    return {
+      state: 'degraded',
+      note: 'last refresh failed: ' + broken.map(function(k) { return SLEEPER_SOURCE_LABELS[k]; }).join(', ')
+    };
+  }
+  var rows = key === 'roster'
+    ? (window.liveMyRoster && liveMyRoster.length)
+    : (window.rivalTeams && rivalTeams.length);
+  if (!rows) {
+    return { state: 'degraded', note: key === 'roster' ? 'roster not loaded' : 'rival rosters not loaded' };
+  }
+  return { state: 'ready', note: '' };
+}
+
+// Everything currently degraded, in the words the user should see. One list,
+// read by the toolbar meta and the hero status, so the two cannot disagree.
+function chatHealthProblems() {
+  var problems = (dataHealth.sleeper.failed || []).map(function(l) { return 'no ' + l; });
+  var f = dataHealth.feeds;
+  var total = f.ok.length + f.failed.length;
+  if (total && f.failed.length) problems.push(f.ok.length + '/' + total + ' feeds');
+  return problems;
+}
 
 function chatToolbarMeta() {
   if (!lastSyncTime) return { text: 'Not synced yet', degraded: true };
-  var failed = dataHealth.sleeper.failed;
   // An unqualified "Updated 2m ago" over a partial pull is the exact lie
-  // this toolbar is supposed to stop telling.
+  // this toolbar exists to stop telling — and a partial NEWS pull counts,
+  // not just a partial Sleeper one.
   var age = (Date.now() - lastSyncTime) < 60000
     ? 'Updated just now'
     : 'Updated ' + getTimeAgo(lastSyncTime) + ' ago';
-  if (failed.length) return { text: age + ' · no ' + failed.join(', '), degraded: true };
+  var problems = chatHealthProblems();
+  if (problems.length) return { text: age + ' · ' + problems.join(' · '), degraded: true };
   return { text: age, degraded: false };
+}
+
+// The Home preview's context strip. Same health source and same quiet-when-
+// healthy rule as the chat toolbar; it is a preview, so it reports rather
+// than navigates.
+function renderHomeCtxStrip() {
+  var el = document.getElementById('cc-ctx');
+  if (!el) return;
+  el.innerHTML = CHAT_TOOLS_UI.map(function(t) {
+    var h;
+    try { h = chatSourceHealth(t.key); } catch (e) { h = { state: 'degraded', note: 'state unknown' }; }
+    var aria = t.label + (h.state === 'degraded' ? ' — ' + h.note : '');
+    return '<span class="cc-src" data-state="' + h.state + '" title="' + escapeHtml(aria)
+      + '" aria-label="' + escapeHtml(aria) + '">' + escapeHtml(t.label)
+      + (h.state === 'degraded' ? '<span class="cc-src-dot"></span>' : '') + '</span>';
+  }).join('<span class="cc-src-sep"></span>');
+
+  var meta = document.getElementById('cc-meta');
+  if (meta) {
+    var problems = chatHealthProblems();
+    meta.textContent = problems.length ? 'Claude Sonnet 5 · partial data' : 'Claude Sonnet 5';
+  }
 }
 
 function renderChatToolbar() {
@@ -3121,13 +3212,13 @@ function renderChatToolbar() {
   var syncing = !!sleeperLoadPromise;
 
   var html = CHAT_TOOLS_UI.map(function(t) {
-    var ok = false;
-    try { ok = t.ready(); } catch (e) { ok = false; }
-    var state = syncing ? 'loading' : (ok ? 'ready' : 'degraded');
+    var h;
+    try { h = chatSourceHealth(t.key); } catch (e) { h = { state: 'degraded', note: 'state unknown' }; }
+    var state = syncing ? 'loading' : h.state;
     // The accessible name carries the state, so the amber dot is never the
-    // only way to know a source is missing.
+    // only way to know a source is missing or partial.
     var aria = t.label + (state === 'loading' ? ' — syncing'
-                        : state === 'degraded' ? ' — ' + t.missing : '');
+                        : state === 'degraded' ? ' — ' + h.note : '');
     var dot = (state === 'ready') ? '' : '<span class="gmc-tool-dot"></span>';
     return '<button type="button" class="gmc-tool" data-state="' + state + '"'
       + (state === 'loading' ? ' aria-busy="true"' : '')
@@ -3137,10 +3228,14 @@ function renderChatToolbar() {
       + '<span>' + escapeHtml(t.label) + '</span>' + dot + '</button>';
   }).join('');
 
-  var meta = chatToolbarMeta();
-  html += '<span class="gmc-meta" data-state="' + (meta.degraded ? 'degraded' : 'ok') + '">'
-       + escapeHtml(meta.text) + '</span>';
   bar.innerHTML = html;
+
+  var meta = chatToolbarMeta();
+  var metaEl = document.getElementById('gmc-meta');
+  if (metaEl) {
+    metaEl.setAttribute('data-state', meta.degraded ? 'degraded' : 'ok');
+    metaEl.textContent = meta.text;
+  }
 }
 
 // The hero's status line reports what the app actually is, not a decorative
@@ -3153,7 +3248,9 @@ function renderChatHeroStatus() {
   if (!sleeperLoaded) {
     state = 'offline';
     label = 'Connecting · Claude Sonnet 5';
-  } else if (dataHealth.sleeper.failed.length) {
+  } else if (chatHealthProblems().length) {
+    // Covers a partial NEWS pull too. Saying "Online" while the app knows two
+    // of six feeds are dark is the same false claim as the green tick was.
     state = 'degraded';
     label = 'Partial data · Claude Sonnet 5';
   } else if (dataAgeMs() > STALE_AFTER_MS) {
@@ -3169,6 +3266,7 @@ function renderChatHeroStatus() {
 function refreshChatSurface() {
   renderChatToolbar();
   renderChatHeroStatus();
+  renderHomeCtxStrip();
 }
 
 // Repaint #fc-msgs from chatHistory (used on load and session switch —
