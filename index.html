@@ -1955,7 +1955,9 @@ function playerDbAgeLabel() {
 // Williams he meant about a player he owns.
 function leagueRosterIndex() {
   var index = {};
-  if (!sleeperRosters) return index;
+  // Array.isArray, not a truthiness check: an unfinished or failed Sleeper
+  // sync can leave this an object, which is truthy and has no forEach.
+  if (!Array.isArray(sleeperRosters)) return index;
   sleeperRosters.forEach(function(roster) {
     var user = (sleeperUsers && sleeperUsers[roster.owner_id]) || {};
     var who = roster.owner_id === mySleeperUserId
@@ -2235,6 +2237,37 @@ window.addEventListener('DOMContentLoaded', function() {
 let prevScreen = 'home';
 let currentScreen = 'home';
 
+// Claude returns content as a LIST of blocks, and since the move to Sonnet 5
+// the first one is normally NOT the answer: adaptive thinking is on by
+// default, and with display omitted it arrives as a `thinking` block whose
+// text is empty. Reading content[0].text therefore got undefined on every
+// reply, and a working answer sitting later in the array was discarded in
+// favour of "Something went wrong". Find the text block; never assume index.
+function replyText(data) {
+  var blocks = (data && Array.isArray(data.content)) ? data.content : [];
+  for (var i = 0; i < blocks.length; i++) {
+    var b = blocks[i];
+    if (b && b.type === 'text' && typeof b.text === 'string' && b.text.trim()) return b.text;
+  }
+  return '';
+}
+
+// When there is no text, the server usually knows why — /chat returns
+// {error} for an Anthropic failure or for hitting the round cap. Showing a
+// generic message threw that away and made every distinct failure look the
+// same, which is why three different problems all read "try again".
+function replyError(data) {
+  if (data) {
+    if (typeof data.error === 'string' && data.error) return data.error;
+    if (data.error && typeof data.error.message === 'string') return data.error.message;
+    if (data.stop_reason === 'max_tokens') {
+      return 'The reply hit its length cap before finishing. Try asking for less at once.';
+    }
+    if (data.stop_reason === 'refusal') return 'The model declined that request.';
+  }
+  return 'Something went wrong — try again.';
+}
+
 function goToChat() { nav("chat"); }
 function nav(target) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -2453,12 +2486,12 @@ async function runTradeFinder(modeIdx) {
   try {
     var res = await callChatAPI({
       model: 'claude-sonnet-5',
-      max_tokens: 4000,
+      max_tokens: 16000,
       system: sysPrompt,
       messages: [{ role: 'user', content: prompt }]
     });
     var data = await res.json();
-    var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : '';
+    var reply = replyText(data);
     if (!reply) throw new Error('Empty response — try again');
 
     lastTFResult = { prompt: prompt, reply: reply };
@@ -2843,20 +2876,31 @@ async function sendChat() {
   chatTouchActiveSession(text);
   const typingEl = addTyping();
 
-  // ── Build per-message context: look up players mentioned + matching news ──
-  var contextAddendum = buildMessageContext(text);
-  var sysPrompt = (window.liveSystemPrompt || systemPrompt);
-  if (contextAddendum) sysPrompt = sysPrompt + '\n\n' + contextAddendum;
-
+  // Context building has to sit inside the try. It walks the whole Sleeper
+  // player dictionary and the league's rosters, so it is the most likely
+  // thing here to throw on malformed data — and outside the try a throw left
+  // the typing indicator spinning forever with no message ever sent and
+  // nothing reported. A message that fails should say so.
   try {
+    var contextAddendum = '';
+    try {
+      contextAddendum = buildMessageContext(text) || '';
+    } catch (ctxErr) {
+      // Losing the context block costs precision, not correctness — the
+      // tools are still there. Sending without it beats not sending.
+      contextAddendum = '';
+    }
+    var sysPrompt = (window.liveSystemPrompt || systemPrompt);
+    if (contextAddendum) sysPrompt = sysPrompt + '\n\n' + contextAddendum;
+
     const res = await callChatAPI({
       model: 'claude-sonnet-5',
-      max_tokens: 4000,
+      max_tokens: 16000,
       system: sysPrompt,
       messages: chatHistory
     });
     const data = await res.json();
-    const reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Something went wrong — try again.';
+    const reply = replyText(data) || replyError(data);
     typingEl.remove();
     addFCMsg('ai', reply);
     chatHistory.push({ role: 'assistant', content: reply });
@@ -3338,7 +3382,7 @@ async function addIntel(id) {
       { needsLiveData: false }
     );
     const data = await res.json();
-    const updated = data.content?.[0]?.text?.trim();
+    const updated = replyText(data).trim();
     if (updated) {
       lm.blurb = updated;
       const today = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
@@ -4061,11 +4105,11 @@ async function scAddNote(id) {
   try {
     // Same as the leaguemate blurb: pure rewrite of the user's own observation.
     var res=await callChatAPI(
-      {model:'claude-sonnet-5',max_tokens:500,messages:[{role:'user',content:prompt}]},
+      {model:'claude-sonnet-5',max_tokens:2000,messages:[{role:'user',content:prompt}]},
       {needsLiveData:false}
     );
     var data=await res.json();
-    var updated=data.content&&data.content[0]?data.content[0].text.trim():null;
+    var updated=replyText(data).trim()||null;
     if(updated){
       p.notes=updated; if(!p.notesLog) p.notesLog=[];
       var today=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
