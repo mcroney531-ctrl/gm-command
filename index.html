@@ -1141,7 +1141,6 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     <div class="settings-row"><div class="sr-left"><div class="sr-icon sri-3">📋</div><div class="sr-info"><div class="sr-title">Watchlist</div><div class="sr-sub">Coming soon</div></div></div><span class="sr-arrow">›</span></div>
     <div class="settings-section">Assistant</div>
     <div class="settings-row"><div class="sr-left"><div class="sr-icon sri-5">🤖</div><div class="sr-info"><div class="sr-title">GM Persona</div><div class="sr-sub">Claude Sonnet · Custom system prompt</div></div></div><span class="sr-arrow">›</span></div>
-    <div class="settings-row"><div class="sr-left"><div class="sr-icon sri-1">📚</div><div class="sr-info"><div class="sr-title">Analyst Sources</div><div class="sr-sub">Waldman, Harmon, Norris, Tice…</div></div></div><span class="sr-arrow">›</span></div>
     <div class="settings-section">Access</div>
     <div class="settings-row" onclick="gmPromptAccessKey()"><div class="sr-left"><div class="sr-icon sri-5">🔑</div><div class="sr-info"><div class="sr-title">Assistant Access Key</div><div class="sr-sub" id="settings-key-sub">—</div></div></div><span class="sr-arrow">›</span></div>
   </div>
@@ -1194,9 +1193,9 @@ function makeJerseySVG(playerName, number, teamAbbr, size) {
   var numStroke = darkPrimary ? primary : '#ffffff';
 
   // Short name (last name only, max 8 chars)
-  var lastName = (playerName || '').split(' ').pop().slice(0,9).toUpperCase();
+  var lastName = escapeHtml((playerName || '').split(' ').pop().slice(0,9).toUpperCase());
   var hasNum = number !== null && number !== undefined && number !== '';
-  var numStr = hasNum ? String(number) : '';
+  var numStr = hasNum ? escapeHtml(String(number)) : '';
 
   // Font sizes scale with jersey size
   var nameFontSize = size <= 42 ? Math.round(size * 0.16) : Math.round(size * 0.14);
@@ -1210,12 +1209,14 @@ function makeJerseySVG(playerName, number, teamAbbr, size) {
   var jerseyPath = "M20,18 L5,32 L15,38 L15,90 L85,90 L85,38 L95,32 L80,18 Q72,12 62,14 Q58,22 50,22 Q42,22 38,14 Q28,12 20,18 Z";
   var collarPath = "M38,14 Q42,24 50,24 Q58,24 62,14";
 
-  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="'+size+'" height="'+size+'">' +
-    '<path d="'+jerseyPath+'" fill="'+primary+'" />' +
-    '<path d="M15,38 L15,48 L85,48 L85,38 Z" fill="'+secondary+'" opacity="0.3"/>' +
-    '<path d="'+collarPath+'" fill="none" stroke="'+secondary+'" stroke-width="2.5" opacity="0.8"/>' +
-    '<text x="50" y="'+nameY+'" text-anchor="middle" font-family="Zalando Sans SemiExpanded,Arial Narrow,sans-serif" font-size="'+nameFontSize+'" fill="'+nameColor+'" letter-spacing="1">'+lastName+'</text>' +
-    (hasNum ? '<text x="50" y="83" text-anchor="middle" font-family="Zalando Sans SemiExpanded,Arial Narrow,sans-serif" font-size="'+numFontSize+'" fill="'+numColor+'" stroke="'+numStroke+'" stroke-width="1.5" paint-order="stroke">'+numStr+'</text>' : '') +
+  // Colours come from our own lookup tables but are attribute values, so they
+  // are escaped too rather than trusted by provenance.
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="'+escapeAttr(size)+'" height="'+escapeAttr(size)+'">' +
+    '<path d="'+jerseyPath+'" fill="'+escapeAttr(primary)+'" />' +
+    '<path d="M15,38 L15,48 L85,48 L85,38 Z" fill="'+escapeAttr(secondary)+'" opacity="0.3"/>' +
+    '<path d="'+collarPath+'" fill="none" stroke="'+escapeAttr(secondary)+'" stroke-width="2.5" opacity="0.8"/>' +
+    '<text x="50" y="'+escapeAttr(nameY)+'" text-anchor="middle" font-family="Zalando Sans SemiExpanded,Arial Narrow,sans-serif" font-size="'+escapeAttr(nameFontSize)+'" fill="'+escapeAttr(nameColor)+'" letter-spacing="1">'+lastName+'</text>' +
+    (hasNum ? '<text x="50" y="83" text-anchor="middle" font-family="Zalando Sans SemiExpanded,Arial Narrow,sans-serif" font-size="'+escapeAttr(numFontSize)+'" fill="'+escapeAttr(numColor)+'" stroke="'+escapeAttr(numStroke)+'" stroke-width="1.5" paint-order="stroke">'+numStr+'</text>' : '') +
     '</svg>';
   return svg;
 }
@@ -1240,10 +1241,34 @@ function playerAvatarHtml(sleeperId, playerName, number, teamAbbr, size) {
   if (!sleeperId) return makeJerseySVG(playerName, number, teamAbbr, size);
   var url = 'https://sleepercdn.com/content/nfl/players/thumb/' + encodeURIComponent(sleeperId) + '.jpg';
   var bg = getTeamColor(teamAbbr) || '#08131D';
-  return '<img src="' + url + '" alt="" width="' + size + '" height="' + size + '" ' +
-    'style="width:' + size + 'px;height:' + size + 'px;object-fit:cover;border-radius:6px;display:block;flex-shrink:0;background:' + bg + '" ' +
-    "onerror='avFallback(this, " + JSON.stringify(playerName || '') + ", " + JSON.stringify(number || '') + ", " + JSON.stringify(teamAbbr || '') + ", " + size + ")'>";
+  // The fallback used to be an inline onerror built by string-concatenating
+  // JSON.stringify(name) into a SINGLE-quoted attribute. Double-quoted JSON
+  // inside a single-quoted attribute meant any apostrophe closed the handler
+  // early: Ja'Marr Chase produced `onerror='avFallback(this, "Ja'`, a syntax
+  // error, so those players had no fallback at all — and the same mechanism
+  // would let a name introduce its own attributes.
+  //
+  // Composing executable JavaScript out of data is the pattern, not the
+  // quoting. The data now travels as escaped data-* attributes and a single
+  // delegated listener does the work.
+  return '<img src="' + escapeAttr(url) + '" alt="" width="' + size + '" height="' + size + '" ' +
+    'style="width:' + size + 'px;height:' + size + 'px;object-fit:cover;border-radius:6px;display:block;flex-shrink:0;background:' + escapeAttr(bg) + '" ' +
+    'data-av-name="' + escapeAttr(playerName || '') + '" ' +
+    'data-av-number="' + escapeAttr(number || '') + '" ' +
+    'data-av-team="' + escapeAttr(teamAbbr || '') + '" ' +
+    'data-av-size="' + escapeAttr(size) + '">';
 }
+
+// error does not bubble, so this listens in the capture phase. One listener
+// for every avatar on every screen, present and future.
+document.addEventListener('error', function(e) {
+  var el = e.target;
+  if (!el || el.tagName !== 'IMG' || !el.hasAttribute('data-av-name')) return;
+  if (el.dataset.avDone) return;   // a failed SVG replacement must not loop
+  el.dataset.avDone = '1';
+  avFallback(el, el.getAttribute('data-av-name'), el.getAttribute('data-av-number'),
+             el.getAttribute('data-av-team'), parseInt(el.getAttribute('data-av-size'), 10) || 56);
+}, true);
 
 // NFL Team Colors
 var NFL_COLORS = {
@@ -1536,7 +1561,8 @@ function newsSourceLabel(item) {
 function updateHomeChatPreview() {
   if (!liveMyRoster || !liveMyRoster.length) return;
   var count = liveMyRoster.length;
-  var names = liveMyRoster.slice(0,4).map(function(p){ return p.name.split(' ').pop(); }).join(', ');
+  // Sleeper-derived, and it lands in innerHTML at both sinks below.
+  var names = escapeHtml(liveMyRoster.slice(0,4).map(function(p){ return p.name.split(' ').pop(); }).join(', '));
   // Starts a sentence, so it has to be capitalised — this read
   // "...and the rest. news feeds syncing." until now.
   var newsPhrase = dataHealth.feeds.at
@@ -1562,7 +1588,7 @@ function renderTFPartnerChips() {
     var shortName = t.name.length > 10 ? t.name.slice(0, 10) + '…' : t.name;
     chipsHtml += '<div class="tf-partner-chip" data-pid="' + t.id + '" onclick="togglePartner(this,\'' + t.id + '\')">' +
       '<div class="tf-p-init">' + t.initials + '</div>' +
-      '<span class="tf-p-name">' + shortName + '</span>' +
+      '<span class="tf-p-name">' + escapeHtml(shortName) + '</span>' +
     '</div>';
   });
   // Replace the comment node with chips
@@ -1866,7 +1892,7 @@ function renderNewsScreen() {
   list.innerHTML = filtered.map(function(item) {
     var badge = getOwnershipBadge(item.playerName);
     var badgeBg = badge ? (badge.cls === 'bm' ? '#46A874' : '#2F8FE5') : '';
-    var badgeHtml = badge ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;font-weight:600;padding:2px 7px;border-radius:8px;margin-left:auto;background:'+badgeBg+';color:#ffffff;letter-spacing:.5px">'+badge.label+'</span>' : '';
+    var badgeHtml = badge ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;font-weight:600;padding:2px 7px;border-radius:8px;margin-left:auto;background:'+escapeAttr(badgeBg)+';color:#ffffff;letter-spacing:.5px">'+escapeHtml(badge.label)+'</span>' : '';
     var descLower = (item.desc||'').toLowerCase();
     var accentColor = '#71808D';
     var accentLabel = '';
@@ -1880,18 +1906,22 @@ function renderNewsScreen() {
       accentColor = '#C89947';
       accentLabel = 'News';
     }
-    var cleanDesc = (item.desc||'').replace(/<[^>]+>/g,'').slice(0,180);
+    // Escaped, not stripped. A tag-strip regex is not a sanitiser: it needs
+    // a closing '>' to match, so `<img src=x onerror=...` with no '>' passes
+    // straight through and the parser completes the tag on the other side.
+    // Verified firing before this change.
+    var cleanDesc = escapeHtml((item.desc||'').replace(/<[^>]+>/g,'').slice(0,180));
     var dateStr = item.timeAgo || item.date || '';
     var displayTeam = item._resolvedTeam || item.team || '';
     return '<div style="background:#F5F7F8;border:1px solid #D9E0E5;border-left:4px solid '+accentColor+';border-radius:10px;padding:11px 13px;margin-bottom:8px;box-shadow:0 1px 3px rgba(8,19,29,.06)">' +
       '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">' +
         '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;font-weight:600;color:'+accentColor+';letter-spacing:1px;text-transform:uppercase">'+accentLabel+'</span>' +
-        (item._pos ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#2F8FE5;letter-spacing:1px;font-weight:600">· '+item._pos+'</span>' : '') +
-        (displayTeam ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#71808D;letter-spacing:1px">· '+displayTeam+'</span>' : '') +
-        (dateStr ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;color:#8A97A3">· '+dateStr+'</span>' : '') +
+        (item._pos ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#2F8FE5;letter-spacing:1px;font-weight:600">· '+escapeHtml(item._pos)+'</span>' : '') +
+        (displayTeam ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#71808D;letter-spacing:1px">· '+escapeHtml(displayTeam)+'</span>' : '') +
+        (dateStr ? '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:7px;color:#8A97A3">· '+escapeHtml(dateStr)+'</span>' : '') +
         badgeHtml +
       '</div>' +
-      '<div style="font-size:13px;font-weight:700;color:#08131D;line-height:1.3;margin-bottom:4px">'+(item.title||'')+'</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#08131D;line-height:1.3;margin-bottom:4px">'+escapeHtml(item.title||'')+'</div>' +
       '<div style="font-size:11px;color:#5a6a85;line-height:1.5">'+cleanDesc+(cleanDesc.length>=180?'…':'')+'</div>' +
     '</div>';
   }).join('');
@@ -1937,7 +1967,7 @@ function renderNewsTray() {
   var shown = owned.concat(others).slice(0, 8);
   scroll.innerHTML = shown.map(function(item) {
     var badge = getOwnershipBadge(item.playerName);
-    var badgeHtml = badge ? '<span class="pb ' + badge.cls + '">' + badge.label + '</span>' : '';
+    var badgeHtml = badge ? '<span class="pb ' + escapeAttr(badge.cls) + '">' + escapeHtml(badge.label) + '</span>' : '';
     // Detect injury keywords for pill color
     var descLower = item.desc.toLowerCase();
     var pillCls = 'npill';
@@ -1949,14 +1979,14 @@ function renderNewsTray() {
       pillCls = 'npill fn';
     }
     // Truncate description
-    var shortDesc = item.desc.replace(/<[^>]+>/g, '').slice(0, 80) + (item.desc.length > 80 ? '…' : '');
+    var shortDesc = escapeHtml(item.desc.replace(/<[^>]+>/g, '').slice(0, 80) + (item.desc.length > 80 ? '…' : ''));
     return '<div class="' + pillCls + '">' +
       '<div class="pm">' +
-        '<span class="pt">' + (item.team || 'NFL') + '</span>' +
-        '<span class="pti">' + item.timeAgo + '</span>' +
+        '<span class="pt">' + escapeHtml(item.team || 'NFL') + '</span>' +
+        '<span class="pti">' + escapeHtml(item.timeAgo) + '</span>' +
         badgeHtml +
       '</div>' +
-      '<div class="pp">' + item.playerName + '</div>' +
+      '<div class="pp">' + escapeHtml(item.playerName) + '</div>' +
       '<div class="pbl">' + shortDesc + '</div>' +
     '</div>';
   }).join('');
@@ -2327,7 +2357,7 @@ function renderHomeRosterStrip() {
     return '<div class="' + chipCls + '" onclick="openLivePlayer(' + JSON.stringify(p.id) + ')">' +
       playerAvatarHtml(p.id, p.name, p.number, p.team, 44) +
       '<span class="ppos ' + posClass + '">' + p.pos + '</span>' +
-      '<span class="pname">' + shortName + '</span>' +
+      '<span class="pname">' + escapeHtml(shortName) + '</span>' +
     '</div>';
   }).join('');
 }
@@ -2351,7 +2381,7 @@ function renderRosterScreen() {
       html += '<div class="rrow" onclick="openLivePlayer(' + JSON.stringify(p.id) + ')">'  +
         playerAvatarHtml(p.id, p.name, p.number, p.team, 48) +
         '<div class="rrow-info">' +
-          '<div class="rrow-name">' + p.name + '</div>' +
+          '<div class="rrow-name">' + escapeHtml(p.name) + '</div>' +
           '<div class="rrow-sub">' + p.team + ' · ' + p.pos + (p.age ? ' · Age ' + p.age : '') + (p.status && p.status !== 'Active' ? ' · ' + p.status : '') + '</div>' +
         '</div>' +
         '<div class="rrow-right"><span class="rrow-pos" style="color:' + (posColors[p.pos]||'#71808D') + '">' + p.pos + '</span></div>' +
@@ -2456,11 +2486,11 @@ function renderLeagueTicker() {
   list.innerHTML = items.map(function(item) {
     var t = ((item.title||'') + (item.desc||'')).toLowerCase();
     var icon = t.includes('trade') ? '🔀' : (t.includes('sign') || t.includes('claim')) ? '✍️' : '📤';
-    var text = (item.title || item.playerName || 'League update').replace(/<[^>]+>/g,'');
+    var text = escapeHtml((item.title || item.playerName || 'League update').replace(/<[^>]+>/g,''));
     return '<div class="ticker-item">' +
       '<span class="ticker-icon">' + icon + '</span>' +
       '<span class="ticker-txt">' + text + '</span>' +
-      '<span class="ticker-time">' + (item.timeAgo||'') + '</span>' +
+      '<span class="ticker-time">' + escapeHtml(item.timeAgo||'') + '</span>' +
     '</div>';
   }).join('');
 }
@@ -2747,15 +2777,16 @@ async function callChatAPI(payload, opts) {
       body: JSON.stringify(payload),
     });
   } catch (e) {
-    // Render is unreachable: offline, DNS, blocked, CORS.
-    if (needsLiveData) {
-      throw new Error(
-        'Can’t reach the data backend, so there are no live rosters, values, ' +
-        'or depth charts behind an answer right now. Not going to guess — ' +
-        'try again in a moment. (' + (e.message || 'network error') + ')'
-      );
-    }
-    return callToollessFallback(payload);
+    // Render is unreachable: offline, DNS, blocked, CORS. There is no second
+    // backend to ask any more, and there should not be: the fallback was an
+    // unauthenticated proxy to the same key.
+    throw new Error(
+      needsLiveData
+        ? 'Can’t reach the data backend, so there are no live rosters, values, ' +
+          'or depth charts behind an answer right now. Not going to guess — ' +
+          'try again in a moment. (' + (e.message || 'network error') + ')'
+        : 'Can’t reach the assistant right now. (' + (e.message || 'network error') + ')'
+    );
   }
 
   if (resp.ok) return resp;
@@ -2764,24 +2795,12 @@ async function callChatAPI(payload, opts) {
   // reason to ask a second backend the same question and show its error
   // instead — surface what actually went wrong.
   const detail = await readErrorDetail(resp);
-  if (needsLiveData) {
-    // Point an auth failure at the one screen that can fix it, rather than
-    // showing a bare 401 that reads like the backend is broken.
-    if (resp.status === 401 || resp.status === 403) {
-      throw new Error(detail + ' Add it under Settings → Assistant Access Key.');
-    }
-    throw new Error('Data backend error (' + resp.status + '): ' + detail);
+  // Point an auth failure at the one screen that can fix it, rather than
+  // showing a bare 401 that reads like the backend is broken.
+  if (resp.status === 401 || resp.status === 403) {
+    throw new Error(detail + ' Add it under Settings → Assistant Access Key.');
   }
-  return callToollessFallback(payload);
-}
-
-async function callToollessFallback(payload) {
-  const body = Object.assign({}, payload, { allow_toolless: true });
-  return fetch('/.netlify/functions/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  throw new Error('Data backend error (' + resp.status + '): ' + detail);
 }
 
 // Error bodies arrive as JSON from FastAPI/Anthropic and as plain text from
@@ -3016,6 +3035,24 @@ function escapeHtml(str) {
   var div = document.createElement('div');
   div.textContent = str == null ? '' : String(str);
   return div.innerHTML;
+}
+
+// escapeHtml is TEXT-safe, not ATTRIBUTE-safe: it round-trips through
+// textContent, and the DOM serializer escapes & < > but leaves both quote
+// characters alone. So `x" onload="alert(1)` survives it unchanged, and any
+// value placed inside an attribute needs this instead.
+//
+// This is the root of the playerAvatarHtml bug as well as a general hole:
+// a name containing an apostrophe silently terminated a single-quoted
+// handler, which is why Ja'Marr Chase and De'Von Achane had no working
+// avatar fallback.
+function escapeAttr(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 // Untrusted text that is allowed ONE piece of formatting: **bold**.
@@ -3923,23 +3960,23 @@ function renderIntel() {
   updateIntelSettingsRow();
   const sec = document.getElementById('lm-section');
   sec.innerHTML = leaguemates.map(lm => `
-    <div class="lm-card" id="lmc-${lm.id}">
-      <div class="lm-card-hd" onclick="toggleLMCard('${lm.id}')">
+    <div class="lm-card" id="lmc-${escapeAttr(lm.id)}">
+      <div class="lm-card-hd" onclick="toggleLMCard('${escapeAttr(lm.id)}')">
         <div class="lm-hd-l">
-          <div class="lm-av">${lm.initials}</div>
-          <div><div class="lm-card-name">${lm.name}</div><div class="lm-card-team">${lm.team}</div></div>
+          <div class="lm-av">${escapeHtml(lm.initials)}</div>
+          <div><div class="lm-card-name">${escapeHtml(lm.name)}</div><div class="lm-card-team">${escapeHtml(lm.team)}</div></div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           ${lm.log.length ? `<span class="lm-ic">${lm.log.length} note${lm.log.length>1?'s':''}</span>` : ''}
           <span class="chevron">▾</span>
         </div>
       </div>
-      <div class="lm-body" id="lmb-${lm.id}">
+      <div class="lm-body" id="lmb-${escapeAttr(lm.id)}">
         <div>
           <div class="field-lbl">Tendencies Breakdown</div>
-          <div class="blurb-display ${lm.blurb?'':'empty'}" id="blurb-${lm.id}">${lm.blurb||'No breakdown yet. Add your first intel note below.'}</div>
+          <div class="blurb-display ${lm.blurb?'':'empty'}" id="blurb-${escapeAttr(lm.id)}">${lm.blurb ? safeRichText(lm.blurb) : 'No breakdown yet. Add your first intel note below.'}</div>
         </div>
-        ${lm.log.length ? `<div><div class="field-lbl" style="margin-bottom:6px">Intel Log</div>${lm.log.map(e=>`<div style="display:flex;gap:8px;padding:7px 10px;background:var(--off);border-radius:6px;border:1px solid var(--border);margin-bottom:4px"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:var(--dim);flex-shrink:0">${e.date}</span><span style="font-size:11px;color:var(--mid)">${e.text}</span></div>`).join('')}</div>` : ''}
+        ${lm.log.length ? `<div><div class="field-lbl" style="margin-bottom:6px">Intel Log</div>${lm.log.map(e=>`<div style="display:flex;gap:8px;padding:7px 10px;background:var(--off);border-radius:6px;border:1px solid var(--border);margin-bottom:4px"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:var(--dim);flex-shrink:0">${escapeHtml(e.date)}</span><span style="font-size:11px;color:var(--mid)">${escapeHtml(e.text)}</span></div>`).join('')}</div>` : ''}
         <div>
           <div class="add-lbl-row"><span class="field-lbl">Add Intel</span><span class="ai-badge">AI Synthesized</span></div>
           <div class="add-desc">Drop a quick observation — AI weaves it into the breakdown above.</div>
@@ -4002,7 +4039,15 @@ async function addIntel(id) {
       succ.style.display = 'flex';
       setTimeout(()=>{ succ.style.display='none'; },3000);
     }
-  } catch(e) { synth.style.display = 'none'; }
+  } catch(e) {
+    synth.style.display = 'none';
+    // Restrained, in place, and it keeps what the user typed.
+    if (blurbEl) {
+      var prev = blurbEl.textContent;
+      blurbEl.textContent = 'Couldn’t reach the assistant — your note was not saved. Try again.';
+      setTimeout(function(){ if (blurbEl.textContent.indexOf('Couldn’t reach') === 0) blurbEl.textContent = prev; }, 4000);
+    }
+  }
 
   btn.disabled = false;
   btn.textContent = 'Add Intel';
@@ -4178,8 +4223,8 @@ function renderRdTab(idx) {
         return `<div class="rd-player-row" onclick="nav('chat')">
           ${playerAvatarHtml(p.id, p.name, null, p.team, 44)}
           <div class="rd-pinfo">
-            <div class="rd-pname">${p.name}</div>
-            <div class="rd-psub">${p.team} · Age ${p.age}</div>
+            <div class="rd-pname">${escapeHtml(p.name)}</div>
+            <div class="rd-psub">${escapeHtml(p.team)} · Age ${escapeHtml(p.age)}</div>
           </div>
           ${flagHtml}
         </div>`;
@@ -4193,10 +4238,10 @@ function renderRdTab(idx) {
       container.innerHTML = t.news.map(n=>`
         <div class="rd-news-item">
           <div class="rd-news-meta">
-            <span class="nli-d">${n.date}</span>
-            <span class="nli-t ${n.cls}">${n.tag}</span>
+            <span class="nli-d">${escapeHtml(n.date)}</span>
+            <span class="nli-t ${escapeAttr(n.cls)}">${escapeHtml(n.tag)}</span>
           </div>
-          <div class="nli-txt">${n.text}</div>
+          <div class="nli-txt">${escapeHtml(n.text)}</div>
         </div>`).join('');
     }
 
@@ -4204,15 +4249,15 @@ function renderRdTab(idx) {
     const lm = t.intelId ? leaguemates.find(l=>l.id===t.intelId) : null;
     if (!lm || !lm.blurb) {
       container.innerHTML = `<div class="rd-intel-body">
-        <div class="nli-txt">No intel profile yet for ${t.manager}. Add notes in Settings → Leaguemate Intel.</div>
+        <div class="nli-txt">No intel profile yet for ${escapeHtml(t.manager)}. Add notes in Settings → Leaguemate Intel.</div>
         <button class="rd-btn-primary" onclick="nav('intel')">🧠 Add Intel</button>
       </div>`;
     } else {
       const log = lm.log || [];
       container.innerHTML = `<div class="rd-intel-body">
         <div class="field-lbl">Tendencies Breakdown</div>
-        <div class="rd-intel-blurb">${lm.blurb}</div>
-        ${log.length ? '<div class="field-lbl">Intel Log</div>' + log.map(e=>`<div class="rd-intel-log-item"><span class="rd-intel-log-date">${e.date}</span><span class="rd-intel-log-txt">${e.text}</span></div>`).join('') : ''}
+        <div class="rd-intel-blurb">${safeRichText(lm.blurb)}</div>
+        ${log.length ? '<div class="field-lbl">Intel Log</div>' + log.map(e=>`<div class="rd-intel-log-item"><span class="rd-intel-log-date">${escapeHtml(e.date)}</span><span class="rd-intel-log-txt">${escapeHtml(e.text)}</span></div>`).join('') : ''}
         <button class="rd-btn-secondary" onclick="nav('intel')">Edit Intel ›</button>
       </div>`;
     }
@@ -4220,12 +4265,12 @@ function renderRdTab(idx) {
   } else {
     const flagged = t.roster.filter(p=>p.flag);
     container.innerHTML = `<div class="rd-trade-body">
-      <div class="rd-trade-intro">Start a trade exploration with <strong>${t.name}</strong>. AI scans both rosters, applies leaguemate intel on ${t.manager}, and suggests packages.</div>
+      <div class="rd-trade-intro">Start a trade exploration with <strong>${escapeHtml(t.name)}</strong>. AI scans both rosters, applies leaguemate intel on ${escapeHtml(t.manager)}, and suggests packages.</div>
       <div class="rd-trade-assets">
         <div class="rd-trade-asset-lbl">Their assets worth watching</div>
         ${flagged.length ? flagged.map(p=>`<div class="rd-asset-row">
-          <span class="rd-asset-pos">${p.pos}</span>
-          <span class="rd-asset-name">${p.name}</span>
+          <span class="rd-asset-pos">${escapeHtml(p.pos)}</span>
+          <span class="rd-asset-name">${escapeHtml(p.name)}</span>
         </div>`).join('') : '<div class="nli-txt" style="color:#71808D">No flagged assets</div>'}
       </div>
       <button class="rd-btn-primary" onclick="nav('trade')">🔀 Open Trade Finder</button>
@@ -4348,20 +4393,20 @@ function renderScBoard() {
           var jSecondary = ncCol ? ncCol[1] : '#ffffff';
           var isDk = isColorDark(jPrimary);
           var namC = isDk ? '#ffffff' : '#08131D';
-          var nm = (p.name||'').split(' ').pop().slice(0,9).toUpperCase();
+          var nm = escapeHtml((p.name||'').split(' ').pop().slice(0,9).toUpperCase());
           var nfs = Math.round(36*0.16);
           var jp2 = 'M20,18 L5,32 L15,38 L15,90 L85,90 L85,38 L95,32 L80,18 Q72,12 62,14 Q58,22 50,22 Q42,22 38,14 Q28,12 20,18 Z';
           var cp2 = 'M38,14 Q42,24 50,24 Q58,24 62,14';
           avHtml = '<div style="width:36px;height:36px;flex-shrink:0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="36">' +
-            '<path d="'+jp2+'" fill="'+jPrimary+'"/>' +
-            '<path d="M15,38 L15,48 L85,48 L85,38 Z" fill="'+jSecondary+'" opacity="0.3"/>' +
-            '<path d="'+cp2+'" fill="none" stroke="'+jSecondary+'" stroke-width="2.5" opacity="0.8"/>' +
-            '<text x="50" y="72" text-anchor="middle" font-family="Zalando Sans SemiExpanded,Arial Narrow,sans-serif" font-size="'+nfs+'" fill="'+namC+'" letter-spacing="1">'+nm+'</text>' +
+            '<path d="'+jp2+'" fill="'+escapeAttr(jPrimary)+'"/>' +
+            '<path d="M15,38 L15,48 L85,48 L85,38 Z" fill="'+escapeAttr(jSecondary)+'" opacity="0.3"/>' +
+            '<path d="'+cp2+'" fill="none" stroke="'+escapeAttr(jSecondary)+'" stroke-width="2.5" opacity="0.8"/>' +
+            '<text x="50" y="72" text-anchor="middle" font-family="Zalando Sans SemiExpanded,Arial Narrow,sans-serif" font-size="'+escapeAttr(nfs)+'" fill="'+escapeAttr(namC)+'" letter-spacing="1">'+nm+'</text>' +
             '</svg></div>';
         }
-        html += '<div class="sc-prospect-card" onclick="openProspect(\''+p.id+'\')">' +
+        html += '<div class="sc-prospect-card" onclick="openProspect(\''+escapeAttr(p.id)+'\')">' +
           avHtml +
-          '<div class="sc-pinfo"><div class="sc-pname">'+p.name+'</div>' +
+          '<div class="sc-pinfo"><div class="sc-pname">'+escapeHtml(p.name)+'</div>' +
           '<div class="sc-pmeta">'+(isDraftedP ? (p.proTeam||'') + ' · ' + p.pos : (p.school||'School TBD') + (p.grade?' &middot; '+p.grade:''))+'</div></div>' +
           '<div class="sc-pright">'+(nc?'<span class="sc-news-count">'+nc+'</span>':'')+'</div>' +
           '<div class="sc-arrow">&#x203A;</div>' +
@@ -4553,10 +4598,10 @@ function renderPdTab(idx) {
     var newsListHtml = news.length
       ? '<div style="background:#F5F7F8;border:1px solid #D9E0E5;border-radius:14px;padding:0 14px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
           news.map(function(item) {
-            return '<div class="pd-news-item"><div class="pd-news-meta"><span class="pd-news-date">'+(item.timeAgo||item.date||'')+'</span></div><div class="pd-news-txt">'+escapeHtml(String(item.desc||'').replace(/<[^>]+>/g,'').slice(0,300))+'</div></div>';
+            return '<div class="pd-news-item"><div class="pd-news-meta"><span class="pd-news-date">'+escapeHtml(item.timeAgo||item.date||'')+'</span></div><div class="pd-news-txt">'+escapeHtml(String(item.desc||'').replace(/<[^>]+>/g,'').slice(0,300))+'</div></div>';
           }).join('') +
         '</div>'
-      : '<div class="pd-no-news">No items found for '+p.name+'<br><span style="font-size:10px;color:#C7D0D6">Save the card to trigger a fresh search, or tap Refresh Feed.</span></div>' +
+      : '<div class="pd-no-news">No items found for '+escapeHtml(p.name)+'<br><span style="font-size:10px;color:#C7D0D6">Save the card to trigger a fresh search, or tap Refresh Feed.</span></div>' +
         (p._newsDebug && p._newsDebug.length ? '<div style="margin-top:12px;background:#EEF2F5;border:1px solid #D9E0E5;border-radius:8px;padding:10px 12px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#71808D;line-height:1.8">' + p._newsDebug.map(function(l){ return '› ' + l; }).join('<br>') + '</div>' : '');
 
     s.innerHTML = refreshHtml + newsListHtml;
@@ -4564,8 +4609,8 @@ function renderPdTab(idx) {
   } else {
     s.innerHTML =
       '<div style="background:#F5F7F8;border:1px solid #D9E0E5;border-radius:14px;padding:16px;box-shadow:0 1px 8px rgba(15,31,61,.05);display:flex;flex-direction:column;gap:12px">' +
-        '<div style="font-size:13px;color:#44576C;line-height:1.65">Ask the GM Assistant anything about <strong style="color:#08131D">'+p.name+'</strong> — dynasty value, landing spot, scheme fit, whether to target him in the draft.</div>' +
-        '<button onclick="scAskGM(currentProspect.id)" style="width:100%;padding:13px;background:#08131D;border:none;border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:16px;letter-spacing:2.5px;color:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">&#x1F9E0; &nbsp;Ask GM About '+p.name+'</button>' +
+        '<div style="font-size:13px;color:#44576C;line-height:1.65">Ask the GM Assistant anything about <strong style="color:#08131D">'+escapeHtml(p.name)+'</strong> — dynasty value, landing spot, scheme fit, whether to target him in the draft.</div>' +
+        '<button onclick="scAskGM(currentProspect.id)" style="width:100%;padding:13px;background:#08131D;border:none;border-radius:10px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:16px;letter-spacing:2.5px;color:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">&#x1F9E0; &nbsp;Ask GM About '+escapeHtml(p.name)+'</button>' +
       '</div>';
   }
 }
@@ -4646,16 +4691,16 @@ function scUpdateProspectHeader(p) {
       var jSecondary = ncCol2 ? ncCol2[1] : '#ffffff';
       var isDk = isColorDark(jPrimary);
       var namC2 = isDk ? '#ffffff' : '#08131D';
-      var nm2 = (p.name||'').split(' ').pop().slice(0,9).toUpperCase();
+      var nm2 = escapeHtml((p.name||'').split(' ').pop().slice(0,9).toUpperCase());
       var nfs2 = Math.round(56*0.14);
       var numfs2 = Math.round(56*0.36);
       var jp2 = 'M20,18 L5,32 L15,38 L15,90 L85,90 L85,38 L95,32 L80,18 Q72,12 62,14 Q58,22 50,22 Q42,22 38,14 Q28,12 20,18 Z';
       var cp2 = 'M38,14 Q42,24 50,24 Q58,24 62,14';
       avEl.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="56" height="56">'+
-        '<path d="'+jp2+'" fill="'+jPrimary+'"/>'+
-        '<path d="M15,38 L15,48 L85,48 L85,38 Z" fill="'+jSecondary+'" opacity="0.3"/>'+
-        '<path d="'+cp2+'" fill="none" stroke="'+jSecondary+'" stroke-width="2.5" opacity="0.8"/>'+
-        '<text x="50" y="72" text-anchor="middle" font-family="Zalando Sans SemiExpanded,Arial Narrow,sans-serif" font-size="'+nfs2+'" fill="'+namC2+'" letter-spacing="1">'+nm2+'</text>'+
+        '<path d="'+jp2+'" fill="'+escapeAttr(jPrimary)+'"/>'+
+        '<path d="M15,38 L15,48 L85,48 L85,38 Z" fill="'+escapeAttr(jSecondary)+'" opacity="0.3"/>'+
+        '<path d="'+cp2+'" fill="none" stroke="'+escapeAttr(jSecondary)+'" stroke-width="2.5" opacity="0.8"/>'+
+        '<text x="50" y="72" text-anchor="middle" font-family="Zalando Sans SemiExpanded,Arial Narrow,sans-serif" font-size="'+escapeAttr(nfs2)+'" fill="'+escapeAttr(namC2)+'" letter-spacing="1">'+nm2+'</text>'+
         '</svg>';
       avEl.style.cssText = 'background:transparent;border:none;width:56px;height:56px;flex-shrink:0;';
     }
@@ -4665,8 +4710,8 @@ function scUpdateProspectHeader(p) {
   var schoolEl = document.getElementById('pd-school');
   if (schoolEl) {
     schoolEl.innerHTML = isDrafted
-      ? (p.proTeam||'').toUpperCase() + ' &middot; ' + p.pos + (p.school ? ' &middot; ' + p.school : '')
-      : (p.school||'School TBD') + ' &middot; ' + (p.draftYear==='NOW'?'2026':p.draftYear) + ' Class';
+      ? escapeHtml((p.proTeam||'').toUpperCase()) + ' &middot; ' + escapeHtml(p.pos) + (p.school ? ' &middot; ' + escapeHtml(p.school) : '')
+      : escapeHtml(p.school||'School TBD') + ' &middot; ' + escapeHtml(p.draftYear==='NOW'?'2026':p.draftYear) + ' Class';
   }
   var badgeEl = document.getElementById('pd-draft-badge');
   if (badgeEl) {
@@ -4724,17 +4769,26 @@ async function scAddNote(id) {
       input.value=''; synth.style.display='none'; succ.style.display='flex';
       setTimeout(function(){succ.style.display='none';},3000);
     }
-  } catch(e){synth.style.display='none';}
+  } catch(e){
+    synth.style.display='none';
+    var d=document.getElementById('pd-notes-display');
+    if(d){
+      var prev=d.textContent;
+      d.textContent='Couldn’t reach the assistant — your note was not saved. Try again.';
+      setTimeout(function(){ if(d.textContent.indexOf('Couldn’t reach')===0) d.textContent=prev; },4000);
+    }
+  }
   btn.disabled=false; btn.textContent='Add Note';
 }
 
 function scRenderFilm(p) {
   if(!p.film||!p.film.length) return '<div style="grid-column:1/-1;text-align:center;padding:20px;font-family:Zalando Sans SemiExpanded,sans-serif;font-size:10px;color:#71808D">No film added yet</div>';
   return p.film.map(function(f,i){
-    var thumb = f.thumb ? '<img class="film-thumb" src="'+f.thumb+'" alt="'+f.title+'">' : '<div class="film-thumb-placeholder">▶</div>';
-    return '<div class="film-card" onclick="scOpenFilm(this)" data-url="'+f.url+'">' +
+    // Everything here is typed by the user and goes into attributes.
+    var thumb = f.thumb ? '<img class="film-thumb" src="'+escapeAttr(f.thumb)+'" alt="'+escapeAttr(f.title)+'">' : '<div class="film-thumb-placeholder">▶</div>';
+    return '<div class="film-card" onclick="scOpenFilm(this)" data-url="'+escapeAttr(f.url)+'">' +
       thumb +
-      '<div class="film-card-label">'+f.title+'</div>' +
+      '<div class="film-card-label">'+escapeHtml(f.title)+'</div>' +
       '<div class="film-card-x" onclick="event.stopPropagation();scRemoveFilm(currentProspect.id,'+i+')">✕</div>' +
     '</div>';
   }).join('');
@@ -4988,10 +5042,10 @@ function openTFPicker() {
     list.innerHTML = roster.map(function(p) {
       var isSelected = tfTablePlayers.some(function(t){ return t.id === p.id; });
       var jersey = playerAvatarHtml(p.id, p.name, p.number, p.team, 40);
-      return '<div class="tf-picker-item' + (isSelected ? ' selected' : '') + '" onclick="toggleTFTablePlayer(\'' + p.id + '\')" id="picker-item-' + p.id + '">' +
+      return '<div class="tf-picker-item' + (isSelected ? ' selected' : '') + '" onclick="toggleTFTablePlayer(\'' + escapeAttr(p.id) + '\')" id="picker-item-' + escapeAttr(p.id) + '">' +
         jersey +
         '<div class="tf-picker-pinfo">' +
-          '<div class="tf-picker-pname">' + p.name + '</div>' +
+          '<div class="tf-picker-pname">' + escapeHtml(p.name) + '</div>' +
           '<div class="tf-picker-pmeta">' + p.pos + ' · ' + p.team + (p.number ? ' · #' + p.number : '') + '</div>' +
         '</div>' +
         '<span class="tf-picker-check">✓</span>' +
@@ -5031,11 +5085,20 @@ function renderTFTableChips() {
   container.innerHTML = tfTablePlayers.map(function(p) {
     return '<div class="tf-table-chip">' +
       '<div class="tf-table-chip-jersey">' + playerAvatarHtml(p.id, p.name, p.number, p.team, 28) + '</div>' +
-      '<span class="tf-table-chip-name">' + p.name.split(' ').pop() + (p.number ? ' #'+p.number : '') + '</span>' +
-      '<span class="tf-table-chip-x" onclick="removeTFTablePlayer(' + JSON.stringify(p.id) + ')">✕</span>' +
+      '<span class="tf-table-chip-name">' + escapeHtml(p.name.split(' ').pop()) + (p.number ? ' #'+escapeHtml(p.number) : '') + '</span>' +
+      '<span class="tf-table-chip-x" data-tf-remove="' + escapeAttr(p.id) + '">✕</span>' +
     '</div>';
   }).join('');
 }
+
+// Replaces the inline onclick the chip used to carry. Delegated, so it keeps
+// working across re-renders and nothing executable is built from the id.
+document.addEventListener('click', function(e) {
+  var x = e.target && e.target.closest ? e.target.closest('[data-tf-remove]') : null;
+  if (!x) return;
+  e.stopPropagation();
+  removeTFTablePlayer(x.getAttribute('data-tf-remove'));
+});
 
 function removeTFTablePlayer(id) {
   tfTablePlayers = tfTablePlayers.filter(function(p){ return p.id !== id; });
