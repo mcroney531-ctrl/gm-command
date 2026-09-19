@@ -1672,6 +1672,7 @@ async function loadRotowireFeed(silent) {
     renderNewsTray();
     renderFeedSourcesRow();
     refreshChatSurface();
+    refreshLiveStatus();
     // The preview blurb names the feed state, so it has to be rebuilt when
     // the feeds land. It wasn't, so the card sat on "News feeds syncing"
     // with a full tray of items behind it.
@@ -2379,7 +2380,10 @@ var STALE_AFTER_MS = 60 * 60 * 1000;
 
 function refreshLiveStatus() {
   if (!sleeperLoaded) return;
-  if (dataHealth.sleeper.failed.length) { setLiveStatus('Partial', '#C89947'); return; }
+  // chatHealthProblems() covers the news feeds as well as Sleeper. Reading
+  // only dataHealth.sleeper here meant this pill could say "Live" while the
+  // chat screen said "Partial data" about exactly the same state.
+  if (chatHealthProblems().length) { setLiveStatus('Partial', '#C89947'); return; }
   if (dataAgeMs() > STALE_AFTER_MS) { setLiveStatus('Stale', '#C89947'); return; }
   setLiveStatus('Live', '#46A874');
 }
