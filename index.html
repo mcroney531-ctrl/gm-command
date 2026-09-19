@@ -2012,8 +2012,7 @@ function buildSystemPrompt() {
     'Recent news on my players: ' + newsStr + '\n\n' +
     'Leaguemate intel: ' + intelStr +
     rivalStr + '\n\n' +
-    'Your trusted analyst sources (reference appropriately): Matt Waldman for RBs, Josh Norris/Hayden Winks for overall, Nate Tice for QBs, Matt Harmon/Steve Smith Sr. for WRs, Robert Mays for all positions.\n\n' +
-    'Be direct, opinionated, and analytical. Keep responses concise — this is a mobile app. When evaluating trades give a clear verdict. Always cite sources briefly at the end.';
+    'Be direct, opinionated, and analytical. Keep responses concise — this is a mobile app. When evaluating trades give a clear verdict. Cite a source ONLY when it came back from a tool in this turn (FantasyCalc values, Sleeper depth charts, ESPN stats, a LeagueLogs blurb). Never attribute a claim to a named analyst, publication or ranking service — their work is not available to you, and putting words in a real person\'s mouth is worse than giving no source.';
 }
 
 // ── Re-render roster screen from live data ──
@@ -2297,7 +2296,10 @@ function nav(target) {
 var lastTFResult = null;
 
 function renderTFPackages(text, accent) {
-  // Parse PACKAGE blocks from Claude response
+  // Model output. Escape once at the boundary, then parse — every fragment
+  // below is a slice of an already-escaped string, so the only markup in the
+  // result is the markup this function writes.
+  text = escapeHtml(text);
   var packages = text.split(/PACKAGE\s+\d+:/i).filter(function(s){ return s.trim(); });
   if (!packages.length) {
     // Fallback: show raw text nicely
@@ -2646,9 +2648,8 @@ const systemPrompt = `You are the GM Assistant for a dynasty fantasy football te
 
 The live roster sync has not completed, so you have NO roster, news, or leaguemate context in this prompt. Do not invent any. Use your tools to look up the user's roster, player values, and current NFL situations before answering anything that depends on them.
 
-Your trusted analyst sources (must reference appropriately): Matt Waldman for RBs, Josh Norris/Hayden Winks for overall, Nate Tice for QBs, Matt Harmon/Steve Smith Sr. for WRs, Robert Mays for all positions.
 
-Be direct, opinionated, and analytical. Keep responses concise — this is a mobile app. When evaluating trades give a clear verdict. Always cite sources briefly at the end.`;
+Be direct, opinionated, and analytical. Keep responses concise — this is a mobile app. When evaluating trades give a clear verdict. Cite a source ONLY when it came back from a tool in this turn. Never attribute a claim to a named analyst, publication or ranking service — their work is not available to you.`;
 
 let chatHistory = [];
 
@@ -2665,6 +2666,18 @@ function escapeHtml(str) {
   var div = document.createElement('div');
   div.textContent = str == null ? '' : String(str);
   return div.innerHTML;
+}
+
+// Untrusted text that is allowed ONE piece of formatting: **bold**.
+//
+// Order is the whole point. Escape first, then promote the convention we
+// intend to support, so the only markup that survives is markup this
+// function created. Doing it the other way round — formatting a raw string
+// and trusting the rest — is what let model output, and anything the model
+// was quoting back (a feed headline, the user's own text), reach innerHTML
+// as live HTML.
+function safeRichText(str) {
+  return escapeHtml(str).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 }
 
 // Coerce one stored session into a shape the rest of the app can rely on,
@@ -3133,7 +3146,7 @@ function addFCMsg(role, text) {
   const who = role === 'you'
     ? '<span class="fc-who">You</span>'
     : '<span class="fc-who"><img class="fc-avatar" src="gm-avatar.webp" alt="" width="30" height="30" decoding="async">GM Assistant</span>';
-  div.innerHTML = `${who}<div class="fc-bubble">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`;
+  div.innerHTML = `${who}<div class="fc-bubble">${safeRichText(text)}</div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
   return div;
@@ -3918,8 +3931,8 @@ function renderPdTab(idx) {
         '<span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(14,168,107,.1);color:#46A874;border:1px solid rgba(14,168,107,.25)">AI Synthesized</span>' +
       '</div>' +
       '<div style="padding:14px;display:flex;flex-direction:column;gap:10px">' +
-        '<div class="pd-notes-blurb'+(p.notes?'':' empty')+'" id="pd-notes-display">'+(p.notes||'No notes yet. Add your first observation below.')+'</div>' +
-        (p.notesLog&&p.notesLog.length ? p.notesLog.map(function(e){ return '<div style="display:flex;gap:8px;padding:6px 9px;background:#EEF2F5;border-radius:6px;border:1px solid #D9E0E5;margin-bottom:4px"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#71808D;flex-shrink:0">'+e.date+'</span><span style="font-size:11px;color:#44576C">'+e.text+'</span></div>'; }).join('') : '') +
+        '<div class="pd-notes-blurb'+(p.notes?'':' empty')+'" id="pd-notes-display">'+escapeHtml(p.notes||'No notes yet. Add your first observation below.')+'</div>' +
+        (p.notesLog&&p.notesLog.length ? p.notesLog.map(function(e){ return '<div style="display:flex;gap:8px;padding:6px 9px;background:#EEF2F5;border-radius:6px;border:1px solid #D9E0E5;margin-bottom:4px"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:#71808D;flex-shrink:0">'+escapeHtml(e.date)+'</span><span style="font-size:11px;color:#44576C">'+escapeHtml(e.text)+'</span></div>'; }).join('') : '') +
         '<div class="pd-note-row"><textarea class="pd-note-input" id="pd-note-input" placeholder="Route running, snap count, landing spot..."></textarea>' +
         '<button class="pd-note-btn" id="pd-note-btn" onclick="scAddNote(currentProspect.id)">Add Note</button></div>' +
         '<div class="pd-synth-row" id="pd-synth-row"><span>Synthesizing...</span></div>' +
@@ -3953,7 +3966,7 @@ function renderPdTab(idx) {
     var newsListHtml = news.length
       ? '<div style="background:#F5F7F8;border:1px solid #D9E0E5;border-radius:14px;padding:0 14px;box-shadow:0 1px 8px rgba(15,31,61,.05)">' +
           news.map(function(item) {
-            return '<div class="pd-news-item"><div class="pd-news-meta"><span class="pd-news-date">'+(item.timeAgo||item.date||'')+'</span></div><div class="pd-news-txt">'+item.desc.replace(/<[^>]+>/g,'').slice(0,300)+'</div></div>';
+            return '<div class="pd-news-item"><div class="pd-news-meta"><span class="pd-news-date">'+(item.timeAgo||item.date||'')+'</span></div><div class="pd-news-txt">'+escapeHtml(String(item.desc||'').replace(/<[^>]+>/g,'').slice(0,300))+'</div></div>';
           }).join('') +
         '</div>'
       : '<div class="pd-no-news">No items found for '+p.name+'<br><span style="font-size:10px;color:#C7D0D6">Save the card to trigger a fresh search, or tap Refresh Feed.</span></div>' +
