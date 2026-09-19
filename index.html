@@ -156,12 +156,15 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
 @keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
 .cc-input { display: flex; gap: 8px; align-items: center; padding: 10px 12px; background: var(--white); }
-.cc-input input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 12px; color: var(--text); outline: none; transition: border-color .15s, box-shadow .15s; }
-.cc-input input::placeholder { color: var(--dim); }
-.cc-input input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47,143,229,.12); }
-.send { width: 34px; height: 34px; flex-shrink: 0; background: var(--accent); border: none; border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: opacity .15s, transform .12s; }
-.send:active { transform: translateY(1px); opacity: .85; }
-.send svg { width: 13px; height: 13px; fill: white; }
+/* Same icy field and same navy circular send as the full composer, scaled
+   for the card. It was the last piece of the old generation left inside a
+   card that otherwise reads as the new one. */
+.cc-input input { flex: 1; background: rgba(255,255,255,.92); border: 1px solid rgba(107,127,153,.30); border-radius: 18px; padding: 10px 15px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 12px; color: #172033; outline: none; box-shadow: 0 4px 12px rgba(15,31,51,.07); transition: border-color 180ms cubic-bezier(.2,.7,.2,1), box-shadow 180ms cubic-bezier(.2,.7,.2,1); }
+.cc-input input::placeholder { color: #8FA2B8; }
+.cc-input input:focus { border-color: rgba(31,58,95,.55); box-shadow: 0 5px 15px rgba(15,31,51,.12); }
+.send { width: 34px; height: 34px; flex-shrink: 0; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #2A476B 0%, #1F3A5F 55%, #182F4E 100%); box-shadow: 0 4px 11px rgba(24,47,78,.30); transition: transform 180ms cubic-bezier(.2,.7,.2,1), box-shadow 180ms cubic-bezier(.2,.7,.2,1); }
+.send:active { transform: scale(.94); box-shadow: 0 2px 7px rgba(24,47,78,.34); }
+.send svg { width: 13px; height: 13px; fill: #F7F9FC; }
 
 /* ── QUICK GRID ── */
 .qgrid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
