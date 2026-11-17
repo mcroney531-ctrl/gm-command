@@ -1,7 +1,8 @@
-const CACHE_NAME = 'gm-command-v1';
+const CACHE_NAME = 'gm-command-v2';
 const STATIC_ASSETS = [
   '/index.html',
   '/manifest.json',
+  '/dynasty_config.json',
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Figtree:wght@300;400;500;600;700&display=swap'
 ];
 

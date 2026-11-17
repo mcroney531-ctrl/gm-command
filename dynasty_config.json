@@ -1,5 +1,5 @@
 {
-  "_note": "Canonical league config for Dynasty Daddies. Mirrors config/dynasty_config.py in the Python engines. Verified against Sleeper API 2026-07-04.",
+  "_note": "GM Command's league identity and format: index.html loads this file at startup and has no hard-coded fallback. Checked mirror of Ddreportcards config/dynasty_config.py: after any change run, in Ddreportcards, python scripts/check_league_profile.py --gm-config ../gm-command/dynasty_config.json. Verified against Sleeper API 2026-07-04.",
   "league_id": "1312201057664786432",
   "league_name": "Dynasty Daddies",
   "my_team_name": "The Psych Ward",
