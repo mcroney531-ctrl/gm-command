@@ -855,6 +855,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .intel-input { width: 100%; min-height: 72px; resize: vertical; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 13.5px; line-height: 1.45; color: var(--text); background: var(--white); border: 1px solid var(--border2); border-radius: 8px; padding: 10px 12px; }
 .intel-input::placeholder { color: #8FA2B8; }
 .intel-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47,143,229,.15); }
+.lm-name-input { min-height: 0; resize: none; }
 .add-intel-btn { width: 100%; border: none; border-radius: 10px; padding: 12px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; background: var(--accent); color: #ffffff; cursor: pointer; box-shadow: 0 4px 12px rgba(47,143,229,.28); transition: transform .1s, opacity .1s; }
 .add-intel-btn:active { transform: translateY(1px); opacity: .9; }
 .add-intel-btn:disabled { opacity: .55; cursor: default; box-shadow: none; transform: none; }
@@ -2482,9 +2483,18 @@ function buildSystemPrompt() {
   // and record come from Sleeper; the blurb is the user's own note. Reading
   // lm.synthesis/lm.notes here was a bug — the field is lm.blurb, so every
   // entry rendered as "No intel yet" and the prompt carried nothing but names.
-  var withIntel = (leaguemates || []).filter(function(lm){ return lm.blurb && lm.blurb.trim(); });
+  // A leaguemate is listed when the user gave them a real name or wrote intel.
+  var withIntel = (leaguemates || []).filter(function(lm){ return lm.realName || (lm.blurb && lm.blurb.trim()); });
   var intelStr = withIntel.length
-    ? withIntel.map(function(lm){ return lm.name + ' (' + lm.team + '): ' + lm.blurb.trim(); }).join(' ')
+    ? withIntel.map(function(lm){
+        var who = lm.realName
+          ? lm.realName + ' (Sleeper username ' + lm.name + '; team ' + lm.team + ')'
+          : lm.name + ' (' + lm.team + ')';
+        return who + (lm.blurb && lm.blurb.trim() ? ': ' + lm.blurb.trim() : '.');
+      }).join(' ') +
+      (withIntel.some(function(lm){ return lm.realName; })
+        ? ' When the user refers to a leaguemate by first name, it means the matching real name above.'
+        : '')
     : 'No leaguemate intel recorded yet.';
 
   // Build rival roster summary
@@ -4115,6 +4125,7 @@ function buildLeaguemates() {
       initials: getInitials(user.display_name || teamName),
       name: user.display_name || teamName,
       team: teamName + ' \u00b7 ' + wins + '\u2013' + losses,
+      realName: '',   // the person's real name, typed by the user on the Intel card
       blurb: '',
       log: []
     });
@@ -4134,6 +4145,7 @@ function lmLoadNotes() {
       if (overrides[lm.id]) {
         lm.blurb = overrides[lm.id].blurb;
         lm.log = overrides[lm.id].log;
+        lm.realName = cleanRealName(overrides[lm.id].realName);
       }
     });
   } catch(e) {}
@@ -4141,9 +4153,31 @@ function lmLoadNotes() {
 function lmSaveNotes() {
   try {
     var overrides = {};
-    leaguemates.forEach(function(lm) { overrides[lm.id] = { blurb: lm.blurb, log: lm.log }; });
+    leaguemates.forEach(function(lm) { overrides[lm.id] = { blurb: lm.blurb, log: lm.log, realName: lm.realName }; });
     localStorage.setItem('gmc_leaguemate_notes', JSON.stringify(overrides));
   } catch(e) {}
+  // Chat should see a new name or note now, not after the next Sleeper sync.
+  buildSystemPrompt();
+}
+
+// One line, at most 40 characters: it goes into the system prompt.
+function cleanRealName(v) {
+  return typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, 40) : '';
+}
+
+function lmHeaderName(lm) {
+  return lm.realName ? lm.name + ' \u00b7 ' + lm.realName : lm.name;
+}
+
+function saveLmName(id) {
+  var lm = leaguemates.find(function(l) { return l.id === id; });
+  var input = document.getElementById('name-' + id);
+  if (!lm || !input) return;
+  lm.realName = cleanRealName(input.value);
+  input.value = lm.realName;
+  lmSaveNotes();
+  var hd = document.getElementById('lmn-' + id);
+  if (hd) hd.textContent = lmHeaderName(lm);
 }
 
 function updateIntelSettingsRow() {
@@ -4168,7 +4202,7 @@ function renderIntel() {
       <div class="lm-card-hd" onclick="toggleLMCard('${escapeAttr(lm.id)}')">
         <div class="lm-hd-l">
           <div class="lm-av">${escapeHtml(lm.initials)}</div>
-          <div><div class="lm-card-name">${escapeHtml(lm.name)}</div><div class="lm-card-team">${escapeHtml(lm.team)}</div></div>
+          <div><div class="lm-card-name" id="lmn-${escapeAttr(lm.id)}">${escapeHtml(lmHeaderName(lm))}</div><div class="lm-card-team">${escapeHtml(lm.team)}</div></div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           ${lm.log.length ? `<span class="lm-ic">${lm.log.length} note${lm.log.length>1?'s':''}</span>` : ''}
@@ -4176,6 +4210,11 @@ function renderIntel() {
         </div>
       </div>
       <div class="lm-body" id="lmb-${escapeAttr(lm.id)}">
+        <div>
+          <div class="field-lbl">Name</div>
+          <input type="text" class="intel-input lm-name-input" id="name-${escapeAttr(lm.id)}" value="${escapeAttr(lm.realName)}" maxlength="40" autocomplete="off" placeholder="Their real name, e.g. John" onchange="saveLmName('${escapeAttr(lm.id)}')">
+          <div class="add-desc" style="margin:6px 0 0">So you can say “John” in chat and the assistant knows which team.</div>
+        </div>
         <div>
           <div class="field-lbl">Tendencies Breakdown</div>
           <div class="blurb-display ${lm.blurb?'':'empty'}" id="blurb-${escapeAttr(lm.id)}">${lm.blurb ? safeRichText(lm.blurb) : 'No breakdown yet. Add your first intel note below.'}</div>
