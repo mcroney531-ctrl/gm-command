@@ -1214,7 +1214,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 <div class="screen" id="screen-intel">
   <div class="app-header">
     <div class="header-row">
-      <button class="back-btn" onclick="nav('settings')" style="color:rgba(255,255,255,.6);font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;background:none;border:none;cursor:pointer">‹ Settings</button>
+      <button class="back-btn" id="intel-back" onclick="intelBack()" style="color:rgba(255,255,255,.6);font-family:Zalando Sans SemiExpanded,sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;background:none;border:none;cursor:pointer">‹ Settings</button>
       <div class="logo"><span class="logo-gm">League</span><span class="logo-cmd">Intel</span></div>
       <div style="width:50px"></div>
     </div>
@@ -4064,7 +4064,27 @@ function renderSettings() {
   if (sub) sub.textContent = gmAccessKey() ? 'Set on this device' : 'Not set — tap to add';
 }
 
-function showIntel() { nav('intel'); renderIntel(); }
+// League Intel has two entries. Settings opens every leaguemate; a rival's
+// Intel tab opens just that rival's manager, card already open, and Back
+// returns to the rival. intelFocusId is that manager's id, or null.
+let intelFocusId = null;
+function showIntel(focusId) {
+  intelFocusId = focusId || null;
+  var back = document.getElementById('intel-back');
+  if (back) back.textContent = intelFocusId ? '\u2039 Rival' : '\u2039 Settings';
+  nav('intel');
+}
+function showRivalIntel() {
+  showIntel(currentRival && currentRival.intelId);
+}
+function intelBack() {
+  if (intelFocusId && currentRival) {
+    nav('rival-detail');
+    renderRdTab(currentRdTab);   // shows a note added on the focused card
+  } else {
+    nav('settings');
+  }
+}
 
 // Built from live Sleeper league members by buildLeaguemates(). Starts empty
 // on purpose: this used to be a hardcoded list of invented managers
@@ -4138,8 +4158,13 @@ function updateIntelSettingsRow() {
 function renderIntel() {
   updateIntelSettingsRow();
   const sec = document.getElementById('lm-section');
-  sec.innerHTML = leaguemates.map(lm => `
-    <div class="lm-card" id="lmc-${escapeAttr(lm.id)}">
+  // Focused from a rival: that one leaguemate, opened. If they aren't loaded
+  // (Sleeper not synced yet), fall back to the full list rather than nothing.
+  const focused = intelFocusId ? leaguemates.filter(l => l.id === intelFocusId) : [];
+  const shown = focused.length ? focused : leaguemates;
+  const openCls = focused.length ? ' open' : '';
+  sec.innerHTML = shown.map(lm => `
+    <div class="lm-card${openCls}" id="lmc-${escapeAttr(lm.id)}">
       <div class="lm-card-hd" onclick="toggleLMCard('${escapeAttr(lm.id)}')">
         <div class="lm-hd-l">
           <div class="lm-av">${escapeHtml(lm.initials)}</div>
@@ -4428,8 +4453,8 @@ function renderRdTab(idx) {
     const lm = t.intelId ? leaguemates.find(l=>l.id===t.intelId) : null;
     if (!lm || !lm.blurb) {
       container.innerHTML = `<div class="rd-intel-body">
-        <div class="nli-txt">No intel profile yet for ${escapeHtml(t.manager)}. Add notes in Settings → Leaguemate Intel.</div>
-        <button class="rd-btn-primary" onclick="nav('intel')">🧠 Add Intel</button>
+        <div class="nli-txt">No intel notes yet for ${escapeHtml(t.manager)}.</div>
+        <button class="rd-btn-primary" onclick="showRivalIntel()">🧠 Add Intel</button>
       </div>`;
     } else {
       const log = lm.log || [];
@@ -4437,7 +4462,7 @@ function renderRdTab(idx) {
         <div class="field-lbl">Tendencies Breakdown</div>
         <div class="rd-intel-blurb">${safeRichText(lm.blurb)}</div>
         ${log.length ? '<div class="field-lbl">Intel Log</div>' + log.map(e=>`<div class="rd-intel-log-item"><span class="rd-intel-log-date">${escapeHtml(e.date)}</span><span class="rd-intel-log-txt">${escapeHtml(e.text)}</span></div>`).join('') : ''}
-        <button class="rd-btn-secondary" onclick="nav('intel')">Edit Intel ›</button>
+        <button class="rd-btn-secondary" onclick="showRivalIntel()">Add / Edit Intel ›</button>
       </div>`;
     }
 
