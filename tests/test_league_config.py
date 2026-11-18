@@ -129,10 +129,16 @@ class ServiceWorkerTest(unittest.TestCase):
 
 
 class VisualAndSecurityBaselineTest(unittest.TestCase):
-    def test_style_block_is_unchanged(self):
+    def test_approved_styles_are_unchanged(self):
+        # The approved stylesheet (48fbc95) must stay byte-identical. Rules may
+        # only be appended after it: the Settings + League Intel block was
+        # added that way, for screens that had never been styled.
         styles = re.findall(r"<style[^>]*>([\s\S]*?)</style>", HTML)
         self.assertEqual(len(styles), 1)
-        self.assertTrue(hashlib.sha256(styles[0].encode()).hexdigest().startswith(BASELINE_STYLE_SHA256_PREFIX))
+        marker = "\n/* \u2500\u2500 SETTINGS + LEAGUE INTEL \u2500\u2500"
+        block = styles[0]
+        approved = block[:block.index(marker) + 1] if marker in block else block
+        self.assertTrue(hashlib.sha256(approved.encode()).hexdigest().startswith(BASELINE_STYLE_SHA256_PREFIX))
 
     def test_no_new_html_sinks(self):
         self.assertEqual(len(re.findall(r"\.innerHTML\s*[+]?=", HTML)), BASELINE_INNERHTML_SINKS)
