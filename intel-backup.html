@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Intel Backup</title>
+<!--
+  One-time, read-only backup of League Intel as the pre-sync app stored it
+  (localStorage "gmc_leaguemate_notes"), taken before the sync update ships.
+  It must be served from the production origin to read that storage.
+
+  It never writes to storage, loads nothing external and never includes the
+  access key. The file it produces can be checked against this device here,
+  and imported by the updated app (Settings -> Import Intel).
+-->
+<style>
+  :root { --bg: #0A1520; --card: #F4F6F8; --text: #0F1F3D; --mid: #45556B; --accent: #2F8FE5; --ok: #2E8B57; --warn: #B7791F; --border: #D8DEE6; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; padding: 20px 16px 40px; }
+  h1 { color: #fff; font-size: 22px; font-weight: 600; margin: 4px 0 14px; letter-spacing: .5px; }
+  .card { background: var(--card); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+  .lbl { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); margin-bottom: 6px; }
+  .big { font-size: 17px; font-weight: 600; }
+  .mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; word-break: break-all; }
+  button, label.btn { display: block; width: 100%; border: none; border-radius: 10px; padding: 13px; margin-top: 10px; font-size: 15px; font-weight: 600; background: var(--accent); color: #fff; cursor: pointer; text-align: center; }
+  button.secondary, label.btn { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+  button:disabled { opacity: .5; }
+  .ok { color: var(--ok); font-weight: 600; }
+  .warn { color: var(--warn); font-weight: 600; }
+  p { margin: 6px 0; color: var(--mid); }
+  input[type=file] { display: none; }
+</style>
+</head>
+<body>
+<h1>Intel Backup</h1>
+
+<div class="card">
+  <div class="lbl">On this device</div>
+  <div class="big" id="summary">Reading…</div>
+  <p id="detail"></p>
+  <div class="lbl" style="margin-top:10px">Fingerprint</div>
+  <div class="mono" id="fp">—</div>
+</div>
+
+<div class="card">
+  <div class="lbl">1 · Save a copy</div>
+  <p>Share sends the file to Drive, email or Files. Download saves it to Downloads.</p>
+  <button id="share">Share backup file</button>
+  <button id="download" class="secondary">Download backup file</button>
+  <button id="copy" class="secondary">Copy backup text</button>
+  <p id="saved"></p>
+</div>
+
+<div class="card">
+  <div class="lbl">2 · Check the saved copy</div>
+  <p>Pick the file you saved. It is compared with what is on this device.</p>
+  <label class="btn" for="verify">Check a backup file</label>
+  <input type="file" id="verify" accept="application/json,.json">
+  <p id="verified"></p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var KEY = 'gmc_leaguemate_notes';
+  var raw = null, parsed = null, fingerprint = '', payload = '';
+
+  function el(id) { return document.getElementById(id); }
+  function hex(buf) { return Array.from(new Uint8Array(buf), function (b) { return b.toString(16).padStart(2, '0'); }).join(''); }
+  async function sha256(text) { return hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))); }
+
+  function describe(data) {
+    var people = 0, notes = 0, names = 0, breakdowns = 0;
+    Object.keys(data).forEach(function (k) {
+      var r = data[k] || {};
+      var n = Array.isArray(r.log) ? r.log.length : 0;
+      var has = n || (r.realName && String(r.realName).trim()) || (r.blurb && String(r.blurb).trim());
+      if (has) people++;
+      notes += n;
+      if (r.realName && String(r.realName).trim()) names++;
+      if (r.blurb && String(r.blurb).trim()) breakdowns++;
+    });
+    return { people: people, notes: notes, names: names, breakdowns: breakdowns };
+  }
+
+  function fileName() { return 'gm-command-intel-backup-' + new Date().toISOString().slice(0, 10) + '.json'; }
+
+  async function init() {
+    try { raw = localStorage.getItem(KEY); } catch (e) { raw = null; }
+    if (raw === null) {
+      el('summary').textContent = 'No League Intel found in this browser.';
+      el('detail').textContent = 'If you use GM Command in a different browser, open this page there. Nothing to back up here.';
+      ['share', 'download', 'copy'].forEach(function (id) { el(id).disabled = true; });
+      return;
+    }
+    try { parsed = JSON.parse(raw); } catch (e) { parsed = null; }
+    var d = parsed && typeof parsed === 'object' ? describe(parsed) : null;
+    el('summary').textContent = d
+      ? d.people + ' leaguemate' + (d.people === 1 ? '' : 's') + ' with intel · ' + d.notes + ' note' + (d.notes === 1 ? '' : 's')
+      : 'Intel found, but it is not readable as JSON (it will still be backed up as-is).';
+    if (d) el('detail').textContent = d.names + ' real name' + (d.names === 1 ? '' : 's') + ' · ' + d.breakdowns + ' breakdown' + (d.breakdowns === 1 ? '' : 's') + ' · ' + raw.length + ' characters';
+    fingerprint = await sha256(raw);
+    el('fp').textContent = fingerprint.slice(0, 16);
+    payload = JSON.stringify({
+      format: 'gm-command-legacy-backup', version: 1, saved_at: new Date().toISOString(),
+      origin: location.origin, sha256: fingerprint, items: { gmc_leaguemate_notes: raw }
+    }, null, 2);
+  }
+
+  function blob() { return new Blob([payload], { type: 'application/json' }); }
+  function saved(msg) { el('saved').textContent = msg; }
+
+  el('share').addEventListener('click', async function () {
+    var file = new File([blob()], fileName(), { type: 'application/json' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: 'GM Command intel backup' }); saved('Shared. Now check the saved copy below.'); }
+      catch (e) { if (e && e.name !== 'AbortError') saved('Sharing failed — use Download instead.'); }
+    } else saved('Sharing files isn’t supported here — use Download instead.');
+  });
+
+  el('download').addEventListener('click', function () {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob());
+    a.download = fileName();
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+    saved('Downloaded ' + fileName() + '. Now check the saved copy below.');
+  });
+
+  el('copy').addEventListener('click', async function () {
+    try { await navigator.clipboard.writeText(payload); saved('Copied. Paste it into a note or email to yourself.'); }
+    catch (e) { saved('Copy isn’t available here — use Share or Download.'); }
+  });
+
+  el('verify').addEventListener('change', async function () {
+    var f = this.files && this.files[0];
+    this.value = '';
+    if (!f) return;
+    var out = el('verified');
+    var data = null;
+    try { data = JSON.parse(await f.text()); } catch (e) { data = null; }
+    if (!data || data.format !== 'gm-command-legacy-backup' || !data.items || typeof data.items.gmc_leaguemate_notes !== 'string') {
+      out.className = 'warn'; out.textContent = 'That is not a GM Command intel backup file.'; return;
+    }
+    var fileFp = await sha256(data.items.gmc_leaguemate_notes);
+    if (fileFp !== data.sha256) { out.className = 'warn'; out.textContent = 'The file is damaged (its fingerprint doesn’t match its contents).'; return; }
+    if (raw !== null && fileFp === fingerprint) { out.className = 'ok'; out.textContent = '✓ Backup matches this device exactly (' + fileFp.slice(0, 16) + ').'; }
+    else { out.className = 'warn'; out.textContent = 'The file is intact, but it does not match what is on this device now (' + fileFp.slice(0, 16) + ').'; }
+  });
+
+  init();
+})();
+</script>
+</body>
+</html>
