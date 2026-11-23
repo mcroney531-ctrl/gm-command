@@ -42,8 +42,11 @@ class NameFieldTest(unittest.TestCase):
         self.assertIn(">Name<", body)
 
     def test_name_is_persisted_with_the_notes(self):
-        self.assertIn("realName", _function_body("lmSaveNotes"))
-        self.assertIn("realName", _function_body("lmLoadNotes"))
+        # Since intel sync the name lives in the intel cache as a pending
+        # server write; leaguemate.realName is derived from it.
+        self.assertIn("e.name_pending = {", _function_body("saveLmName"))
+        self.assertIn("intelPersist()", _function_body("lmSaveNotes"))
+        self.assertIn("lm.realName = cleanRealName(v.realName)", _function_body("lmLoadNotes"))
         self.assertIn("realName: ''", _function_body("buildLeaguemates"))
 
     def test_save_cleans_input_and_updates_without_html(self):
