@@ -4189,26 +4189,38 @@ function intelEmptyCache() {
   return { schema: 2, last_synced_rev: 0, legacy_imported: false, last_export_at: 0, seq: 0, lm: {} };
 }
 function intelLoadCache() {
+  var raw = null;
+  try { raw = localStorage.getItem(INTEL_CACHE_KEY); } catch (e) { return intelEmptyCache(); }
+  if (!raw) return intelEmptyCache();
   try {
-    var c = JSON.parse(localStorage.getItem(INTEL_CACHE_KEY) || 'null');
+    var c = JSON.parse(raw);
     if (c && c.schema === 2 && c.lm && typeof c.lm === 'object') return c;
   } catch (e) {}
+  // Unreadable (corrupt, or a future schema): keep it under its own key
+  // before the next save replaces it, so it can still be recovered.
+  try { localStorage.setItem(INTEL_CACHE_KEY + '_unreadable_' + Date.now(), raw); } catch (e) {}
   return intelEmptyCache();
 }
+var intelSync = { state: 'idle', inFlight: null, again: false, retryMs: 0, timer: null, lastOkAt: 0, restored: false, storageError: false };
 var intelCache = intelLoadCache();
-var intelSync = { state: 'idle', inFlight: null, again: false, retryMs: 0, timer: null, lastOkAt: 0, restored: false };
 var intelOpenCards = new Set();
 var intelSynthBusy = new Set();   // owners with a synthesis in flight; survives re-renders
 
 function intelPersist() {
-  try { localStorage.setItem(INTEL_CACHE_KEY, JSON.stringify(intelCache)); } catch (e) {}
+  try {
+    localStorage.setItem(INTEL_CACHE_KEY, JSON.stringify(intelCache));
+    intelSync.storageError = false;
+  } catch (e) {
+    // Storage full or blocked: changes now live only in this tab. Say so.
+    intelSync.storageError = true;
+  }
 }
 function intelSeq() { intelCache.seq = (intelCache.seq || 0) + 1; return intelCache.seq; }
 function intelEntry(owner) {
   var e = intelCache.lm[owner];
   if (!e) {
     e = intelCache.lm[owner] = { name: null, name_pending: null, name_rejected: null,
-                                 breakdown: null, breakdown_pending: null, blocked: null, obs: {} };
+                                 breakdown: null, breakdown_pending: null, breakdown_rejected: null, blocked: null, obs: {} };
   }
   return e;
 }
@@ -4247,7 +4259,7 @@ async function intelLegacyId(owner, date, text) {
 function intelOrderKey(o) { return o.rev ? o.rev : 1e12 + (o.seq || 0); }   // unsynced notes are newest
 function intelView(owner) {
   var e = intelCache.lm[owner];
-  if (!e) return { realName: '', blurb: '', log: [], outstanding: [], nameRejected: null, hasBreakdown: false };
+  if (!e) return { realName: '', blurb: '', log: [], outstanding: [], nameRejected: null, breakdownRejected: null, hasBreakdown: false };
   var nm = e.name_pending || e.name;
   var bd = e.breakdown_pending || e.breakdown;
   var covers = bd ? (bd.covers || []) : [];
@@ -4258,6 +4270,7 @@ function intelView(owner) {
     blurb: bd ? bd.value : '',
     hasBreakdown: !!bd,
     nameRejected: e.name_rejected,
+    breakdownRejected: e.breakdown_rejected || null,
     log: obs.map(function(o) {
       return { id: o.id, date: o.date_label, text: o.text, pending: !o.rev, covered: covers.indexOf(o.id) >= 0 };
     }),
@@ -4275,6 +4288,7 @@ function lmLoadNotes() {
     lm.log = v.log;
     lm.outstanding = v.outstanding;
     lm.nameRejected = v.nameRejected;
+    lm.breakdownRejected = v.breakdownRejected;
   });
 }
 
@@ -4294,32 +4308,41 @@ function lmHeaderName(lm) {
 }
 
 // ── Migration from the pre-sync localStorage format ──
+// Applies legacy records (the gmc_leaguemate_notes shape) to the cache:
+// additive, and a name or breakdown only where none exists. Used for the
+// one-time migration and for importing a pre-sync backup file. Returns the
+// number of notes added.
+async function intelApplyLegacy(raw) {
+  var added = 0;
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return added;
+  for (const owner of Object.keys(raw)) {
+    if (!INTEL_OWNER_RE.test(owner)) continue;
+    var rec = raw[owner] || {};
+    var log = Array.isArray(rec.log) ? rec.log.slice().reverse() : [];   // stored newest-first
+    var ids = [];
+    var e = intelEntry(owner);
+    for (const item of log) {
+      var text = intelCleanText(item && item.text, 1000);
+      if (!text) continue;
+      var date = intelCleanDate(item && item.date);
+      var id = await intelLegacyId(owner, date, text);
+      if (!e.obs[id]) { e.obs[id] = { id: id, text: text, date_label: date, rev: 0, seq: intelSeq() }; added++; }
+      if (ids.indexOf(id) < 0) ids.push(id);
+    }
+    var name = cleanRealName(rec.realName);
+    if (name && !e.name && !e.name_pending) e.name_pending = { value: name, base_rev: 0 };
+    var blurb = intelCleanText(rec.blurb, 4000);
+    if (blurb && !e.breakdown && !e.breakdown_pending) e.breakdown_pending = { value: blurb, base_rev: 0, covers: ids };
+  }
+  return added;
+}
+
 async function intelImportLegacy() {
   if (intelCache.legacy_imported) return;
   if (!(window.crypto && crypto.subtle)) return;   // try again in a secure context
   var raw = null;
   try { raw = JSON.parse(localStorage.getItem(INTEL_LEGACY_KEY) || 'null'); } catch (e) { raw = null; }
-  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
-    for (const owner of Object.keys(raw)) {
-      if (!INTEL_OWNER_RE.test(owner)) continue;
-      var rec = raw[owner] || {};
-      var log = Array.isArray(rec.log) ? rec.log.slice().reverse() : [];   // stored newest-first
-      var ids = [];
-      var e = intelEntry(owner);
-      for (const item of log) {
-        var text = intelCleanText(item && item.text, 1000);
-        if (!text) continue;
-        var date = intelCleanDate(item && item.date);
-        var id = await intelLegacyId(owner, date, text);
-        if (!e.obs[id]) e.obs[id] = { id: id, text: text, date_label: date, rev: 0, seq: intelSeq() };
-        if (ids.indexOf(id) < 0) ids.push(id);
-      }
-      var name = cleanRealName(rec.realName);
-      if (name && !e.name && !e.name_pending) e.name_pending = { value: name, base_rev: 0 };
-      var blurb = intelCleanText(rec.blurb, 4000);
-      if (blurb && !e.breakdown && !e.breakdown_pending) e.breakdown_pending = { value: blurb, base_rev: 0, covers: ids };
-    }
-  }
+  await intelApplyLegacy(raw);
   intelCache.legacy_imported = true;
   intelPersist();
 }
@@ -4434,7 +4457,7 @@ async function intelPushOwner(owner) {
         } else if (e.name_pending) e.name_pending.base_rev = cur.rev;
       }
     } else if (rn.status === 404) { e.blocked = 'not-in-league'; }
-    else { e.name_rejected = { value: p.value }; if (e.name_pending === p) e.name_pending = null; }
+    else { e.name_rejected = { value: p.value, reason: 'invalid' }; if (e.name_pending === p) e.name_pending = null; }
     intelPersist();
   }
   // Breakdown, once every note it covers is stored.
@@ -4455,7 +4478,10 @@ async function intelPushOwner(owner) {
         // A newer breakdown won. Ours is derived data and is dropped; the
         // notes it covered stay, and show as not yet in the breakdown.
         e.breakdown = { value: String(cb.value), rev: cb.rev, covers: (cb.covers || []).slice() };
-        if (e.breakdown_pending === b) e.breakdown_pending = null;
+        if (e.breakdown_pending === b) {
+          if (String(cb.value) !== b.value) e.breakdown_rejected = { value: b.value, covers: covers.slice() };
+          e.breakdown_pending = null;
+        }
         else if (e.breakdown_pending) e.breakdown_pending.base_rev = cb.rev;
       }
     } else if (rb.status === 422) {
@@ -4553,6 +4579,7 @@ var INTEL_STATE_TEXT = {
   preview: 'Preview — showing your real intel; changes here stay in this preview'
 };
 function intelStatusText() {
+  if (intelSync.storageError) return 'Couldn\u2019t save on this device \u2014 export a backup before closing the app';
   var t = INTEL_STATE_TEXT[intelSync.state] || '';
   if (intelSync.restored && intelSync.state === 'synced') t = 'Server copy was missing — restored from this device';
   var bad = intelUnsavableCount();
@@ -4613,11 +4640,12 @@ function renderIntel() {
           <div class="field-lbl">Name</div>
           <input type="text" class="intel-input lm-name-input" id="name-${escapeAttr(lm.id)}" value="${escapeAttr(lm.realName)}" maxlength="40" autocomplete="off" placeholder="Their real name, e.g. John" onchange="saveLmName('${escapeAttr(lm.id)}')">
           <div class="add-desc" style="margin:6px 0 0">So you can say “John” in chat and the assistant knows which team.</div>
-          ${lm.nameRejected ? `<div class="intel-notice">Not saved: “${escapeHtml(lm.nameRejected.value)}” — the name was changed on another device. <button class="intel-notice-btn" onclick="intelUseRejectedName('${escapeAttr(lm.id)}')">Use mine</button></div>` : ''}
+          ${lm.nameRejected ? `<div class="intel-notice">Not saved: “${escapeHtml(lm.nameRejected.value)}” — ${lm.nameRejected.reason === 'invalid' ? 'the server rejected it' : 'the name was changed on another device'}. <button class="intel-notice-btn" onclick="intelUseRejectedName('${escapeAttr(lm.id)}')">Use mine</button></div>` : ''}
         </div>
         <div>
           <div class="field-lbl">Tendencies Breakdown</div>
           <div class="blurb-display ${lm.blurb?'':'empty'}" id="blurb-${escapeAttr(lm.id)}">${lm.blurb ? safeRichText(lm.blurb) : 'No breakdown yet. Add your first intel note below.'}</div>
+          ${lm.breakdownRejected ? `<div class="intel-notice">A newer breakdown from another device replaced yours. Re-synthesize to fold your notes into it, or <button class="intel-notice-btn" onclick="intelUseRejectedBreakdown('${escapeAttr(lm.id)}')">Use mine</button></div>` : ''}
           ${lm.outstanding.length ? `<div class="intel-notice">${lm.outstanding.length} note${lm.outstanding.length>1?'s':''} not in the breakdown yet. <button class="intel-notice-btn" id="rsb-${escapeAttr(lm.id)}" onclick="intelResynthesize('${escapeAttr(lm.id)}')">Re-synthesize</button></div>` : ''}
         </div>
         ${lm.log.length ? `<div><div class="field-lbl" style="margin-bottom:6px">Intel Log</div>${lm.log.map(e=>`<div style="display:flex;gap:8px;padding:7px 10px;background:var(--off);border-radius:6px;border:1px solid var(--border);margin-bottom:4px"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:var(--dim);flex-shrink:0">${escapeHtml(e.date)}</span><span style="font-size:11px;color:var(--mid)">${escapeHtml(e.text)}${e.pending ? '<span class="intel-tag">not synced</span>' : ''}${e.covered ? '' : '<span class="intel-tag">not in breakdown</span>'}</span></div>`).join('')}</div>` : ''}
@@ -4662,6 +4690,17 @@ function saveLmName(id) {
   var hd = document.getElementById('lmn-' + id);
   var lm = leaguemates.find(function(l) { return l.id === id; });
   if (hd && lm) hd.textContent = lmHeaderName(lm);
+  syncIntel();
+}
+
+function intelUseRejectedBreakdown(id) {
+  var e = intelEntry(id);
+  var r = e.breakdown_rejected;
+  if (!r) return;
+  e.breakdown_pending = { value: r.value, base_rev: intelRev(e.breakdown),
+                          covers: (r.covers || []).filter(function(i) { return e.obs[i]; }) };
+  e.breakdown_rejected = null;
+  lmSaveNotes();
   syncIntel();
 }
 
@@ -4716,6 +4755,7 @@ async function intelSynthesize(owner, ids) {
   var baseRev = e.breakdown_pending ? e.breakdown_pending.base_rev : intelRev(e.breakdown);
   var covers = prevCovers.concat(ids.filter(function(i) { return e.obs[i] && prevCovers.indexOf(i) < 0; }));
   e.breakdown_pending = { value: updated, base_rev: baseRev, covers: covers };
+  e.breakdown_rejected = null;   // superseded by a breakdown that builds on the current one
   return 'ok';
 }
 
@@ -4796,6 +4836,8 @@ function intelExport() {
       sleeper_name: lm ? lm.name : '',
       name: nm ? nm.value : null,
       breakdown: bd ? { value: bd.value, covers: (bd.covers || []).slice() } : null,
+      rejected_name: e.name_rejected ? e.name_rejected.value : null,
+      rejected_breakdown: e.breakdown_rejected ? e.breakdown_rejected.value : null,
       observations: Object.keys(e.obs).map(function(k) { return e.obs[k]; })
         .sort(function(a, b) { return intelOrderKey(a) - intelOrderKey(b); })
         .map(function(o) { return { id: o.id, text: o.text, date_label: o.date_label }; })
@@ -4837,6 +4879,18 @@ async function intelImportFile(input) {
 // breakdown only where this device has none. Differences are reported,
 // never applied. Returns a plain-text summary (shown with alert()).
 async function intelApplyImport(data) {
+  // A backup made with intel-backup.html before sync existed: the raw
+  // gmc_leaguemate_notes text, applied with the same rules as migration.
+  if (data && data.format === 'gm-command-legacy-backup' && data.version === 1 && data.items &&
+      typeof data.items.gmc_leaguemate_notes === 'string') {
+    var legacy = null;
+    try { legacy = JSON.parse(data.items.gmc_leaguemate_notes); } catch (e) { legacy = null; }
+    if (!legacy || typeof legacy !== 'object') return 'That backup file is damaged. Nothing was imported.';
+    var n = await intelApplyLegacy(legacy);
+    intelPersist();
+    return 'Imported ' + n + ' new note' + (n === 1 ? '' : 's') + ' from the pre-sync backup. ' +
+      'Names and breakdowns were only filled in where none existed.';
+  }
   if (!data || data.format !== 'gm-command-intel' || data.version !== 1 ||
       !data.leaguemates || typeof data.leaguemates !== 'object' || Array.isArray(data.leaguemates)) {
     return 'Not a GM Command intel export. Nothing was imported.';

@@ -70,7 +70,7 @@ class ReadAndMergeTest(unittest.TestCase):
         self.assertIn(".rev = 0", body)                        # re-sends what the server lost
 
     def test_no_device_clock_in_conflict_decisions(self):
-        for fn in ("intelMerge", "intelPushOwner", "intelSynthesize", "saveLmName", "intelApplyImport"):
+        for fn in ("intelMerge", "intelPushOwner", "intelSynthesize", "saveLmName", "intelApplyImport", "intelApplyLegacy"):
             with self.subTest(fn):
                 self.assertNotIn("Date.now", _function_body(fn))
 
@@ -109,9 +109,38 @@ class SourceDataTest(unittest.TestCase):
         self.assertNotRegex(HTML, r"setItem\(\s*(INTEL_LEGACY_KEY|'gmc_leaguemate_notes')")
 
     def test_migration_only_fills_never_set_fields(self):
-        body = _function_body("intelImportLegacy")
+        body = _function_body("intelApplyLegacy")
         self.assertIn("if (name && !e.name && !e.name_pending) e.name_pending = { value: name, base_rev: 0 };", body)
         self.assertIn("if (blurb && !e.breakdown && !e.breakdown_pending)", body)
+
+
+class NoSilentLossTest(unittest.TestCase):
+    """Every path that removes a local value keeps it somewhere visible."""
+
+    def test_unreadable_cache_is_preserved_before_replacement(self):
+        body = _function_body("intelLoadCache")
+        self.assertIn("INTEL_CACHE_KEY + '_unreadable_'", body)
+        self.assertLess(body.index("_unreadable_"), body.rindex("return intelEmptyCache()"))
+
+    def test_storage_failure_is_surfaced(self):
+        self.assertIn("intelSync.storageError = true", _function_body("intelPersist"))
+        self.assertIn("if (intelSync.storageError)", _function_body("intelStatusText"))
+
+    def test_losing_breakdown_is_kept_and_restorable(self):
+        push = _function_body("intelPushOwner")
+        self.assertIn("e.breakdown_rejected = { value: b.value, covers: covers.slice() }", push)
+        self.assertLess(push.index("e.breakdown_rejected = {"), push.index("e.breakdown_pending = null;\n        }"))
+        self.assertIn("e.breakdown_pending = { value: r.value", _function_body("intelUseRejectedBreakdown"))
+        self.assertIn("intelUseRejectedBreakdown(", _function_body("renderIntel"))
+
+    def test_rejected_values_are_exported(self):
+        body = _function_body("intelExport")
+        self.assertIn("rejected_name:", body)
+        self.assertIn("rejected_breakdown:", body)
+
+    def test_invalid_name_keeps_value_with_accurate_reason(self):
+        self.assertIn("e.name_rejected = { value: p.value, reason: 'invalid' }", _function_body("intelPushOwner"))
+        self.assertIn("the server rejected it", _function_body("renderIntel"))
 
 
 class ServiceWorkerTest(unittest.TestCase):

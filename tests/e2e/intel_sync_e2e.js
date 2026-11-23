@@ -55,10 +55,11 @@ async function device(opts = {}) {
   const origin = opts.origin || PROD;
   const ctx = await browser.newContext({ viewport: { width: 430, height: 932 }, serviceWorkers: 'block', acceptDownloads: true });
   const state = { errors: [], puts: 0, chat: opts.chat || 'ok', chatDelayMs: 0, intel: 'pass', blockPuts: false };
-  await ctx.addInitScript(([key, legacy]) => {
+  await ctx.addInitScript(([key, legacy, rawCache]) => {
     if (key !== null && !localStorage.getItem('gmCommandAccessKey')) localStorage.setItem('gmCommandAccessKey', key);
     if (legacy && !localStorage.getItem('gmc_leaguemate_notes')) localStorage.setItem('gmc_leaguemate_notes', JSON.stringify(legacy));
-  }, [opts.key === undefined ? SECRET : opts.key, opts.legacy || null]);
+    if (rawCache && !sessionStorage.getItem('seeded')) { localStorage.setItem('gmc_intel_v2', rawCache); sessionStorage.setItem('seeded', '1'); }
+  }, [opts.key === undefined ? SECRET : opts.key, opts.legacy || null, opts.rawCache || null]);
   await ctx.route('**/*', async (route) => {
     const req = route.request();
     const u = new URL(req.url());
@@ -157,7 +158,14 @@ scenario('legacy migration with realistic records', async () => {
   check('breakdown migrated covering both notes', j && j.breakdown && j.breakdown.covers.length === 2 && j.observations.every(o => j.breakdown.covers.includes(o.id)));
   check('owner with only notes migrated, empty name not sent', s.leaguemates[SAM] && s.leaguemates[SAM].observations.length === 1 && s.leaguemates[SAM].name === null);
   check('invalid legacy owner ignored', !('BCNH' in s.leaguemates));
-  check('legacy store left in place', await d.page.evaluate(() => !!localStorage.getItem('gmc_leaguemate_notes')));
+  const legacyRaw = JSON.stringify(legacy);
+  check('legacy store byte-identical after migration', (await d.page.evaluate(() => localStorage.getItem('gmc_leaguemate_notes'))) === legacyRaw);
+  await syncNowAndSettle(d.page);
+  await d.page.reload();
+  await d.page.waitForFunction(() => leaguemates.length === 11);
+  await settle(d.page);
+  check('legacy store byte-identical after re-syncs and reload', (await d.page.evaluate(() => localStorage.getItem('gmc_leaguemate_notes'))) === legacyRaw);
+  check('migration not repeated after reload', (await serverGet()).leaguemates[JOHN].observations.length === 2);
   const prompt = await d.page.evaluate(() => window.liveSystemPrompt || '');
   check('chat prompt carries the migrated name and breakdown', prompt.includes('John (Sleeper username Mgr1001') && prompt.includes('Cheap on WRs; panics after injuries.'));
   // Interrupted/re-run migration on a second device with the same notes: no duplicates.
@@ -302,12 +310,17 @@ scenario('concurrent synthesis on two devices: loser keeps its note', async () =
   const v = await view(b.page, SAM);
   check('B adopted the winning breakdown', v.blurb === s.breakdown.value, { b: v.blurb, server: s.breakdown.value, cache: (await cache(b.page)).lm[SAM] });
   check("B shows its note as outstanding", v.outstanding.length === 1 && v.outstanding[0] === ids['Note from B'], v.outstanding);
+  const bc = (await cache(b.page)).lm[SAM];
+  check("B's losing breakdown is kept, not discarded", bc.breakdown_rejected && bc.breakdown_rejected.value.includes('Note from B'), bc.breakdown_rejected);
+  await b.page.evaluate(() => renderIntel());
+  check("B is told and offered Use mine", (await b.page.textContent('#lmb-' + SAM)).includes('A newer breakdown from another device replaced yours'));
   b.state.chatDelayMs = 0;
   await b.page.evaluate(() => renderIntel());
   await b.page.click('#rsb-' + SAM);
   await b.page.waitForFunction((o) => !document.getElementById('rsb-' + o), SAM, { timeout: 15000 });
   await settle(b.page);
   const s2 = (await serverGet()).leaguemates[SAM];
+  check('re-synthesis supersedes the kept rejected breakdown', !(await cache(b.page)).lm[SAM].breakdown_rejected);
   check('after re-synthesis all notes covered', s2.breakdown.covers.length === 3, { s2: s2.breakdown, state: await st(b.page), cache: (await cache(b.page)).lm[SAM] });
   check('no page errors', !a.state.errors.length && !b.state.errors.length, a.state.errors.concat(b.state.errors));
   await a.ctx.close(); await b.ctx.close();
@@ -412,6 +425,90 @@ scenario('export / import recovery, additive only', async () => {
   check('garbage file rejected', (await c.page.evaluate(() => intelApplyImport({ hello: 1 }))).startsWith('Not a GM Command intel export'));
   check('no page errors', !c.state.errors.length, c.state.errors);
   await c.ctx.close();
+});
+
+scenario('unreadable cache is preserved, not overwritten', async () => {
+  await flush();
+  const d = await device({ rawCache: '{"schema":2,"lm":{"1001":{trunc' });
+  await setName(d.page, JOHN, 'John');
+  const kept = await d.page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('gmc_intel_v2_unreadable_')).map(k => localStorage.getItem(k)));
+  check('raw unreadable cache kept under its own key', kept.length === 1 && kept[0] === '{"schema":2,"lm":{"1001":{trunc', kept);
+  check('app still works', (await serverGet()).leaguemates[JOHN].name.value === 'John');
+  check('no page errors', !d.state.errors.length, d.state.errors);
+  await d.ctx.close();
+});
+
+scenario('device storage failure is surfaced', async () => {
+  await flush();
+  const d = await device();
+  await settle(d.page);
+  await d.page.evaluate(() => {
+    const orig = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (k, v) { if (k === 'gmc_intel_v2') throw new DOMException('full', 'QuotaExceededError'); return orig.call(this, k, v); };
+  });
+  await setName(d.page, ALEX, 'Alex');
+  check('status warns to export', (await d.page.evaluate(() => intelStatusText())).startsWith('Couldn’t save on this device'));
+  check('no page errors', !d.state.errors.length, d.state.errors);
+  await d.ctx.close();
+});
+
+scenario('pre-merge backup page: read-only, verifiable, restorable', async () => {
+  await flush();
+  const legacy = { [JOHN]: { realName: 'John', blurb: 'Cheap on WRs.', log: [{ date: 'Nov 18', text: 'Always counters low on WRs' }, { date: 'Nov 12', text: 'Panics after injuries' }] },
+                   [SAM]: { realName: '', blurb: '', log: [{ date: 'Nov 1', text: 'Loves rookies' }] } };
+  // The phone as it is today: old data, the backup page opened directly (the
+  // sync code never loads in this context).
+  const ctx = await browser.newContext({ serviceWorkers: 'block', acceptDownloads: true });
+  await ctx.addInitScript((l) => { if (!localStorage.getItem('gmc_leaguemate_notes')) { localStorage.setItem('gmc_leaguemate_notes', JSON.stringify(l)); localStorage.setItem('gmCommandAccessKey', 'phone-key'); } }, legacy);
+  await ctx.route('**/*', (route) => {
+    const u = new URL(route.request().url());
+    if (u.origin === PROD && u.pathname === '/intel-backup.html') return route.fulfill({ status: 200, contentType: 'text/html', body: fs.readFileSync(path.join(GM_DIR, 'intel-backup.html')) });
+    return route.abort();
+  });
+  const page = await ctx.newPage();
+  const errors = []; page.on('pageerror', e => errors.push(String(e)));
+  await page.goto(PROD + '/intel-backup.html');
+  await page.waitForFunction(() => document.getElementById('fp').textContent !== '—');
+  const before = await page.evaluate(() => JSON.stringify(Object.assign({}, localStorage)));
+  check('summary counts', (await page.textContent('#summary')).startsWith('2 leaguemates with intel · 3 notes'), await page.textContent('#summary'));
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#download')]);
+  const file = path.join(require('os').tmpdir(), 'intel-legacy-backup-e2e.json');
+  await dl.saveAs(file);
+  const backup = JSON.parse(fs.readFileSync(file, 'utf8'));
+  check('backup holds the exact stored text', backup.items.gmc_leaguemate_notes === JSON.stringify(legacy));
+  check('backup never contains the access key', !fs.readFileSync(file, 'utf8').includes('phone-key'));
+  await page.setInputFiles('#verify', file);
+  await page.waitForFunction(() => document.getElementById('verified').textContent);
+  check('saved copy verifies against the device', (await page.textContent('#verified')).startsWith('✓ Backup matches this device exactly'), await page.textContent('#verified'));
+  const tampered = Object.assign({}, backup, { items: { gmc_leaguemate_notes: backup.items.gmc_leaguemate_notes.replace('John', 'Jxhn') } });
+  const tfile = file.replace('.json', '-tampered.json'); fs.writeFileSync(tfile, JSON.stringify(tampered));
+  await page.evaluate(() => { document.getElementById('verified').textContent = ''; });
+  await page.setInputFiles('#verify', tfile);
+  await page.waitForFunction(() => document.getElementById('verified').textContent);
+  check('damaged copy is detected', (await page.textContent('#verified')).includes('damaged'));
+  check('backup page wrote nothing to storage', (await page.evaluate(() => JSON.stringify(Object.assign({}, localStorage)))) === before);
+  check('no page errors', !errors.length, errors);
+  await ctx.close();
+  // Worst case after merge: phone wiped and server empty. Restore from the file.
+  const c = await device();
+  await settle(c.page);
+  const summary = await c.page.evaluate(async (data) => { const s = await intelApplyImport(data); lmSaveNotes(); await syncIntel(); return s; }, backup);
+  await settle(c.page);
+  const s = (await serverGet()).leaguemates;
+  check('backup restores names, notes and breakdown', s[JOHN].name.value === 'John' && s[JOHN].observations.length === 2 && s[JOHN].breakdown.covers.length === 2 && s[SAM].observations.length === 1, summary);
+  // Same notes again (e.g. also migrated from the device): no duplicates.
+  await c.page.evaluate(async (data) => { await intelApplyImport(data); lmSaveNotes(); await syncIntel(); }, backup);
+  await settle(c.page);
+  check('re-importing the backup adds no duplicates', (await serverGet()).leaguemates[JOHN].observations.length === 2);
+  await c.ctx.close();
+  // An empty browser: nothing to back up, and it says so.
+  const ctx2 = await browser.newContext({ serviceWorkers: 'block' });
+  await ctx2.route('**/*', (route) => route.request().url().endsWith('/intel-backup.html') ? route.fulfill({ status: 200, contentType: 'text/html', body: fs.readFileSync(path.join(GM_DIR, 'intel-backup.html')) }) : route.abort());
+  const p2 = await ctx2.newPage();
+  await p2.goto(PROD + '/intel-backup.html');
+  await p2.waitForFunction(() => document.getElementById('summary').textContent !== 'Reading…');
+  check('empty browser says nothing to back up', (await p2.textContent('#summary')).startsWith('No League Intel found'));
+  await ctx2.close();
 });
 
 scenario('no key: device-only, nothing sent', async () => {
