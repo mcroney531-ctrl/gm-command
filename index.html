@@ -856,6 +856,14 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
 .intel-input::placeholder { color: #8FA2B8; }
 .intel-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47,143,229,.15); }
 .lm-name-input { min-height: 0; resize: none; }
+.intel-sync { font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; line-height: 1.4; color: var(--dim); padding: 2px 2px 4px; }
+.intel-sync:empty { display: none; }
+.intel-sync[data-state="retry"], .intel-sync[data-state="auth"], .intel-sync[data-state="nokey"] { color: #B7791F; }
+.intel-sync[data-state="preview"] { color: var(--accent); }
+.intel-notice { margin-top: 8px; font-size: 11px; line-height: 1.5; color: var(--mid); background: rgba(200,153,71,.10); border: 1px solid rgba(200,153,71,.35); border-radius: 8px; padding: 8px 10px; }
+.intel-notice-btn { margin-left: 6px; border: 1px solid var(--accent); background: var(--white); color: var(--accent); border-radius: 6px; padding: 3px 8px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 9px; letter-spacing: .5px; text-transform: uppercase; cursor: pointer; }
+.intel-notice-btn:disabled { opacity: .55; cursor: default; }
+.intel-tag { margin-left: 6px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 7px; letter-spacing: .5px; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; background: rgba(200,153,71,.14); color: #8A6420; white-space: nowrap; }
 .add-intel-btn { width: 100%; border: none; border-radius: 10px; padding: 12px; font-family: 'Zalando Sans SemiExpanded', sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; background: var(--accent); color: #ffffff; cursor: pointer; box-shadow: 0 4px 12px rgba(47,143,229,.28); transition: transform .1s, opacity .1s; }
 .add-intel-btn:active { transform: translateY(1px); opacity: .9; }
 .add-intel-btn:disabled { opacity: .55; cursor: default; box-shadow: none; transform: none; }
@@ -1201,6 +1209,9 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     <div class="settings-row"><div class="sr-left"><div class="sr-icon sri-2">📡</div><div class="sr-info"><div class="sr-title">News Feed Sources</div><div class="sr-sub" id="settings-feeds-sub">—</div></div></div><span class="sr-arrow">›</span></div>
     <div class="settings-section">League</div>
     <div class="settings-row" onclick="showIntel()"><div class="sr-left"><div class="sr-icon sri-4">🧠</div><div class="sr-info"><div class="sr-title">Leaguemate Intel</div><div class="sr-sub" id="settings-intel-sub">—</div></div></div><span class="sr-arrow">›</span></div>
+    <div class="settings-row" onclick="intelExport()"><div class="sr-left"><div class="sr-icon sri-4">💾</div><div class="sr-info"><div class="sr-title">Export Intel</div><div class="sr-sub" id="intel-export-sub">—</div></div></div><span class="sr-arrow">›</span></div>
+    <div class="settings-row" onclick="intelPickImport()"><div class="sr-left"><div class="sr-icon sri-4">📥</div><div class="sr-info"><div class="sr-title">Import Intel</div><div class="sr-sub" id="intel-import-sub">—</div></div></div><span class="sr-arrow">›</span></div>
+    <input type="file" id="intel-import-file" accept="application/json,.json" style="display:none" onchange="intelImportFile(this)">
     <div class="settings-row"><div class="sr-left"><div class="sr-icon sri-3">📋</div><div class="sr-info"><div class="sr-title">Watchlist</div><div class="sr-sub">Coming soon</div></div></div><span class="sr-arrow">›</span></div>
     <div class="settings-section">Assistant</div>
     <div class="settings-row"><div class="sr-left"><div class="sr-icon sri-5">🤖</div><div class="sr-info"><div class="sr-title">GM Persona</div><div class="sr-sub">Claude Sonnet · Custom system prompt</div></div></div><span class="sr-arrow">›</span></div>
@@ -1221,6 +1232,7 @@ body { font-family: 'Zalando Sans SemiExpanded', sans-serif; max-width: 430px; m
     </div>
   </div>
   <div class="settings-scroll">
+    <div class="intel-sync" id="intel-sync-status" role="status"></div>
     <div class="lm-section" id="lm-section"><!-- injected --></div>
   </div>
 </div>
@@ -4067,6 +4079,7 @@ function gmPromptAccessKey() {
     else localStorage.removeItem(GM_KEY_STORAGE);
   } catch (e) { /* private mode — key simply won't persist */ }
   renderSettings();
+  syncIntel();   // a new key may unlock intel sync
 }
 
 function renderSettings() {
@@ -4134,71 +4147,457 @@ function buildLeaguemates() {
   updateIntelSettingsRow();
 }
 
-// Intel notes (blurb + log) persist to localStorage, keyed by leaguemate id —
-// without this, every "Add Intel" note was lost on the next page load.
-function lmLoadNotes() {
-  try {
-    var saved = localStorage.getItem('gmc_leaguemate_notes');
-    if (!saved) return;
-    var overrides = JSON.parse(saved);
-    leaguemates.forEach(function(lm) {
-      if (overrides[lm.id]) {
-        lm.blurb = overrides[lm.id].blurb;
-        lm.log = overrides[lm.id].log;
-        lm.realName = cleanRealName(overrides[lm.id].realName);
-      }
-    });
-  } catch(e) {}
+// ─────────────────────────────────
+// LEAGUE INTEL — local cache + server sync
+// ─────────────────────────────────
+//
+// Intel used to live only in this browser's localStorage, so clearing site
+// data or opening the app another way lost every note. It is now stored on
+// the Report Cards API (/intel) and cached here. The contract, agreed before
+// it was built:
+//
+// * Three kinds of data per leaguemate (Sleeper owner id): a real name, an
+//   AI-synthesized breakdown (with `covers`, the observation ids it was made
+//   from), and add-only observations, each with its own id.
+// * The server decides order with revision numbers, never this device's
+//   clock. Name and breakdown writes say which revision they were based on
+//   (base_rev); a stale write is refused with the current value (409).
+// * Merging only ever adds or adopts newer server values. No server answer —
+//   empty, 503, 401 — can delete or blank anything held here. Local changes
+//   wait in the cache (pending) until the server confirms them, and survive
+//   reloads, so an interrupted upload is simply retried.
+// * Observations are the source; the breakdown is derived. A note is saved
+//   before synthesis runs and stays saved if synthesis fails or loses a race;
+//   notes the breakdown does not cover are shown with a Re-synthesize button.
+// * Server wins a name conflict, and the rejected local value is kept so it
+//   can be restored with one tap.
+// * Only the production origin writes. A deploy preview reads the real intel
+//   but keeps its own edits locally, and says so. The server enforces the
+//   same rule; this side just avoids sending writes that would be refused.
+
+const INTEL_PROD_ORIGIN = 'https://gm-command.netlify.app';
+const INTEL_URL = REPORTCARDS_BASE + '/intel';
+const INTEL_CACHE_KEY = 'gmc_intel_v2';
+const INTEL_LEGACY_KEY = 'gmc_leaguemate_notes';   // pre-sync format; read once, never deleted
+const INTEL_LEGACY_NS = 'gm-command:legacy-intel:v1';
+const INTEL_OWNER_RE = /^\d{1,32}$/;
+const INTEL_UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+function intelWritable() { return location.origin === INTEL_PROD_ORIGIN; }
+
+function intelEmptyCache() {
+  return { schema: 2, last_synced_rev: 0, legacy_imported: false, last_export_at: 0, seq: 0, lm: {} };
 }
-function lmSaveNotes() {
+function intelLoadCache() {
   try {
-    var overrides = {};
-    leaguemates.forEach(function(lm) { overrides[lm.id] = { blurb: lm.blurb, log: lm.log, realName: lm.realName }; });
-    localStorage.setItem('gmc_leaguemate_notes', JSON.stringify(overrides));
-  } catch(e) {}
-  // Chat should see a new name or note now, not after the next Sleeper sync.
-  buildSystemPrompt();
+    var c = JSON.parse(localStorage.getItem(INTEL_CACHE_KEY) || 'null');
+    if (c && c.schema === 2 && c.lm && typeof c.lm === 'object') return c;
+  } catch (e) {}
+  return intelEmptyCache();
+}
+var intelCache = intelLoadCache();
+var intelSync = { state: 'idle', inFlight: null, again: false, retryMs: 0, timer: null, lastOkAt: 0, restored: false };
+var intelOpenCards = new Set();
+var intelSynthBusy = new Set();   // owners with a synthesis in flight; survives re-renders
+
+function intelPersist() {
+  try { localStorage.setItem(INTEL_CACHE_KEY, JSON.stringify(intelCache)); } catch (e) {}
+}
+function intelSeq() { intelCache.seq = (intelCache.seq || 0) + 1; return intelCache.seq; }
+function intelEntry(owner) {
+  var e = intelCache.lm[owner];
+  if (!e) {
+    e = intelCache.lm[owner] = { name: null, name_pending: null, name_rejected: null,
+                                 breakdown: null, breakdown_pending: null, blocked: null, obs: {} };
+  }
+  return e;
 }
 
 // One line, at most 40 characters: it goes into the system prompt.
 function cleanRealName(v) {
   return typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, 40) : '';
 }
-
-function lmHeaderName(lm) {
-  return lm.realName ? lm.name + ' \u00b7 ' + lm.realName : lm.name;
+function intelCleanText(v, max) {
+  return typeof v === 'string' ? v.replace(/[\x00-\x09\x0b-\x1f\x7f]/g, '').trim().slice(0, max) : '';
+}
+function intelCleanDate(v) {
+  return typeof v === 'string' ? v.replace(/[\x00-\x1f\x7f]/g, '').trim().slice(0, 20) : '';
 }
 
-function saveLmName(id) {
-  var lm = leaguemates.find(function(l) { return l.id === id; });
-  var input = document.getElementById('name-' + id);
-  if (!lm || !input) return;
-  lm.realName = cleanRealName(input.value);
-  input.value = lm.realName;
+function intelNewId() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  var b = new Uint8Array(16); crypto.getRandomValues(b);
+  b[6] = (b[6] & 0x0f) | 0x40; b[8] = (b[8] & 0x3f) | 0x80;
+  var h = Array.from(b, function(x) { return x.toString(16).padStart(2, '0'); }).join('');
+  return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
+}
+
+// Legacy notes have no ids. Each gets a deterministic, namespaced one, so a
+// migration that is interrupted and re-run, or run on two devices holding
+// the same notes, cannot create duplicates. New notes use random UUIDs.
+async function intelLegacyId(owner, date, text) {
+  var bytes = new TextEncoder().encode([INTEL_LEGACY_NS, owner, date, text].join('\u0000'));
+  var h = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)),
+                     function(x) { return x.toString(16).padStart(2, '0'); }).join('');
+  var variant = ((parseInt(h[16], 16) & 0x3) | 0x8).toString(16);
+  return h.slice(0, 8) + '-' + h.slice(8, 12) + '-5' + h.slice(13, 16) + '-' + variant + h.slice(17, 20) + '-' + h.slice(20, 32);
+}
+
+// ── What the UI and the chat prompt see ──
+function intelOrderKey(o) { return o.rev ? o.rev : 1e12 + (o.seq || 0); }   // unsynced notes are newest
+function intelView(owner) {
+  var e = intelCache.lm[owner];
+  if (!e) return { realName: '', blurb: '', log: [], outstanding: [], nameRejected: null, hasBreakdown: false };
+  var nm = e.name_pending || e.name;
+  var bd = e.breakdown_pending || e.breakdown;
+  var covers = bd ? (bd.covers || []) : [];
+  var obs = Object.keys(e.obs).map(function(k) { return e.obs[k]; })
+    .sort(function(a, b) { return intelOrderKey(b) - intelOrderKey(a); });
+  return {
+    realName: nm ? nm.value : '',
+    blurb: bd ? bd.value : '',
+    hasBreakdown: !!bd,
+    nameRejected: e.name_rejected,
+    log: obs.map(function(o) {
+      return { id: o.id, date: o.date_label, text: o.text, pending: !o.rev, covered: covers.indexOf(o.id) >= 0 };
+    }),
+    outstanding: obs.filter(function(o) { return covers.indexOf(o.id) < 0; }).map(function(o) { return o.id; })
+  };
+}
+
+// Leaguemate objects keep the fields the rest of the app already reads
+// (realName, blurb, log) — derived from the cache, never stored on them.
+function lmLoadNotes() {
+  leaguemates.forEach(function(lm) {
+    var v = intelView(lm.id);
+    lm.realName = cleanRealName(v.realName);
+    lm.blurb = v.blurb;
+    lm.log = v.log;
+    lm.outstanding = v.outstanding;
+    lm.nameRejected = v.nameRejected;
+  });
+}
+
+// Every local change goes through here: persist first, then refresh what
+// reads it — the chat prompt included, so chat sees a new name or note now.
+function lmSaveNotes() {
+  intelPersist();
+  lmLoadNotes();
+  buildSystemPrompt();
+  updateIntelSettingsRow();
+  if (currentScreen === 'intel') renderIntel();
+  if (currentScreen === 'rival-detail' && currentRival && currentRdTab === 2) renderRdTab(2);
+}
+
+function lmHeaderName(lm) {
+  return lm.realName ? lm.name + ' · ' + lm.realName : lm.name;
+}
+
+// ── Migration from the pre-sync localStorage format ──
+async function intelImportLegacy() {
+  if (intelCache.legacy_imported) return;
+  if (!(window.crypto && crypto.subtle)) return;   // try again in a secure context
+  var raw = null;
+  try { raw = JSON.parse(localStorage.getItem(INTEL_LEGACY_KEY) || 'null'); } catch (e) { raw = null; }
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    for (const owner of Object.keys(raw)) {
+      if (!INTEL_OWNER_RE.test(owner)) continue;
+      var rec = raw[owner] || {};
+      var log = Array.isArray(rec.log) ? rec.log.slice().reverse() : [];   // stored newest-first
+      var ids = [];
+      var e = intelEntry(owner);
+      for (const item of log) {
+        var text = intelCleanText(item && item.text, 1000);
+        if (!text) continue;
+        var date = intelCleanDate(item && item.date);
+        var id = await intelLegacyId(owner, date, text);
+        if (!e.obs[id]) e.obs[id] = { id: id, text: text, date_label: date, rev: 0, seq: intelSeq() };
+        if (ids.indexOf(id) < 0) ids.push(id);
+      }
+      var name = cleanRealName(rec.realName);
+      if (name && !e.name && !e.name_pending) e.name_pending = { value: name, base_rev: 0 };
+      var blurb = intelCleanText(rec.blurb, 4000);
+      if (blurb && !e.breakdown && !e.breakdown_pending) e.breakdown_pending = { value: blurb, base_rev: 0, covers: ids };
+    }
+  }
+  intelCache.legacy_imported = true;
+  intelPersist();
+}
+
+// ── Merge a complete server snapshot (200 only) ──
+function intelRev(x) { return x && x.rev ? x.rev : 0; }
+function intelMerge(data) {
+  if (!data.initialized && intelCache.last_synced_rev > 0) intelSync.restored = true;
+  var owners = new Set(Object.keys(intelCache.lm));
+  Object.keys(data.leaguemates).forEach(function(o) { if (INTEL_OWNER_RE.test(o)) owners.add(o); });
+  owners.forEach(function(owner) {
+    var s = data.leaguemates[owner] || {};
+    var e = intelEntry(owner);
+    // Name
+    if (s.name && intelRev(s.name) > intelRev(e.name)) e.name = { value: String(s.name.value), rev: s.name.rev };
+    else if (!s.name && e.name) {
+      // The server has no copy of a value it once confirmed: re-send ours.
+      if (!e.name_pending) e.name_pending = { value: e.name.value, base_rev: 0 };
+      e.name = null;
+    }
+    if (!s.name && e.name_pending) e.name_pending.base_rev = 0;
+    if (e.name_pending && e.name && e.name_pending.value === e.name.value) e.name_pending = null;
+    // Breakdown
+    if (s.breakdown && intelRev(s.breakdown) > intelRev(e.breakdown)) {
+      e.breakdown = { value: String(s.breakdown.value), rev: s.breakdown.rev,
+                      covers: (s.breakdown.covers || []).filter(function(i) { return INTEL_UUID_RE.test(i); }) };
+    } else if (!s.breakdown && e.breakdown) {
+      if (!e.breakdown_pending) e.breakdown_pending = { value: e.breakdown.value, base_rev: 0, covers: e.breakdown.covers.slice() };
+      e.breakdown = null;
+    }
+    if (!s.breakdown && e.breakdown_pending) e.breakdown_pending.base_rev = 0;
+    if (e.breakdown_pending && e.breakdown && e.breakdown_pending.value === e.breakdown.value) e.breakdown_pending = null;
+    // Observations: add what we lack; re-send what the server lost.
+    var seen = new Set();
+    (s.observations || []).forEach(function(o) {
+      if (!o || !INTEL_UUID_RE.test(o.id)) return;
+      seen.add(o.id);
+      var l = e.obs[o.id];
+      if (!l) e.obs[o.id] = { id: o.id, text: String(o.text), date_label: String(o.date_label || ''), rev: o.rev, seq: 0 };
+      else { l.rev = o.rev; l.text = String(o.text); l.date_label = String(o.date_label || ''); }
+    });
+    Object.keys(e.obs).forEach(function(id) { if (e.obs[id].rev && !seen.has(id)) e.obs[id].rev = 0; });
+  });
+  intelCache.last_synced_rev = data.rev || 0;
+}
+
+// ── Push pending changes (production only) ──
+function intelHeaders() {
+  var h = { 'Content-Type': 'application/json' };
+  var k = gmAccessKey();
+  if (k) h['X-GM-Key'] = k;
+  return h;
+}
+
+// Returns {status, body} for answers this code acts on, or {fatal: state}
+// for ones that mean "stop and try later": offline, auth, rate limit, 5xx.
+async function intelPut(owner, path, payload) {
+  var res;
+  try {
+    res = await fetch(INTEL_URL + '/' + owner + path, { method: 'PUT', headers: intelHeaders(), body: JSON.stringify(payload) });
+  } catch (e) { return { fatal: 'retry' }; }
+  if (res.status === 401 || res.status === 403) return { fatal: 'auth' };
+  if (res.status === 429 || res.status >= 500) return { fatal: 'retry' };
+  var body = null;
+  try { body = await res.json(); } catch (e) { body = null; }
+  return { status: res.status, body: body };
+}
+
+function intelReplaceCover(e, oldId, newId) {
+  [e.breakdown_pending].forEach(function(b) {
+    if (b) b.covers = b.covers.map(function(i) { return i === oldId ? newId : i; });
+  });
+}
+
+async function intelPushOwner(owner) {
+  var e = intelCache.lm[owner];
+  if (!e || e.blocked) return null;
+  // Observations first, oldest first: a breakdown may only cover stored notes.
+  var pend = Object.keys(e.obs).map(function(k) { return e.obs[k]; })
+    .filter(function(o) { return !o.rev && !o.rejected; })
+    .sort(function(a, b) { return (a.seq || 0) - (b.seq || 0); });
+  for (const o of pend) {
+    var r = await intelPut(owner, '/observations/' + o.id, { text: o.text, date_label: o.date_label });
+    if (r.fatal) return r.fatal;
+    if (r.status === 200 && r.body) o.rev = r.body.rev;
+    else if (r.status === 409) {
+      // That id already holds different text. Keep this note under a new id.
+      var oldId = o.id, nid = intelNewId();
+      delete e.obs[oldId]; o.id = nid; e.obs[nid] = o;
+      intelReplaceCover(e, oldId, nid);
+    } else if (r.status === 404) { e.blocked = 'not-in-league'; intelPersist(); return null; }
+    else o.rejected = true;   // 422: invalid; kept here, not retried
+    intelPersist();
+  }
+  // Name
+  var p = e.name_pending;
+  if (p) {
+    var rn = await intelPut(owner, '/name', { value: p.value, base_rev: p.base_rev });
+    if (rn.fatal) return rn.fatal;
+    if (rn.status === 200 && rn.body) {
+      e.name = { value: p.value, rev: rn.body.rev };
+      if (e.name_pending === p) e.name_pending = null;
+      else if (e.name_pending) e.name_pending.base_rev = rn.body.rev;   // edited again meanwhile
+    } else if (rn.status === 409 && rn.body && rn.body.detail) {
+      var cur = rn.body.detail.current;
+      if (!cur) p.base_rev = 0;
+      else {
+        e.name = { value: String(cur.value), rev: cur.rev };
+        if (e.name_pending === p) {
+          if (String(cur.value) !== p.value) e.name_rejected = { value: p.value };
+          e.name_pending = null;
+        } else if (e.name_pending) e.name_pending.base_rev = cur.rev;
+      }
+    } else if (rn.status === 404) { e.blocked = 'not-in-league'; }
+    else { e.name_rejected = { value: p.value }; if (e.name_pending === p) e.name_pending = null; }
+    intelPersist();
+  }
+  // Breakdown, once every note it covers is stored.
+  var b = e.breakdown_pending;
+  if (b && !e.blocked) {
+    var covers = b.covers.filter(function(i) { return e.obs[i]; });
+    if (covers.some(function(i) { return !e.obs[i].rev; })) return null;
+    var rb = await intelPut(owner, '/breakdown', { value: b.value, base_rev: b.base_rev, covers: covers });
+    if (rb.fatal) return rb.fatal;
+    if (rb.status === 200 && rb.body) {
+      e.breakdown = { value: b.value, rev: rb.body.rev, covers: covers };
+      if (e.breakdown_pending === b) e.breakdown_pending = null;
+      else if (e.breakdown_pending) e.breakdown_pending.base_rev = rb.body.rev;
+    } else if (rb.status === 409 && rb.body && rb.body.detail) {
+      var cb = rb.body.detail.current;
+      if (!cb) b.base_rev = 0;
+      else {
+        // A newer breakdown won. Ours is derived data and is dropped; the
+        // notes it covered stay, and show as not yet in the breakdown.
+        e.breakdown = { value: String(cb.value), rev: cb.rev, covers: (cb.covers || []).slice() };
+        if (e.breakdown_pending === b) e.breakdown_pending = null;
+        else if (e.breakdown_pending) e.breakdown_pending.base_rev = cb.rev;
+      }
+    } else if (rb.status === 422) {
+      covers.forEach(function(i) { e.obs[i].rev = 0; });   // server lacks a covered note: re-send it
+    } else if (rb.status === 404) { e.blocked = 'not-in-league'; }
+    intelPersist();
+  }
+  return null;
+}
+
+function intelHasPending() {
+  return Object.keys(intelCache.lm).some(function(owner) {
+    var e = intelCache.lm[owner];
+    if (e.blocked) return false;
+    return !!(e.name_pending || e.breakdown_pending ||
+      Object.keys(e.obs).some(function(k) { return !e.obs[k].rev && !e.obs[k].rejected; }));
+  });
+}
+function intelUnsavableCount() {
+  var n = 0;
+  Object.keys(intelCache.lm).forEach(function(owner) {
+    var e = intelCache.lm[owner];
+    Object.keys(e.obs).forEach(function(k) { if (e.obs[k].rejected || (e.blocked && !e.obs[k].rev)) n++; });
+  });
+  return n;
+}
+
+// ── The sync loop ──
+function intelSetState(state) {
+  intelSync.state = state;
+  updateIntelSettingsRow();
+}
+function intelRetryLater() {
+  intelSetState('retry');
+  clearTimeout(intelSync.timer);
+  intelSync.retryMs = Math.min(Math.max(intelSync.retryMs * 2, 15000), 300000);
+  intelSync.timer = setTimeout(syncIntel, intelSync.retryMs);
+}
+
+function syncIntel() {
+  if (intelSync.inFlight) { intelSync.again = true; return intelSync.inFlight; }
+  intelSync.inFlight = intelSyncOnce()
+    .catch(function() { intelRetryLater(); })
+    .finally(function() {
+      intelSync.inFlight = null;
+      if (intelSync.again) { intelSync.again = false; syncIntel(); }
+    });
+  return intelSync.inFlight;
+}
+
+async function intelSyncOnce() {
+  await intelImportLegacy();
   lmSaveNotes();
-  var hd = document.getElementById('lmn-' + id);
-  if (hd) hd.textContent = lmHeaderName(lm);
+  if (!gmAccessKey()) { intelSetState('nokey'); return; }
+  intelSetState('syncing');
+  var res;
+  try { res = await fetch(INTEL_URL, { headers: intelHeaders(), cache: 'no-store' }); }
+  catch (e) { return intelRetryLater(); }
+  if (res.status === 401 || res.status === 403) return intelSetState('auth');
+  if (!res.ok) return intelRetryLater();          // 503 etc.: nothing is merged
+  var data = null;
+  try { data = await res.json(); } catch (e) { data = null; }
+  if (!data || data.schema !== 1 || !data.leaguemates || typeof data.leaguemates !== 'object') return intelRetryLater();
+  intelMerge(data);
+  lmSaveNotes();
+  if (!intelWritable()) { intelSync.lastOkAt = Date.now(); return intelSetState('preview'); }
+  for (var pass = 0; pass < 3 && intelHasPending(); pass++) {
+    for (const owner of Object.keys(intelCache.lm)) {
+      var fatal = await intelPushOwner(owner);
+      if (fatal) { lmSaveNotes(); return fatal === 'auth' ? intelSetState('auth') : intelRetryLater(); }
+    }
+  }
+  lmSaveNotes();
+  intelSync.retryMs = 0;
+  intelSync.lastOkAt = Date.now();
+  if (intelHasPending()) return intelRetryLater();
+  intelSetState('synced');
+}
+
+window.addEventListener('online', function() { syncIntel(); });
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState !== 'visible') return;
+  if (intelHasPending() || Date.now() - intelSync.lastOkAt > 5 * 60 * 1000) syncIntel();
+});
+window.addEventListener('DOMContentLoaded', function() { syncIntel(); });
+
+// ── Status ──
+var INTEL_STATE_TEXT = {
+  idle: '',
+  syncing: 'Syncing…',
+  synced: 'Synced',
+  retry: 'Not synced — saved on this device, will retry',
+  nokey: 'Saved on this device only — add your access key to sync',
+  auth: 'Not synced — access key rejected; saved on this device',
+  preview: 'Preview — showing your real intel; changes here stay in this preview'
+};
+function intelStatusText() {
+  var t = INTEL_STATE_TEXT[intelSync.state] || '';
+  if (intelSync.restored && intelSync.state === 'synced') t = 'Server copy was missing — restored from this device';
+  var bad = intelUnsavableCount();
+  if (bad) t += (t ? ' · ' : '') + bad + ' note' + (bad === 1 ? '' : 's') + ' couldn’t be saved';
+  return t;
 }
 
 function updateIntelSettingsRow() {
   var el = document.getElementById('settings-intel-sub');
-  if (!el) return;
-  var notes = (leaguemates || []).reduce(function(n, lm) { return n + ((lm.log && lm.log.length) || 0); }, 0);
-  el.textContent = leaguemates.length
-    ? leaguemates.length + ' profile' + (leaguemates.length === 1 ? '' : 's') + ' \u00b7 ' + notes + ' intel note' + (notes === 1 ? '' : 's')
-    : 'Waiting for Sleeper sync';
+  if (el) {
+    var notes = (leaguemates || []).reduce(function(n, lm) { return n + ((lm.log && lm.log.length) || 0); }, 0);
+    var base = leaguemates.length
+      ? leaguemates.length + ' profile' + (leaguemates.length === 1 ? '' : 's') + ' · ' + notes + ' intel note' + (notes === 1 ? '' : 's')
+      : 'Waiting for Sleeper sync';
+    var st = intelStatusText();
+    el.textContent = st ? base + ' · ' + st : base;
+  }
+  var line = document.getElementById('intel-sync-status');
+  if (line) {
+    line.textContent = intelStatusText();
+    line.dataset.state = intelSync.state;
+  }
+  var ex = document.getElementById('intel-export-sub');
+  if (ex) {
+    var at = intelCache.last_export_at;
+    ex.textContent = at ? 'Last export: ' + getTimeAgo(at) + ' ago' : 'Never exported — keep a backup file';
+  }
+  var im = document.getElementById('intel-import-sub');
+  if (im) im.textContent = intelWritable() ? 'Adds notes from a backup file; never overwrites' : 'Production app only';
 }
 
+// ── Screen ──
 function renderIntel() {
   updateIntelSettingsRow();
   const sec = document.getElementById('lm-section');
+  // A sync can re-render while the user is typing: keep drafts and focus.
+  const drafts = {};
+  sec.querySelectorAll('.intel-input').forEach(function(el) { drafts[el.id] = el.value; });
+  const focusId = document.activeElement && sec.contains(document.activeElement) ? document.activeElement.id : null;
   // Focused from a rival: that one leaguemate, opened. If they aren't loaded
   // (Sleeper not synced yet), fall back to the full list rather than nothing.
   const focused = intelFocusId ? leaguemates.filter(l => l.id === intelFocusId) : [];
   const shown = focused.length ? focused : leaguemates;
-  const openCls = focused.length ? ' open' : '';
   sec.innerHTML = shown.map(lm => `
-    <div class="lm-card${openCls}" id="lmc-${escapeAttr(lm.id)}">
+    <div class="lm-card${(focused.length || intelOpenCards.has(lm.id)) ? ' open' : ''}" id="lmc-${escapeAttr(lm.id)}">
       <div class="lm-card-hd" onclick="toggleLMCard('${escapeAttr(lm.id)}')">
         <div class="lm-hd-l">
           <div class="lm-av">${escapeHtml(lm.initials)}</div>
@@ -4214,86 +4613,269 @@ function renderIntel() {
           <div class="field-lbl">Name</div>
           <input type="text" class="intel-input lm-name-input" id="name-${escapeAttr(lm.id)}" value="${escapeAttr(lm.realName)}" maxlength="40" autocomplete="off" placeholder="Their real name, e.g. John" onchange="saveLmName('${escapeAttr(lm.id)}')">
           <div class="add-desc" style="margin:6px 0 0">So you can say “John” in chat and the assistant knows which team.</div>
+          ${lm.nameRejected ? `<div class="intel-notice">Not saved: “${escapeHtml(lm.nameRejected.value)}” — the name was changed on another device. <button class="intel-notice-btn" onclick="intelUseRejectedName('${escapeAttr(lm.id)}')">Use mine</button></div>` : ''}
         </div>
         <div>
           <div class="field-lbl">Tendencies Breakdown</div>
           <div class="blurb-display ${lm.blurb?'':'empty'}" id="blurb-${escapeAttr(lm.id)}">${lm.blurb ? safeRichText(lm.blurb) : 'No breakdown yet. Add your first intel note below.'}</div>
+          ${lm.outstanding.length ? `<div class="intel-notice">${lm.outstanding.length} note${lm.outstanding.length>1?'s':''} not in the breakdown yet. <button class="intel-notice-btn" id="rsb-${escapeAttr(lm.id)}" onclick="intelResynthesize('${escapeAttr(lm.id)}')">Re-synthesize</button></div>` : ''}
         </div>
-        ${lm.log.length ? `<div><div class="field-lbl" style="margin-bottom:6px">Intel Log</div>${lm.log.map(e=>`<div style="display:flex;gap:8px;padding:7px 10px;background:var(--off);border-radius:6px;border:1px solid var(--border);margin-bottom:4px"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:var(--dim);flex-shrink:0">${escapeHtml(e.date)}</span><span style="font-size:11px;color:var(--mid)">${escapeHtml(e.text)}</span></div>`).join('')}</div>` : ''}
+        ${lm.log.length ? `<div><div class="field-lbl" style="margin-bottom:6px">Intel Log</div>${lm.log.map(e=>`<div style="display:flex;gap:8px;padding:7px 10px;background:var(--off);border-radius:6px;border:1px solid var(--border);margin-bottom:4px"><span style="font-family:Zalando Sans SemiExpanded,sans-serif;font-size:8px;color:var(--dim);flex-shrink:0">${escapeHtml(e.date)}</span><span style="font-size:11px;color:var(--mid)">${escapeHtml(e.text)}${e.pending ? '<span class="intel-tag">not synced</span>' : ''}${e.covered ? '' : '<span class="intel-tag">not in breakdown</span>'}</span></div>`).join('')}</div>` : ''}
         <div>
           <div class="add-lbl-row"><span class="field-lbl">Add Intel</span><span class="ai-badge">AI Synthesized</span></div>
           <div class="add-desc">Drop a quick observation — AI weaves it into the breakdown above.</div>
           <div class="add-row">
-            <textarea class="intel-input" id="ii-${lm.id}" placeholder="e.g. 'Always counters low on WRs...'"></textarea>
-            <button class="add-intel-btn" id="aib-${lm.id}" onclick="addIntel('${lm.id}')">Add Intel</button>
+            <textarea class="intel-input" id="ii-${escapeAttr(lm.id)}" placeholder="e.g. 'Always counters low on WRs...'"></textarea>
+            <button class="add-intel-btn" id="aib-${escapeAttr(lm.id)}" onclick="addIntel('${escapeAttr(lm.id)}')">Add Intel</button>
           </div>
-          <div class="synth-row" id="synth-${lm.id}"><span>Synthesizing</span><span class="synth-dots"><span></span><span></span><span></span></span></div>
-          <div class="success-row" id="succ-${lm.id}">✓ Breakdown updated</div>
+          <div class="synth-row" id="synth-${escapeAttr(lm.id)}"><span>Synthesizing</span><span class="synth-dots"><span></span><span></span><span></span></span></div>
+          <div class="success-row" id="succ-${escapeAttr(lm.id)}">✓ Breakdown updated</div>
         </div>
       </div>
     </div>
   `).join('');
+  Object.keys(drafts).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && id.indexOf('ii-') === 0) el.value = drafts[id];
+  });
+  if (focusId) { var f = document.getElementById(focusId); if (f) f.focus(); }
+  intelSynthBusy.forEach(function(id) { intelSynthUi(id, true); });
 }
 
 function toggleLMCard(id) {
   const card = document.getElementById('lmc-' + id);
   card.classList.toggle('open');
+  if (card.classList.contains('open')) intelOpenCards.add(id); else intelOpenCards.delete(id);
+}
+
+function saveLmName(id) {
+  var input = document.getElementById('name-' + id);
+  if (!input || !INTEL_OWNER_RE.test(id)) return;
+  var value = cleanRealName(input.value);
+  input.value = value;
+  var e = intelEntry(id);
+  var current = e.name_pending || e.name;
+  if ((current ? current.value : '') === value && !(current === null && value)) return;
+  e.name_pending = { value: value, base_rev: e.name_pending ? e.name_pending.base_rev : intelRev(e.name) };
+  e.name_rejected = null;
+  lmSaveNotes();
+  var hd = document.getElementById('lmn-' + id);
+  var lm = leaguemates.find(function(l) { return l.id === id; });
+  if (hd && lm) hd.textContent = lmHeaderName(lm);
+  syncIntel();
+}
+
+function intelUseRejectedName(id) {
+  var e = intelEntry(id);
+  if (!e.name_rejected) return;
+  e.name_pending = { value: e.name_rejected.value, base_rev: intelRev(e.name) };
+  e.name_rejected = null;
+  lmSaveNotes();
+  syncIntel();
+}
+
+// ── Add Intel → synthesis ──
+function intelSynthesisPrompt(existing, notes) {
+  var noteBlock = notes.length === 1
+    ? 'New intel note:\n"""\n' + notes[0] + '\n"""'
+    : 'New intel notes:\n' + notes.map(function(n) { return '"""\n' + n + '\n"""'; }).join('\n');
+  if (existing) {
+    return 'You are a dynasty fantasy football GM assistant maintaining a tendencies profile on a league manager.\n\n' +
+      'Existing breakdown:\n"""\n' + existing + '\n"""\n\n' + noteBlock +
+      '\n\nRewrite the breakdown as a single cohesive paragraph naturally incorporating the new intel. Same direct analytical tone. Return only the updated breakdown text.';
+  }
+  return 'You are a dynasty fantasy football GM assistant. ' + (notes.length === 1 ? 'First intel note' : 'First intel notes') +
+    ':\n' + noteBlock.replace(/^New intel notes?:\n/, '') +
+    '\n\nWrite a short, direct tendencies breakdown (2-4 sentences) based on ' + (notes.length === 1 ? 'this note' : 'these notes') +
+    '. Analytical tone. Return only the breakdown text.';
+}
+
+// One model call. Folds the given notes into the current breakdown. Returns
+// 'ok', 'stale' (the breakdown changed during the call, so this result is
+// not applied) or 'failed'. Notes are never touched here.
+async function intelSynthesize(owner, ids) {
+  var e = intelEntry(owner);
+  var base = e.breakdown_pending || e.breakdown;
+  var baseText = base ? base.value : '';
+  var prevCovers = base ? (base.covers || []).slice() : [];
+  var notes = ids.map(function(i) { return e.obs[i]; }).filter(Boolean).map(function(o) { return o.text; });
+  if (!notes.length) return 'failed';
+  var updated = '';
+  try {
+    // Reshapes notes the user typed — no roster, value, or news fact is
+    // involved, so this one may be served without the tool backend.
+    const res = await callChatAPI(
+      { model: 'claude-sonnet-5', max_tokens: 4000, messages: [{ role: 'user', content: intelSynthesisPrompt(baseText, notes) }] },
+      { needsLiveData: false }
+    );
+    updated = intelCleanText(replyText(await res.json()), 4000);
+  } catch (err) { return 'failed'; }
+  if (!updated) return 'failed';
+  var cur = e.breakdown_pending || e.breakdown;
+  if ((cur ? cur.value : '') !== baseText) return 'stale';
+  var baseRev = e.breakdown_pending ? e.breakdown_pending.base_rev : intelRev(e.breakdown);
+  var covers = prevCovers.concat(ids.filter(function(i) { return e.obs[i] && prevCovers.indexOf(i) < 0; }));
+  e.breakdown_pending = { value: updated, base_rev: baseRev, covers: covers };
+  return 'ok';
+}
+
+function intelSynthUi(id, busy) {
+  var rs = document.getElementById('rsb-' + id);
+  if (rs) { rs.disabled = busy; rs.textContent = busy ? 'Working…' : 'Re-synthesize'; }
+  var btn = document.getElementById('aib-' + id);
+  var synth = document.getElementById('synth-' + id);
+  var succ = document.getElementById('succ-' + id);
+  if (btn) { btn.disabled = busy; btn.textContent = busy ? 'Working…' : 'Add Intel'; }
+  if (synth) synth.style.display = busy ? 'flex' : 'none';
+  if (succ && busy) succ.style.display = 'none';
+}
+function intelSynthResult(id, outcome) {
+  var blurbEl = document.getElementById('blurb-' + id);
+  if (outcome === 'ok') {
+    var succ = document.getElementById('succ-' + id);
+    if (succ) { succ.style.display = 'flex'; setTimeout(function() { succ.style.display = 'none'; }, 3000); }
+    if (blurbEl) { blurbEl.classList.add('blurb-hl'); setTimeout(function() { blurbEl.classList.remove('blurb-hl'); }, 1600); }
+  } else if (blurbEl) {
+    var prev = blurbEl.textContent;
+    blurbEl.textContent = outcome === 'stale'
+      ? 'The breakdown changed while this was running — your note is saved. Tap Re-synthesize to fold it in.'
+      : 'Couldn’t reach the assistant — your note is saved. Tap Re-synthesize to fold it in.';
+    setTimeout(function() { if (blurbEl.isConnected && blurbEl.textContent !== prev) renderIntel(); }, 5000);
+  }
 }
 
 async function addIntel(id) {
   const input = document.getElementById('ii-' + id);
-  const note = input.value.trim();
-  if (!note) return;
-  const lm = leaguemates.find(l => l.id === id);
-  const btn = document.getElementById('aib-' + id);
-  const synth = document.getElementById('synth-' + id);
-  const succ = document.getElementById('succ-' + id);
-  const blurbEl = document.getElementById('blurb-' + id);
+  const note = intelCleanText(input && input.value, 1000);
+  if (!note || !INTEL_OWNER_RE.test(id)) return;
+  // The note is source data: store it before synthesis, so nothing that
+  // happens to the AI call can lose it.
+  const e = intelEntry(id);
+  const obsId = intelNewId();
+  e.obs[obsId] = { id: obsId, text: note, date_label: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                   rev: 0, seq: intelSeq() };
+  input.value = '';
+  intelOpenCards.add(id);
+  lmSaveNotes();
+  syncIntel();
+  if (intelSynthBusy.has(id)) return;   // the note is saved; it shows as not yet in the breakdown
+  intelSynthBusy.add(id);
+  intelSynthUi(id, true);
+  let outcome;
+  try { outcome = await intelSynthesize(id, [obsId]); }
+  finally { intelSynthBusy.delete(id); }
+  lmSaveNotes();
+  intelSynthUi(id, false);
+  intelSynthResult(id, outcome);
+  syncIntel();
+}
 
-  btn.disabled = true;
-  btn.textContent = 'Working…';
-  synth.style.display = 'flex';
-  succ.style.display = 'none';
+async function intelResynthesize(id) {
+  var lm = leaguemates.find(function(l) { return l.id === id; });
+  if (!lm || !lm.outstanding.length || intelSynthBusy.has(id)) return;
+  intelSynthBusy.add(id);
+  intelSynthUi(id, true);
+  let outcome;
+  try { outcome = await intelSynthesize(id, lm.outstanding.slice()); }
+  finally { intelSynthBusy.delete(id); }
+  lmSaveNotes();
+  intelSynthUi(id, false);
+  intelSynthResult(id, outcome);
+  syncIntel();
+}
 
-  const prompt = lm.blurb
-    ? `You are a dynasty fantasy football GM assistant maintaining a tendencies profile on a league manager.\n\nExisting breakdown:\n"""\n${lm.blurb}\n"""\n\nNew intel note:\n"""\n${note}\n"""\n\nRewrite the breakdown as a single cohesive paragraph naturally incorporating the new intel. Same direct analytical tone. Return only the updated breakdown text.`
-    : `You are a dynasty fantasy football GM assistant. First intel note:\n"""\n${note}\n"""\n\nWrite a short, direct tendencies breakdown (2-4 sentences) based on this note. Analytical tone. Return only the breakdown text.`;
+// ── Recovery: export / import ──
+function intelExport() {
+  var out = { format: 'gm-command-intel', version: 1, exported_at: new Date().toISOString(), leaguemates: {} };
+  Object.keys(intelCache.lm).forEach(function(owner) {
+    var e = intelCache.lm[owner];
+    var nm = e.name_pending || e.name;
+    var bd = e.breakdown_pending || e.breakdown;
+    var lm = leaguemates.find(function(l) { return l.id === owner; });
+    out.leaguemates[owner] = {
+      sleeper_name: lm ? lm.name : '',
+      name: nm ? nm.value : null,
+      breakdown: bd ? { value: bd.value, covers: (bd.covers || []).slice() } : null,
+      observations: Object.keys(e.obs).map(function(k) { return e.obs[k]; })
+        .sort(function(a, b) { return intelOrderKey(a) - intelOrderKey(b); })
+        .map(function(o) { return { id: o.id, text: o.text, date_label: o.date_label }; })
+    };
+  });
+  var blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gm-command-intel-' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 2000);
+  intelCache.last_export_at = Date.now();
+  intelPersist();
+  updateIntelSettingsRow();
+}
 
-  try {
-    // Reshapes the note the user just typed — no roster, value, or news
-    // fact is involved, so this one may be served without the tool backend.
-    const res = await callChatAPI(
-      { model: 'claude-sonnet-5', max_tokens: 4000, messages: [{ role: 'user', content: prompt }] },
-      { needsLiveData: false }
-    );
-    const data = await res.json();
-    const updated = replyText(data).trim();
-    if (updated) {
-      lm.blurb = updated;
-      const today = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      lm.log.unshift({ date: today, text: note });
-      lmSaveNotes();
-      blurbEl.textContent = updated;
-      blurbEl.classList.remove('empty');
-      blurbEl.classList.add('blurb-hl');
-      setTimeout(()=>blurbEl.classList.remove('blurb-hl'),1600);
-      input.value = '';
-      synth.style.display = 'none';
-      succ.style.display = 'flex';
-      setTimeout(()=>{ succ.style.display='none'; },3000);
+function intelPickImport() {
+  if (!intelWritable()) { window.alert('Import only works in the production app.'); return; }
+  var f = document.getElementById('intel-import-file');
+  if (f) f.click();
+}
+
+async function intelImportFile(input) {
+  var file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  if (file.size > 2000000) { window.alert('That file is too large to be a GM Command intel export.'); return; }
+  var data = null;
+  try { data = JSON.parse(await file.text()); } catch (e) { data = null; }
+  var summary = await intelApplyImport(data);
+  window.alert(summary);
+  lmSaveNotes();
+  syncIntel();
+}
+
+// Additive only, same rules as migration: notes by id, and a name or
+// breakdown only where this device has none. Differences are reported,
+// never applied. Returns a plain-text summary (shown with alert()).
+async function intelApplyImport(data) {
+  if (!data || data.format !== 'gm-command-intel' || data.version !== 1 ||
+      !data.leaguemates || typeof data.leaguemates !== 'object' || Array.isArray(data.leaguemates)) {
+    return 'Not a GM Command intel export. Nothing was imported.';
+  }
+  var added = 0, conflicts = [];
+  for (const owner of Object.keys(data.leaguemates)) {
+    if (!INTEL_OWNER_RE.test(owner)) continue;
+    var rec = data.leaguemates[owner] || {};
+    var e = intelEntry(owner);
+    var lm = leaguemates.find(function(l) { return l.id === owner; });
+    var label = lm ? lm.name : (intelCleanText(rec.sleeper_name, 40) || owner);
+    var ids = [];
+    for (const o of (Array.isArray(rec.observations) ? rec.observations : [])) {
+      var text = intelCleanText(o && o.text, 1000);
+      if (!text) continue;
+      var date = intelCleanDate(o && o.date_label);
+      var id = (o && typeof o.id === 'string' && INTEL_UUID_RE.test(o.id)) ? o.id : await intelLegacyId(owner, date, text);
+      if (!e.obs[id]) { e.obs[id] = { id: id, text: text, date_label: date, rev: 0, seq: intelSeq() }; added++; }
+      else if (e.obs[id].text !== text) { conflicts.push(label + ': a note with the same id differs; kept the existing one'); continue; }
+      ids.push(id);
     }
-  } catch(e) {
-    synth.style.display = 'none';
-    // Restrained, in place, and it keeps what the user typed.
-    if (blurbEl) {
-      var prev = blurbEl.textContent;
-      blurbEl.textContent = 'Couldn’t reach the assistant — your note was not saved. Try again.';
-      setTimeout(function(){ if (blurbEl.textContent.indexOf('Couldn’t reach') === 0) blurbEl.textContent = prev; }, 4000);
+    var name = cleanRealName(rec.name);
+    var curName = e.name_pending || e.name;
+    if (name) {
+      if (!curName) e.name_pending = { value: name, base_rev: 0 };
+      else if (curName.value !== name) conflicts.push(label + ': name kept as “' + curName.value + '” (file had “' + name + '”)');
+    }
+    var bdText = rec.breakdown && intelCleanText(rec.breakdown.value, 4000);
+    var curBd = e.breakdown_pending || e.breakdown;
+    if (bdText) {
+      var covers = (Array.isArray(rec.breakdown.covers) ? rec.breakdown.covers : [])
+        .filter(function(i) { return typeof i === 'string' && e.obs[i]; });
+      if (!curBd) e.breakdown_pending = { value: bdText, base_rev: 0, covers: covers };
+      else if (curBd.value !== bdText) conflicts.push(label + ': breakdown kept (the file’s differs)');
     }
   }
-
-  btn.disabled = false;
-  btn.textContent = 'Add Intel';
+  intelPersist();
+  return 'Imported ' + added + ' new note' + (added === 1 ? '' : 's') + '.' +
+    (conflicts.length ? '\n\nNot overwritten:\n• ' + conflicts.join('\n• ') : '');
 }
 
 // ─────────────────────────────────

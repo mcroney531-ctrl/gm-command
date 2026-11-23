@@ -63,7 +63,8 @@ class BehaviorTest(unittest.TestCase):
 
     def test_status_rows_hidden_until_add_intel_shows_them(self):
         self.assertIn("display: none", _rule(".synth-row, .success-row"))
-        self.assertIn("synth.style.display = 'flex'", HTML)
+        # Since intel sync, intelSynthUi()/intelSynthResult() toggle them.
+        self.assertIn("synth.style.display = busy ? 'flex' : 'none'", HTML)
         self.assertIn("succ.style.display = 'flex'", HTML)
 
     def test_add_intel_states(self):

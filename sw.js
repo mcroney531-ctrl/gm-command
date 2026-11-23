@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gm-command-v2';
+const CACHE_NAME = 'gm-command-v3';
 const STATIC_ASSETS = [
   '/index.html',
   '/manifest.json',
@@ -32,7 +32,10 @@ self.addEventListener('activate', function(event) {
 // Fetch — network first, fall back to cache
 self.addEventListener('fetch', function(event) {
   // Always go network-first for API calls
-  if (event.request.url.includes('api.sleeper.app') ||
+  // The Report Cards API carries the user's intel and chat: never cache it,
+  // or an offline load would replay a stale /intel as if it were live.
+  if (event.request.url.includes('ddreportcards.onrender.com') ||
+      event.request.url.includes('api.sleeper.app') ||
       event.request.url.includes('api.anthropic.com') ||
       event.request.url.includes('rotowire.com')) {
     event.respondWith(fetch(event.request));
