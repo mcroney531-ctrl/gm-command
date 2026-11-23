@@ -143,6 +143,14 @@ class NoSilentLossTest(unittest.TestCase):
         self.assertIn("the server rejected it", _function_body("renderIntel"))
 
 
+class BackupImportTest(unittest.TestCase):
+    def test_import_accepts_the_pre_merge_backup_format(self):
+        page = (ROOT / "intel-backup.html").read_text(encoding="utf-8")
+        self.assertIn("format: 'gm-command-legacy-backup', version: 1", page)
+        body = _function_body("intelApplyImport")
+        self.assertIn("data.format === 'gm-command-legacy-backup'", body)
+        self.assertIn("await intelApplyLegacy(legacy)", body)
+
 class ServiceWorkerTest(unittest.TestCase):
     def test_backend_is_network_only(self):
         bypass = SW[SW.index("self.addEventListener('fetch'"):SW.index("event.respondWith(fetch(event.request));")]

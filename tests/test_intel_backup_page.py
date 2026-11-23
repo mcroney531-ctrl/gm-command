@@ -13,7 +13,6 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PAGE = (ROOT / "intel-backup.html").read_text(encoding="utf-8")
-APP = (ROOT / "index.html").read_text(encoding="utf-8")
 
 
 class BackupPageTest(unittest.TestCase):
@@ -34,9 +33,9 @@ class BackupPageTest(unittest.TestCase):
         self.assertNotIn("innerHTML", PAGE)
         self.assertNotIn("document.write", PAGE)
 
-    def test_format_is_importable_by_the_app(self):
+    def test_declares_its_file_format(self):
+        # The app's Import accepts this format: see test_intel_sync.py.
         self.assertIn("format: 'gm-command-legacy-backup', version: 1", PAGE)
-        self.assertIn("data.format === 'gm-command-legacy-backup'", APP)
 
     def test_not_indexed(self):
         self.assertIn('<meta name="robots" content="noindex">', PAGE)
